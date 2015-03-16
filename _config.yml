@@ -1,0 +1,26 @@
+# Dependencies
+markdown:            redcarpet
+highlighter:         pygments
+
+# Permalinks
+#
+# Use of `relative_permalinks` ensures post links from the index work properly.
+permalink:           pretty
+relative_permalinks: true
+
+# Setup
+title:               "Sebastian Van Sande"
+tagline:             "JavaScript adventurer"
+description:         "Development blog of Sebastian Van Sande."
+url:                 http://seppevs.github.io
+baseurl:             /
+paginate:            5
+
+# About/contact
+author:
+  name:              Sebastian Van Sande
+  url:               https://twitter.com/seppevs
+  email:             sebastian@vansande.org
+
+# Custom vars
+version:             1.0.0

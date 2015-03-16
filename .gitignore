@@ -1,0 +1,12 @@
+_site
+_drafts
+.idea
+.DS_Store
+.jekyll
+.bundle
+.sass-cache
+Gemfile
+Gemfile.lock
+node_modules
+package.json
+*.swp
