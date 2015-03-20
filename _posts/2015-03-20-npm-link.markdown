@@ -2,7 +2,7 @@
 layout: post
 title:  NPM Link
 summary: Depending on other modules without having to use the NPM repository
-date:   2015-03-20 15:22:00
+date:   2015-03-20 17:47:00
 tags:
 - NPM
 - Node.js
