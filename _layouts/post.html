@@ -14,10 +14,8 @@ layout: default
     {{ content }}
 
     {% include twitter_comment.html %}
-
-    {% include comments.html %}
-
 </div>
+
 
 <div class="related">
     <h2>Related Posts</h2>
@@ -33,4 +31,9 @@ layout: default
         </li>
         {% endfor %}
     </ul>
+</div>
+
+<div>
+    <h2>Comments</h2>
+    {% include comments.html %}
 </div>
