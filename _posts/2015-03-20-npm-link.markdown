@@ -6,6 +6,7 @@ date:   2015-03-20 17:47:00
 tags:
 - NPM
 - Node.js
+comments: true
 ---
 
 ## What?
