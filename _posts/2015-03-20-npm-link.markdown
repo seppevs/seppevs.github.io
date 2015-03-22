@@ -1,0 +1,158 @@
+---
+layout: post
+title:  NPM Link
+summary: Depending on other modules without having to use the NPM repository
+date:   2015-03-20 17:47:00
+tags:
+- NPM
+- Node.js
+comments: true
+---
+
+## What?
+With `npm link` you can depend on other Node modules without having to rely on a NPM repository.
+It also saves you from specifying some complex path to the dependency on your file system.
+
+Using the dependency works as it was resolved through a NPM repository.
+
+## Why?
+Maybe the dependency is still under development or a private NPM repository is overkill for your project?
+
+## An Example
+### The Farm application
+Imagine we're creating this 'farm' application. It has two files:
+
+#### app.js:
+{% highlight JavaScript %}
+var cow = require('farm-cow');
+cow.talk(function(text) {
+   console.log("The cow says: " + text);
+});
+{% endhighlight %}
+
+#### package.json:
+{% highlight JavaScript %}
+{
+  "name": "farm",
+  "version": "1.0.0",
+  "description": "A farm",
+  "main": "app.js",
+  "dependencies": {
+    "farm-cow": "1.0.0"
+  },
+  "author": "Developer",
+  "license": "MIT"
+}
+{% endhighlight %}
+
+As you can see, this application depends on the `farm-cow` module. This dependency is not part of our application and is still under development by someone else.
+
+### The dependency: farm-cow
+This module has two files:
+
+#### farm-cow.js:
+{% highlight JavaScript %}
+exports.talk = function(callback) {
+  callback("mmmooooooooo");
+};
+{% endhighlight %}
+
+#### package.json:
+{% highlight JavaScript %}
+{
+  "name": "farm-cow",
+  "version": "1.0.0",
+  "description": "Farm Cow",
+  "main": "farm-cow.js",
+  "author": "Other developer",
+  "license": "MIT"
+}
+{% endhighlight %}
+
+### The problem
+When we try to run the farm application, an error is thrown:
+
+{% highlight Bash %}
+$ node app.js
+module.js:338
+    throw err;
+          ^
+Error: Cannot find module 'farm-cow'
+    at Function.Module._resolveFilename (module.js:336:15)
+    at Function.Module._load (module.js:278:25)
+    at Module.require (module.js:365:17)
+    at require (module.js:384:17)
+    at Object.<anonymous> (/home/team/farm/app.js:1:73)
+    at Module._compile (module.js:460:26)
+    at Object.Module._extensions..js (module.js:478:10)
+    at Module.load (module.js:355:32)
+    at Function.Module._load (module.js:310:12)
+    at Function.Module.runMain (module.js:501:10)
+{% endhighlight %}
+
+This is normal, because the farm-cow module is not available in the node_modules directory.
+
+Unfortunately, running `npm install` won't solve anything because the `farm-cow` module is not available in our NPM repository:
+
+{% highlight Bash %}
+$ npm install
+npm WARN package.json farm@1.0.0 No repository field.
+npm WARN package.json farm@1.0.0 No README data
+npm ERR! Darwin 14.1.0
+npm ERR! argv "node" "/usr/local/bin/npm" "install"
+npm ERR! node v0.12.0
+npm ERR! npm  v2.5.1
+npm ERR! code E404
+
+npm ERR! 404 Not Found: farm-cow
+npm ERR! 404
+npm ERR! 404 'farm-cow' is not in the npm registry.
+npm ERR! 404 You should bug the author to publish it (or use the name yoursel!)
+npm ERR! 404 It was specified as a dependency of 'farm'
+npm ERR! 404
+npm ERR! 404 Note that you can also install from a
+npm ERR! 404 tarball, folder, http url, or git url.
+
+npm ERR! Please include the following file with any support request:
+npm ERR!     /home/team/farm/npm-debug.log
+{% endhighlight %}
+
+
+### Resolving with `npm link`
+Because we can reach the dependency through the file system, we can use `npm link` to resolve it.
+
+#### Making the module available
+Navigate to the dependency in our terminal:
+{% highlight Bash %}
+$ cd /home/other-team/farm-cow
+$ npm link
+/usr/local/lib/node_modules/farm-cow -> /home/other-team/farm-cow
+{% endhighlight %}
+
+The `npm link` command has created a symlink that points to the farm-cow directory. Note that it used the value of the 'name' attribute in the package.json file.
+
+#### Using the module
+Navigate to the module that requires this dependency:
+{% highlight Bash %}
+$ cd /home/team/farm
+$ npm link farm-cow
+/home/team/farm/node_modules/farm-cow -> /usr/local/lib/node_modules/farm-cow -> /home/other-team/farm-cow
+{% endhighlight %}
+
+The `npm link` command has now created another symlink to the application that needs the directory.
+
+#### Verify
+Running the farm `app.js` will work now because the farm-cow module is resolved through the symlink:
+
+{% highlight Bash %}
+$ node app.js
+The cow says: mmmooooooooo
+{% endhighlight %}
+
+### Unlinking
+We can break the link by using the `npm unlink` command in the farm application:
+
+{% highlight Bash %}
+$ npm unlink farm-cow
+unbuild farm-cow@1.0.0
+{% endhighlight %}

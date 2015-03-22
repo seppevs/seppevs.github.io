@@ -12,7 +12,7 @@ relative_permalinks: true
 title:               "Sebastian Van Sande"
 tagline:             "JavaScript adventurer"
 description:         "Development blog of Sebastian Van Sande."
-url:                 http://seppevs.github.io
+url:                 http://vansande.org
 baseurl:             /
 paginate:            5
 
