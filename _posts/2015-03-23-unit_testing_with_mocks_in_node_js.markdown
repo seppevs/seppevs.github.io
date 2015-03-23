@@ -279,7 +279,7 @@ The test should pass now:
 Congratulations. You just completed the first iteration.
 
 ## Try to implement the rest of the scenarios by yourself
-You should be able to implement the by yourself now, but you can also scroll down for a complete end solution.
+You should be able to implement the by yourself now. Another option is to scroll down and peek at the end solution.
 
 ### Scenario 2
 
