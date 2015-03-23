@@ -11,6 +11,7 @@ tags:
 - TDD
 - BDD
 - Tutorial
+comments: true
 ---
 
 ## Introduction to Unit Testing
