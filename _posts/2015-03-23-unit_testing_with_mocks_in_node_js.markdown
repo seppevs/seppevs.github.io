@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  Unit Testing in Node with Stubs
-summary: A tutorial where we learn how to test features in complete isolation by using stubs.
+title:  Unit Testing with Mocks in Node
+summary: A tutorial where we learn how to test features in complete isolation by using mocks & stubs.
 date:   2015-03-22 11:37:58
 tags:
 - JavaScript
