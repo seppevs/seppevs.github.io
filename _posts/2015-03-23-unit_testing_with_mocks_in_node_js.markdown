@@ -435,4 +435,4 @@ module.exports = {
 };
 {% endhighlight %}
 
-All code of this blog post is [available on github]()
+All code of this blog post is [available on github](https://github.com/seppevs/seppevs.github.io/tree/master/code-samples/unit_testing_with_mocks_in_node_js/twitstat)
