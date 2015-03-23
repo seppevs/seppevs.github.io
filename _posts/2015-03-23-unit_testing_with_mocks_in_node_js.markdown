@@ -1,59 +1,95 @@
 ---
 layout: post
-title:  Unit Testing with Mocks in Node.js
-summary: Testing features in complete isolation by using mocks.
+title:  Unit Testing in Node
+summary: A tutorial where we learn how to test features in complete isolation by using mocks.
 date:   2015-03-22 11:37:58
 tags:
 - JavaScript
 - Node.js
-- Unit
 - Testing
 - Mocking
+- TDD
+- BDD
+- Tutorial
 ---
 
-## Introduction
+## Introduction to Unit Testing
 
-Writing tests makes the developer more certain of his work, and reduces the chance of bugs. Whether you're doing TDD or BDD, usually you will end up with writing a mix
-of unit tests & integration tests in your application.
+Writing tests makes the developer more certain of his work, and reduces the chance of bugs. Whether you're doing TDD or BDD, in more complex applications you _will_ end up with a mix
+of unit tests & integration tests.
 
 * **Unit Testing** is a test approach where a developer tests each feature in complete isolation. The scope is very narrow and well defined. Complex dependencies and interactions
 to the outside world are stubbed or mocked. Only the internal consistency is tested.
 * **Integration Testing** is another approach where a developer verifies that different parts of the system work together. Multiple layers are involved and external resources (database instances, file system, network, ...) are consulted.
 
-In this post, we will focus on how you can write unit tests with mocks in Node.
+The rest of this post will focus on unit testing.
 
-## An Example
+##Node Unit Test Tools
+[Mocha](http://mochajs.org/) will be our overall test framework. It's the most feature-rich JavaScript test framework for Node.js existing today.
+Make sure you've installed this globally as well:
 
-### Functional Requirements
+{% highlight Bash %}
+$ npm install -g mocha
+{% endhighlight %}
 
-Imagine we need to implement a module 'twitstat' with the following specifications:
+[Chai](http://chaijs.com/) is a popular JavaScript TDD/BDD assertion library for Node.js and the browser. It works flawlessly with Mocha.
+
+[Proxyquire](https://github.com/thlorenz/proxyquire) is a tool we will use to proxy Node's `require()` function. By doing this we can easily override dependencies during testing.
+
+[Sinon](http://sinonjs.org/) is a mocking/spying/stubbing framework for JavaScript. This works great in combination with Proxyquire.
+
+## Functional Requirements
+
+Imagine we need to implement a module 'twitstat'.
+
+#### The user story:
 
 > As a user of the module 'twitstat'
 
-> I want to know how many times a certain url was shared on Twitter
+> I want to know how popular a certain url is, based on how many times it was shared on Twitter
 
-> So I can make use of this functionality in my own application
+> So I can make use of this 'popularity' value in my own application
 
-The signature of the new function should look like this:
+#### The logic to assign the "popularity" value:
+
+> * LOW popularity: urls shared less than 10 times
+> * MEDIUM popularity: urls shared between 10 and 50 times
+> * HIGH popularity: urls shared more than 50 times
+
+
+## Technical Requirements
+
+### twitstat module
+####How the signature of the function should look like:
 {% highlight JavaScript %}
-function urlCount(url, callback) {
+function getPopularity(url, callback) {
 
 }
 {% endhighlight %}
 
-The callback should follow the usual Node convention:
+#### The callback should follow the usual Node convention:
 {% highlight JavaScript %}
 function callback(err, data) {
     // err is null OR contains an Error if something went wrong
-    // data contains the JSON response received from Twitter
+    // data contains a JSON object
 }
 {% endhighlight %}
 
+####The data JSON object should look like this:
+{% highlight JavaScript %}
+{
+url: "http://imdb.com/",
+popularity: "HIGH"
+}
+{% endhighlight %}
 
-It needs to send a HTTP GET request to this Twitter JSON REST endpoint:
+### Using Twitter's REST service
+#### Request
+The twitstat module should send a HTTP GET request to this Twitter REST service:
 [http://urls.api.twitter.com/1/urls/count.json?url=imdb.com](`http://urls.api.twitter.com/1/urls/count.json?url=imdb.com`)
 
-A possible response:
+#### Response
+An example:
 {% highlight JavaScript %}
 {
 count: 1279,
@@ -62,7 +98,7 @@ url: "http://imdb.com/"
 {% endhighlight %}
 
 
-### Setting up the project
+## Setting up the project
 
 Create a new directory & navigate into it
 {% highlight Bash %}
@@ -96,37 +132,31 @@ Create a package.json file:
 }
 {% endhighlight %}
 
-Install all dependencies listed in your `package.json` file:
+Note: [Request](https://www.npmjs.com/package/request) is a nice module to send HTTP requests. We will use to call the Twitter REST service in the production code.
+It's also the module we will stub in our unit test.
+
+Install all dependencies listed in the `package.json` file:
 
 {% highlight Bash %}
 $ npm install
 {% endhighlight %}
 
 
-###Introducing the Test Tools
-[Mocha](http://mochajs.org/) will be our overall test framework. It's the most feature-rich JavaScript test framework for Node.js existing today.
-Make sure you've installed this globally as well:
 
-{% highlight Bash %}
-$ npm install -g mocha
-{% endhighlight %}
+## Scenario 1
 
-[Chai](http://chaijs.com/) is a popular JavaScript TDD/BDD assertion library for Node.js and the browser. It works flawlessly with Mocha.
+### URL's with less than 10 shares should get a LOW popularity:
+> Given a url with 9 shares on Twitter
 
-[Proxyquire](https://github.com/thlorenz/proxyquire) is a tool we will use to proxy Node's `require()` function. By doing this we can easily override dependencies during testing.
+> When the popularity of that url is requested
 
-[Sinon](http://sinonjs.org/) is a mocking/spying/stubbing framework for JavaScript. This works great in combination with Proxyquire.
+> Then I should get LOW as popularity
 
-This is a very good combination of test tools to do unit testing in Node.
-
-_Note: [Request]() is NOT a test tool! It's the module we will use to send HTTP requests to the Twitter API in the production code.
-It's also the module we will stub in our unit test._
-
-### Adding a first test
+### RED phase: add a test that should fail
 
 As a good software craftsman, we write the test first.
 
-Create a tests directory
+#### Create a tests directory:
 {% highlight Bash %}
 $ mkdir tests
 {% endhighlight %}
@@ -147,43 +177,46 @@ describe('twitstat', function () {
         twitstat = proxyquire('../lib/twitstat', {'request': request});
     });
 
-    it('should invoke the callback with the data received from Twitter for the given URL', function (done) {
-        var expectedEndpoint = 'http://urls.api.twitter.com/1/urls/count.json?url=reddit.com';
+    it('should report a LOW popularity when given url is shared less than 10 times', function (done) {
+        var expectedEndpoint = 'http://urls.api.twitter.com/1/urls/count.json?url=some-url.com';
         var body = JSON.stringify({
-            count: 9512,
-            url: "http://reddit.com/"
+            count: 9,
+            url: "http://some-url.com/"
         });
         request.withArgs(expectedEndpoint).yields(null, null, body);
 
-        twitstat.urlCount('reddit.com', function (err, data) {
+        twitstat.getPopularity('some-url.com', function (err, data) {
             expect(err).to.be.null;
-            expect(data).to.equal(body);
+            expect(data).to.equal(JSON.stringify({
+                "url": "http://some-url.com/",
+                "popularity": "LOW"
+            }));
             done();
         });
     });
 });
 {% endhighlight %}
 
-A lot happens in here:
+What happens:
 
 * The `require()` statements import the test tools (chai, sinon, proxyquire)
 * `describe()` bundles all twitstat tests
 * `before()` runs before each test, in here:
   * A stubbed request is created with Sinon
-  * The twitstat module (= the module under test) is imported with proxyquire. We informed Proxyquire to replace the real 'request' module with our stubbed 'request' module. Proxyquire will return this stubbed request when the twitstat module calls `require('request')`.
+  * The twitstat module (= the module under test) is imported with proxyquire. We inform Proxyquire to replace the real 'request' module with our stubbed 'request' module. Proxyquire will return this stub when the twitstat module calls `require('request')`.
 * `it()` defines the first test/specification.
-* The request stub is configured: when invoked with 'reddit.com', then yield the callback function with:
+* The request stub is configured: when invoked with 'some-url.com', then yield the callback function with:
   * **null**:the 'error' parameter
   * **null**: the 'response' parameter.
-  * **response**: the JSON response string. This is what the Twitter REST service would reply as HTTP response.
-* Finally, we invoke `urlCount()` (the function under test) with:
-  * **reddit.com**: the same url we've configured in the stubbed request
+  * **response**: the _(fake)_ HTTP JSON response string we would get from Twitter.
+* Finally, we invoke `getPopularity()` _(the function under test)_ with:
+  * **some-url.com**: the same url we've configured in the stubbed request
    * _**callback function**_, it contains the actual test/spec:
-       * We expect the err to be null (because that's what we yield in the stubbed request)
-       * We expect the data to be equal to the response we've configured in the stubbed request
+       * We expect the err to be null (= what we yield in the stubbed request)
+       * We expect the data to be a JSON string containing the url (as returned by the Twitter service) and a popularity with value "LOW"
        * We inform Mocha that we're `done()`. This is necessary when testing code with callbacks.
 
-#### Run all tests:
+### Run all tests:
 {% highlight Bash %}
 $ npm test
 {% endhighlight %}
@@ -191,11 +224,11 @@ _Note: This will run `mocha tests`, as configured in the package.json file_
 
 The test we've added should fail because we haven't implemented anything yet:
 
-![First test should fail](/public/images/posts/unit_testing_with_mocks_in_node_js/first-test-fail.png)
+![First test should fail](/public/images/posts/unit_testing_with_mocks_in_node_js/test1-fail.png)
 
-### Making the first test pass
+### GREEN Phase: make the test pass
 
-In order to make the test pass, we need to write the implementation code.
+We will now do the minimum amount of work required to make the test pass.
 
 #### Create a lib directory:
 {% highlight Bash %}
@@ -209,91 +242,197 @@ Create a new file 'twitstat.js' in the lib directory.
 var request = require('request');
 
 module.exports = {
-    urlCount: function (url, callback) {
+    getPopularity: function (url, callback) {
         var endpoint = "http://urls.api.twitter.com/1/urls/count.json?url=" + url;
         request(endpoint, function (err, response, body) {
-            return callback(null, body);
+            var twitterResponse = JSON.parse(body);
+            var data = JSON.stringify({
+                "url": twitterResponse.url,
+                "popularity": "LOW"
+            });
+            return callback(null, data);
         });
     }
 };
-
 {% endhighlight %}
 
-What happens here:
+What happens:
 
 * The request module is imported _(= stubbed in the test with Sinon & Proxyquire)_
-* An object is exported. It has an `urlCount()` function:
+* An object is exported. It has an `getPopularity()` function:
     * it constructs the endpoint by appending the url argument to the twitter endpoint URL
-    * when the request module receives a response, it invokes the given callback with the received body.
+    * it sends an HTTP request
+    * when it receives a response, it invokes the given callback with the URL of the Twitter response + a popularity of LOW.
 
 _Note: returning the callback is not a mistake. It's a [good practice](http://blog.risingstack.com/node-js-best-practices/)!_
 
-#### Run the test again:
+### Run the test again:
 {% highlight Bash %}
 $ npm test
 {% endhighlight %}
 
-
 The test should pass now:
 
-![First test should fail](/public/images/posts/unit_testing_with_mocks_in_node_js/first-test-pass.png)
+![First test should fail](/public/images/posts/unit_testing_with_mocks_in_node_js/test1-pass.png)
 
-### Adding a second test
+Congratulations. You just completed the first iteration.
 
-Checking for errors is a [good practice](http://blog.risingstack.com/node-js-best-practices/). So add a new test after the previous `it()` function in the same `describe()` function block.
-This time we do the HTTP request to Twitter with another url parameter (imdb.com).
+## Try to implement the rest of the scenario's by yourself
+Based on the previous code, you should be able to do this. Otherwise, scroll down for the complete end solution.
 
-#### tests/twitstat.js:
+### Scenario 2
+
+#### URL's with more than 50 shares should get a HIGH popularity:
+> Given a url with 51 shares on Twitter
+
+> When the popularity of that url is requested
+
+> Then I should get HIGH as popularity
+
+### Scenario 3:
+#### URL's with with shares between 10 and 50 should get a MEDIUM popularity
+> Given a url with 25 shares on Twitter
+
+> When the popularity of that url is requested
+
+> Then I should get MEDIUM as popularity
+
+### Scenario 4:
+#### Errors should be handled correctly
+
+> Given some random url
+
+> When an error occurred while requesting Twitter
+
+> Then I should get a populated error object and no data
+
+Remember: [you should always check for errors](http://blog.risingstack.com/node-js-best-practices/)!
+
+### Always follow this order:
+
+* RED phase:
+  * write a test for above scenario
+  * verify that the test fails
+* GREEN phase:
+  * add the minimal amount of code necessary to make the test pass
+  * verify that all tests pass
+* REFACTOR phase:
+  * refactor when necessary
+
+
+## A possible end solution
+
+#### test/twitstat.js
 {% highlight JavaScript %}
-    it('should invoke the callback with an error object when something went wrong', function(done) {
+var expect = require('chai').expect;
+var sinon = require('sinon');
+var proxyquire = require('proxyquire');
+
+describe('twitstat', function () {
+    var twitstat;
+    var request;
+    before(function () {
+        request = sinon.stub();
+        twitstat = proxyquire('../lib/twitstat', {'request': request});
+    });
+
+    it('should report a LOW popularity when given url is shared less than 10 times', function (done) {
+        var expectedEndpoint = 'http://urls.api.twitter.com/1/urls/count.json?url=some-url.com';
+        var body = JSON.stringify({
+            count: 9,
+            url: "http://some-url.com/"
+        });
+        request.withArgs(expectedEndpoint).yields(null, null, body);
+
+        twitstat.getPopularity('some-url.com', function (err, data) {
+            expect(err).to.be.null;
+            expect(data).to.equal(JSON.stringify({
+                "url": "http://some-url.com/",
+                "popularity": "LOW"
+            }));
+            done();
+        });
+    });
+
+    it('should report a HIGH popularity when given url is shared 51 times', function (done) {
+        var expectedEndpoint = 'http://urls.api.twitter.com/1/urls/count.json?url=other-url.com';
+        var body = JSON.stringify({
+            count: 51,
+            url: "http://other-url.com/"
+        });
+        request.withArgs(expectedEndpoint).yields(null, null, body);
+
+        twitstat.getPopularity('other-url.com', function (err, data) {
+            expect(err).to.be.null;
+            expect(data).to.equal(JSON.stringify({
+                "url": "http://other-url.com/",
+                "popularity": "HIGH"
+            }));
+            done();
+        });
+    });
+
+    it('should report a MEDIUM popularity when given url is shared 25 times', function (done) {
+        var expectedEndpoint = 'http://urls.api.twitter.com/1/urls/count.json?url=blah.com';
+        var body = JSON.stringify({
+            count: 25,
+            url: "http://blah.com/"
+        });
+        request.withArgs(expectedEndpoint).yields(null, null, body);
+
+        twitstat.getPopularity('blah.com', function (err, data) {
+            expect(err).to.be.null;
+            expect(data).to.equal(JSON.stringify({
+                "url": "http://blah.com/",
+                "popularity": "MEDIUM"
+            }));
+            done();
+        });
+    });
+
+    it('should invoke the callback with an error object when things go wrong', function(done) {
         var expectedEndpoint = 'http://urls.api.twitter.com/1/urls/count.json?url=idmb.com';
         var expectedError = new Error('Not found');
         request.withArgs(expectedEndpoint).yields(expectedError, null, null);
 
-        twitstat.urlCount('idmb.com', function(err, data) {
+        twitstat.getPopularity('idmb.com', function(err, data) {
             expect(err).to.equal(expectedError);
             expect(data).to.be.null;
             done();
         });
     });
+});
 {% endhighlight %}
 
-
-#### Run all tests:
-{% highlight Bash %}
-$ npm test
-{% endhighlight %}
-
-The test we've added should fail:
-
-### Making the second test pass
-
-Modify the production code so it can deal with errors received from the request module:
 
 #### lib/twitstat.js
 {% highlight JavaScript %}
 var request = require('request');
 
 module.exports = {
-    urlCount: function (url, callback) {
+    getPopularity: function (url, callback) {
         var endpoint = "http://urls.api.twitter.com/1/urls/count.json?url=" + url;
         request(endpoint, function (err, response, body) {
             if (err) {
                 return callback(err, null);
             }
-            return callback(null, body);
+            var twitterResponse = JSON.parse(body);
+            var popularity = "MEDIUM";
+            if (twitterResponse.count < 10) {
+                popularity = "LOW";
+            } else if (twitterResponse.count > 50) {
+                popularity = "HIGH";
+            }
+
+            var stat = JSON.stringify({
+                "url": twitterResponse.url,
+                "popularity": popularity
+            });
+
+            return callback(null, stat);
         });
     }
 };
 {% endhighlight %}
-
-
-#### Run all tests again:
-{% highlight Bash %}
-$ npm test
-{% endhighlight %}
-
-All tests should pass now:
-
 
 All code of this blog post is [available on github]()
