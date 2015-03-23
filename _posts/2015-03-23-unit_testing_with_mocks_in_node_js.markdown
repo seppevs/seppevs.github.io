@@ -15,7 +15,7 @@ tags:
 
 ## Introduction to Unit Testing
 
-Writing tests makes the developer more certain of his work, and reduces the chance of bugs. Whether you're doing TDD or BDD, in more complex applications you _will_ end up with a mix
+Writing tests makes the developer more certain of their work, and reduces the chance of bugs. Whether you're doing TDD or BDD, in more complex applications you _will_ end up with a mix
 of unit tests & integration tests.
 
 * **Unit Testing** is a test approach where a developer tests each feature in complete isolation. The scope is very narrow and well defined. Complex dependencies and interactions
@@ -277,7 +277,7 @@ The test should pass now:
 
 Congratulations. You just completed the first iteration.
 
-## Try to implement the rest of the scenario's by yourself
+## Try to implement the rest of the scenarios by yourself
 Based on the previous code, you should be able to do this. Otherwise, scroll down for the complete end solution.
 
 ### Scenario 2
