@@ -57,7 +57,6 @@ Imagine we need to implement a module 'twitstat'.
 > * MEDIUM popularity: urls shared between 10 and 50 times
 > * HIGH popularity: urls shared more than 50 times
 
-
 ## Technical Requirements
 
 ### twitstat module
@@ -87,7 +86,7 @@ popularity: "HIGH"
 ### Using Twitter's REST service
 #### Request
 The twitstat module should send a HTTP GET request to this Twitter REST service:
-[http://urls.api.twitter.com/1/urls/count.json?url=imdb.com](`http://urls.api.twitter.com/1/urls/count.json?url=imdb.com`)
+[http://urls.api.twitter.com/1/urls/count.json?url=imdb.com](http://urls.api.twitter.com/1/urls/count.json?url=imdb.com)
 
 #### Response
 An example:
