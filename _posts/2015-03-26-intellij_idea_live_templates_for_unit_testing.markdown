@@ -28,7 +28,7 @@ $END$
 }
 {% endhighlight %}
 
-Define the applicable context by clicking "Define" and choosing "Java" and click "Apply".
+Define the applicable context by clicking "Define" and choosing "Java". Click "Apply".
 
 ### Screenshot
 ![The setup template](/public/images/posts/intellij_idea_live_templates_for_unit_testing/setup.png)
