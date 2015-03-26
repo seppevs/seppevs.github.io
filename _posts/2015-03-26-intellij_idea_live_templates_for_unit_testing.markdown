@@ -56,3 +56,8 @@ In a (new) unit test:
 
 * type: setup (and press the TAB button) => a 'setup' method should appear
 * type: test (and press the TAB button) => a 'test' method should appear
+
+### EDIT
+
+As [explained by Gleighton on Reddit](http://www.reddit.com/r/java/comments/30czqa/intellij_idea_live_templates_for_unit_testing/cpra2z2), this is already built in in IntelliJ:<br />
+Go to the test class and press CONTROL+ENTER (Mac) or ALT+INSERT (Linux/Windows) => here you can choose the same templates. You can edit them by pressing the right arrow key.
