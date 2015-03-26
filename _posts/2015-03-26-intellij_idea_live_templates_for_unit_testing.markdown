@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  IntelliJ IDEA Live Templates for Unit Testing
-summary: A list of a few interesting tips for our beloved IDE.
+summary: When you're doing TDD/BDD in a Java project with IntelliJ IDEA, you really should consider using the following two Live Templates.
 date:   2015-03-26 11:26:32
 tags:
 - Java
@@ -31,7 +31,7 @@ $END$
 Define the applicable context by clicking "Define" and choosing "Java" and click "Apply".
 
 ### Screenshot
-![The setup template](/public/images/posts/intellij_idea_tips_and_tricks/setup.png)
+![The setup template](/public/images/posts/intellij_idea_live_templates_for_unit_testing/setup.png)
 
 ### Verify that it works
 In a (new) unit test, type: setup (and press the TAB button) => a 'setup' method should appear
@@ -52,7 +52,7 @@ $END$
 Define "Java" as the applicable context again and click "OK".
 
 ### Screenshot
-![The test template](/public/images/posts/intellij_idea_tips_and_tricks/test.png)
+![The test template](/public/images/posts/intellij_idea_live_templates_for_unit_testing/test.png)
 
 ### Verify that it works
 In a unit test, type: test (and press the TAB button) => a 'test' method should appear
