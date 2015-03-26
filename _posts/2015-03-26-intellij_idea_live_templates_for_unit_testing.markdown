@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  IntelliJ IDEA Live Templates for Unit Testing
-summary: When you're doing TDD/BDD in a Java project with IntelliJ IDEA, you really should consider using the following two Live Templates.
+summary: When you're doing TDD/BDD in a Java project with IntelliJ IDEA and JUnit, you really should consider using the following two Live Templates.
 date:   2015-03-26 11:26:32
 tags:
 - Java
