@@ -33,9 +33,6 @@ Define the applicable context by clicking "Define" and choosing "Java". Click "A
 ### Screenshot
 ![The setup template](/public/images/posts/intellij_idea_live_templates_for_unit_testing/setup.png)
 
-### Verify that it works
-In a (new) unit test, type: setup (and press the TAB button) => a 'setup' method should appear
-
 
 ## The 'test' Template
 ### Adding the template
@@ -55,4 +52,7 @@ Define "Java" as the applicable context again and click "OK".
 ![The test template](/public/images/posts/intellij_idea_live_templates_for_unit_testing/test.png)
 
 ### Verify that it works
-In a unit test, type: test (and press the TAB button) => a 'test' method should appear
+In a (new) unit test:
+
+* type: setup (and press the TAB button) => a 'setup' method should appear
+* type: test (and press the TAB button) => a 'test' method should appear
