@@ -12,7 +12,7 @@ comments: true
 ---
 
 ## Introduction
-When you're doing TDD/BDD in a Java project with IntelliJ IDEA, you _really_ should consider using the following two Live Templates.
+When you're doing TDD/BDD in a Java project with IntelliJ IDEA and JUnit, you _really_ should consider using the following two Live Templates.
 Since I always forget how to add these templates, I decided to document it here.
 
 ## The 'setup' Template
