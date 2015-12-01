@@ -30,9 +30,9 @@ a.badge:hover {
 }
 
 .badge-important {
-    background-color: #75b5aa;
+    background-color: #6a9fb5;
 }
 
 .badge-important[href] {
-    background-color: #75b5aa;
+    background-color: #6a9fb5;
 }
