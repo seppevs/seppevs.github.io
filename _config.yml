@@ -6,7 +6,7 @@ highlighter:         pygments
 #
 # Use of `relative_permalinks` ensures post links from the index work properly.
 permalink:           pretty
-relative_permalinks: true
+#relative_permalinks: true
 
 # Setup
 title:               "Sebastian Van Sande"
@@ -24,3 +24,8 @@ author:
 
 # Custom vars
 version:             1.0.0
+
+# Gems
+gems: 				[jekyll-paginate, pygments, redcarpet]
+paginate: 			5
+paginate_path: 		"page:num"
