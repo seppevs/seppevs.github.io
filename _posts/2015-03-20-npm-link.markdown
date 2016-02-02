@@ -19,6 +19,7 @@ Using the dependency works as it was resolved through a NPM repository.
 Maybe the dependency is still under development or a private NPM repository is overkill for your project?
 
 ## An Example
+
 ### The Farm application
 Imagine we're creating this 'farm' application. It has two files:
 

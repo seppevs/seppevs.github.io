@@ -150,28 +150,25 @@ abbr[title] {
 /* Code */
 code,
 pre {
-    font-family: Menlo, Monaco, "Courier New", monospace;
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
 code {
     padding: .25em .5em;
     font-size: 85%;
-    color: #6a9fb5;
-    background-color: #f9f9f9;
+    background-color: #e5e5e5;
     border-radius: 3px;
 }
 pre {
     display: block;
     margin-top: 0;
     margin-bottom: 1rem;
-    padding: 1rem;
+    padding: 0.75rem;
     font-size: .8rem;
     line-height: 1.4;
     white-space: pre;
     white-space: pre-wrap;
     word-break: break-all;
     word-wrap: break-word;
-    background-color: #222;
-
 }
 pre code {
     padding: 0;
@@ -183,7 +180,8 @@ pre code {
 /* Pygments via Jekyll */
 .highlight {
     margin-bottom: 1rem;
-    border-radius: 4px;
+    margin-left: 0rem;
+    border: 0.12rem solid #e5e5e5;
 }
 .highlight pre {
     margin-bottom: 0;

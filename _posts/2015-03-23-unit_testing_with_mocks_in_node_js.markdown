@@ -45,10 +45,8 @@ Imagine we need to implement a module 'twitstat'.
 
 #### The user story:
 
-> As a user of the module 'twitstat'
-
-> I want to know how popular a certain url is, based on how many times it was shared on Twitter
-
+> As a user of the module 'twitstat'<br />
+> I want to know how popular a certain url is, based on how many times it was shared on Twitter<br />
 > So I can make use of this 'popularity' value in my own application
 
 #### The logic to assign the "popularity" value:
@@ -60,7 +58,8 @@ Imagine we need to implement a module 'twitstat'.
 ## Technical Requirements
 
 ### twitstat module
-####How the signature of the function should look like:
+
+#### How the signature of the function should look like:
 {% highlight JavaScript %}
 function getPopularity(url, callback) {
 
@@ -75,15 +74,16 @@ function callback(err, data) {
 }
 {% endhighlight %}
 
-####The data JSON object should look like this:
+#### The data JSON object should look like this:
 {% highlight JavaScript %}
 {
-url: "http://imdb.com/",
-popularity: "HIGH"
+  url: "http://imdb.com/",
+  popularity: "HIGH"
 }
 {% endhighlight %}
 
 ### Using Twitter's REST service
+
 #### Request
 The twitstat module should send a HTTP GET request to this Twitter REST service:
 [http://urls.api.twitter.com/1/urls/count.json?url=imdb.com](http://urls.api.twitter.com/1/urls/count.json?url=imdb.com)
@@ -92,8 +92,8 @@ The twitstat module should send a HTTP GET request to this Twitter REST service:
 An example:
 {% highlight JavaScript %}
 {
-count: 1279,
-url: "http://imdb.com/"
+  count: 1279,
+  url: "http://imdb.com/"
 }
 {% endhighlight %}
 
@@ -146,10 +146,8 @@ $ npm install
 ## Scenario 1
 
 ### URL's with less than 10 shares should get a LOW popularity:
-> Given a url with 9 shares on Twitter
-
-> When the popularity of that url is requested
-
+> Given a url with 9 shares on Twitter<br />
+> When the popularity of that url is requested<br />
 > Then I should get LOW as popularity
 
 ### RED phase: add a test that should fail
@@ -283,27 +281,23 @@ You should be able to implement the by yourself now. Another option is to scroll
 ### Scenario 2
 
 #### URL's with more than 50 shares should get a HIGH popularity:
-> Given a url with 51 shares on Twitter
-
-> When the popularity of that url is requested
-
+> Given a url with 51 shares on Twitter<br />
+> When the popularity of that url is requested<br />
 > Then I should get HIGH as popularity
 
 ### Scenario 3:
+
 #### URL's with with shares between 10 and 50 should get a MEDIUM popularity
-> Given a url with 25 shares on Twitter
-
-> When the popularity of that url is requested
-
+> Given a url with 25 shares on Twitter<br />
+> When the popularity of that url is requested<br />
 > Then I should get MEDIUM as popularity
 
 ### Scenario 4:
+
 #### Errors should be handled correctly
 
-> Given some random url
-
-> When an error occurred while requesting Twitter
-
+> Given some random url<br />
+> When an error occurred while requesting Twitter<br />
 > Then I should get a populated error object and no data
 
 Remember: [you should always check for errors](http://blog.risingstack.com/node-js-best-practices/)!
