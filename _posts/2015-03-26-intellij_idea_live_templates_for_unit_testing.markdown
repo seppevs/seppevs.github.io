@@ -16,6 +16,7 @@ When you're doing TDD/BDD in a Java project with IntelliJ IDEA and JUnit, you _r
 Since I always forget how to add these templates, I decided to document it here.
 
 ## The 'setup' Template
+
 ### Adding the template
 Preferences => Editor => Live Templates = click the '+'
 
@@ -35,6 +36,7 @@ Define the applicable context by clicking "Define" and choosing "Java". Click "A
 
 
 ## The 'test' Template
+
 ### Adding the template
 In the same 'Live Templates' screen, click the '+' again
 Now, fill in "test" as abbreviation and enter as template text:
