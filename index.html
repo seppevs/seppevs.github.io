@@ -13,9 +13,6 @@ title: Home
         </h2>
         <span class="post-date">
             {{ post.date | date_to_string }}
-            {% for tag in post.tags %}
-                <span class="badge badge-important">{{tag}}</span>
-            {% endfor %}
         </span>
 
         {{ post.summary }}&hellip; <a href="{{ post.url}}">Continue &raquo;</a>
