@@ -72,7 +72,7 @@ function randomOf() {
 
 This module provides 2 functions to create complete or partial randomized movie objects:
 
-* `movie()` creates a movie object where all its attributes are randomized. It uses chance to generate realistic random data.
+* `movie()` creates a movie object where all its attributes are randomized. It uses [chance](http://chancejs.com/) to generate realistic random data.
 * `movieWith()` creates a movie object with all its attributes randomized, except for those specified in the _override_ argument.
 
 An example of invoking `movie()`
@@ -199,4 +199,4 @@ function toTitle(movie) {
 }
 {% endhighlight %}
 
-All code of this blog post is available on github
+All code of this blog post is [available on github](https://github.com/seppevs/seppevs.github.io/tree/master/code-samples/working_effectively_with_test_data_in_javascript/test-builders)
