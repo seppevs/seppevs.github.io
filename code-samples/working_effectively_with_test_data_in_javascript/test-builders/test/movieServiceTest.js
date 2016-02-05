@@ -3,14 +3,9 @@
 var expect = require('chai').expect;
 var movieService = require('../lib/movieService');
 
-var movie = require('./movieBuilder').movie;
 var movieWith = require('./movieBuilder').movieWith;
 
 describe('movieService', function() {
-
-  it('bla', function() {
-    console.log(movie());
-  });
 
   it('should be possible to get a list of titles by genre', function() {
     movieService.movies = [
