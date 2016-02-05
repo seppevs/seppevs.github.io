@@ -6,7 +6,7 @@ var _ = require('lodash');
 module.exports = {
   movie: movie,
   movieWith: movieWith
-}
+};
 
 function movie() {
   return {
