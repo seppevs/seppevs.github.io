@@ -3,7 +3,7 @@ layout: page
 title: About
 ---
 
-![Me](http://en.gravatar.com/userimage/1518376/11c6db76bdc180db73b99798ad42be30.jpg?size=500 "Me")
+![Me](https://secure.gravatar.com/avatar/fa32e43c5ee072a072cc26478ed55f3e?size=300 "Me")
 
 I'm a freelance software developer with 10 years of experience in Java enterprise application development.
 
