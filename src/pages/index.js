@@ -4,7 +4,7 @@ export default () => (
   <Layout>
     <h2>Hi there!</h2>
     <p>
-      This domain name belongs to Sebastian Van Sande.
+      This domain name belongs to Sebastian Van Sande. ;-)
     </p>
     <p>
       Unfortunately, there isn't much to see here right now.
