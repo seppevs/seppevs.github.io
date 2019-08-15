@@ -1,2 +1,2 @@
 # vansande.org
-Just a landing page
+Just a landing page for [vansande.org](vansande.org)
