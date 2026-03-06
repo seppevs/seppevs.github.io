@@ -2,9 +2,975 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>vansande.org</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sebastian Van Sande — Software Developer</title>
+  <meta name="description" content="Sebastian Van Sande — Software Developer at DPG Media IT. Building robust systems with Java, Spring, AWS and modern cloud technologies.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080810;
+      --bg-2: #0d0d1a;
+      --bg-glass: rgba(255,255,255,0.03);
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.15);
+      --text: #e8e8f0;
+      --text-muted: #7878a0;
+      --text-dim: #4a4a6a;
+      --accent: #6366f1;
+      --accent-2: #06b6d4;
+      --accent-3: #a855f7;
+      --glow: rgba(99,102,241,0.15);
+      --glow-2: rgba(6,182,212,0.1);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE TEXTURE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ─── GRADIENT ORBS ─── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.25;
+    }
+    .orb-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, #6366f1 0%, transparent 70%);
+      top: -200px; left: -100px;
+      animation: float 20s ease-in-out infinite;
+    }
+    .orb-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, #06b6d4 0%, transparent 70%);
+      bottom: 10%; right: -150px;
+      animation: float 25s ease-in-out infinite reverse;
+    }
+    .orb-3 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, #a855f7 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: float 30s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0); }
+      33% { transform: translate(30px, -20px); }
+      66% { transform: translate(-20px, 30px); }
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(8,8,16,0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .nav-logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ─── WRAPPER ─── */
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 0 80px;
+    }
+
+    .hero-inner {
+      max-width: 760px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      border: 1px solid rgba(99,102,241,0.3);
+      background: rgba(99,102,241,0.08);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      margin-bottom: 40px;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent-2);
+      box-shadow: 0 0 8px var(--accent-2);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    h1 {
+      font-size: clamp(48px, 7vw, 80px);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+    }
+    h1 .gradient-text {
+      background: linear-gradient(135deg, #6366f1 0%, #06b6d4 50%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 20px;
+      color: var(--text-muted);
+      font-weight: 400;
+      max-width: 540px;
+      margin-bottom: 48px;
+      line-height: 1.7;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      letter-spacing: 0.01em;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: white;
+      border: none;
+      box-shadow: 0 0 30px rgba(99,102,241,0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 50px rgba(99,102,241,0.5);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover {
+      background: var(--bg-glass);
+      color: var(--text);
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
+
+    /* ─── SECTIONS ─── */
+    section { padding: 100px 0; }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent-2);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+
+    .section-desc {
+      font-size: 17px;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.75;
+      margin-bottom: 60px;
+    }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0;
+    }
+
+    /* ─── CARDS ─── */
+    .card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(99,102,241,0.05) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .card:hover::before { opacity: 1; }
+
+    /* ─── ABOUT ─── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .about-main {
+      grid-column: 1 / -1;
+    }
+
+    .about-main p {
+      font-size: 18px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+    .about-main p:last-child { margin-bottom: 0; }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 60px;
+    }
+    .stat {
+      padding: 24px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      letter-spacing: 0.03em;
+    }
+
+    /* ─── SKILLS ─── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .skill-card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 16px;
+      letter-spacing: 0.01em;
+    }
+
+    .skill-icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .tag:hover {
+      border-color: rgba(99,102,241,0.4);
+      color: var(--accent);
+      background: rgba(99,102,241,0.08);
+    }
+    .tag.accent { border-color: rgba(99,102,241,0.3); color: var(--accent); background: rgba(99,102,241,0.08); }
+    .tag.cyan { border-color: rgba(6,182,212,0.3); color: var(--accent-2); background: rgba(6,182,212,0.08); }
+    .tag.purple { border-color: rgba(168,85,247,0.3); color: var(--accent-3); background: rgba(168,85,247,0.08); }
+
+    /* ─── EXPERIENCE ─── */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 191px;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--border) 5%, var(--border) 95%, transparent);
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 40px;
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .timeline-item:last-child { border-bottom: none; }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 185px;
+      top: 48px;
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 12px rgba(99,102,241,0.4);
+      z-index: 1;
+    }
+
+    .timeline-left {
+      text-align: right;
+      padding-top: 2px;
+    }
+    .timeline-period {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .timeline-company {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .timeline-right h3 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    .timeline-right .timeline-company-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--accent-2);
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .timeline-right p {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+    .timeline-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 16px;
+    }
+
+    /* ─── CERTIFICATIONS ─── */
+    .certs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .cert-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 24px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: all 0.3s ease;
+    }
+    .cert-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
+
+    .cert-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(6,182,212,0.15));
+      border: 1px solid rgba(99,102,241,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .cert-info h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .cert-info span {
+      font-size: 12px;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ─── CONTACT ─── */
+    #contact {
+      padding-bottom: 120px;
+    }
+
+    .contact-card {
+      background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(6,182,212,0.05) 50%, rgba(168,85,247,0.08) 100%);
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: 24px;
+      padding: 64px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 200px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(99,102,241,0.6), transparent);
+    }
+
+    .contact-card h2 {
+      font-size: clamp(28px, 4vw, 42px);
+      margin-bottom: 16px;
+    }
+    .contact-card p {
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      font-size: 17px;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 32px 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+    footer p {
+      font-size: 13px;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ─── SCROLL ANIMATIONS ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .wrap { padding: 0 24px; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .skills-grid { grid-template-columns: 1fr; }
+      .certs-grid { grid-template-columns: 1fr; }
+      .about-grid { grid-template-columns: 1fr; }
+      .timeline::before { left: 0; }
+      .timeline-item { grid-template-columns: 1fr; gap: 8px; }
+      .timeline-item::before { display: none; }
+      .timeline-left { text-align: left; }
+      .contact-card { padding: 40px 24px; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
 </head>
 <body>
-  <p>Welcome to vansande.org</p>
+
+  <!-- Ambient orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <span class="nav-logo"><span>seb</span>@vansande.org</span>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#certifications">Certs</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="wrap">
+      <div class="hero-inner">
+        <div class="hero-badge">Available for opportunities</div>
+        <h1>
+          Sebastian<br>
+          <span class="gradient-text">Van Sande</span>
+        </h1>
+        <p class="hero-subtitle">
+          Senior software developer crafting reliable, scalable systems.
+          Two decades of experience building everything from enterprise Java applications to cloud-native AWS architectures.
+        </p>
+        <div class="hero-cta">
+          <a href="https://be.linkedin.com/in/sebastianvansande" target="_blank" rel="noopener" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            LinkedIn
+          </a>
+          <a href="#contact" class="btn btn-ghost">
+            Get in touch
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- About -->
+  <section id="about">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="section-label">// about me</div>
+        <h2>Passionate about<br>building great software</h2>
+      </div>
+      <div class="about-main reveal reveal-delay-1">
+        <p>
+          I'm a highly motivated software developer with a broad technical interest and knowledge, based in the Antwerp area, Belgium. With over 20 years in the industry, I've honed my craft across enterprise Java development, cloud architecture, and agile delivery.
+        </p>
+        <p>
+          Currently at <strong>DPG Media IT</strong> — one of Europe's largest media groups — I work on the systems that power digital publishing at scale. My background spans everything from backend API design and database engineering to cloud infrastructure and team leadership.
+        </p>
+        <p>
+          I hold certifications from AWS, Scrum Alliance, and Sun/Oracle, and I stay sharp by keeping up with the ever-evolving software landscape. When I'm not coding, I'm exploring new technologies and contributing to meaningful digital products.
+        </p>
+      </div>
+      <div class="stats-row">
+        <div class="stat reveal reveal-delay-1">
+          <div class="stat-number">20+</div>
+          <div class="stat-label">Years experience</div>
+        </div>
+        <div class="stat reveal reveal-delay-2">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Certifications</div>
+        </div>
+        <div class="stat reveal reveal-delay-3">
+          <div class="stat-number">3</div>
+          <div class="stat-label">Languages spoken</div>
+        </div>
+        <div class="stat reveal reveal-delay-4">
+          <div class="stat-number">∞</div>
+          <div class="stat-label">Curiosity</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Skills -->
+  <section id="skills">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="section-label">// expertise</div>
+        <h2>Technical skills</h2>
+        <p class="section-desc">A deep and broad stack built over two decades of production software development.</p>
+      </div>
+      <div class="skills-grid">
+        <div class="card skill-card reveal reveal-delay-1">
+          <span class="skill-icon">☕</span>
+          <h3>Backend Development</h3>
+          <div class="tags">
+            <span class="tag accent">Java</span>
+            <span class="tag accent">Spring Boot</span>
+            <span class="tag accent">Spring</span>
+            <span class="tag">Hibernate</span>
+            <span class="tag">JPA</span>
+            <span class="tag">REST APIs</span>
+            <span class="tag">Microservices</span>
+          </div>
+        </div>
+        <div class="card skill-card reveal reveal-delay-2">
+          <span class="skill-icon">☁️</span>
+          <h3>Cloud & Infrastructure</h3>
+          <div class="tags">
+            <span class="tag cyan">AWS</span>
+            <span class="tag cyan">Lambda</span>
+            <span class="tag cyan">EC2</span>
+            <span class="tag cyan">S3</span>
+            <span class="tag">Docker</span>
+            <span class="tag">CI/CD</span>
+            <span class="tag">Serverless</span>
+          </div>
+        </div>
+        <div class="card skill-card reveal reveal-delay-3">
+          <span class="skill-icon">🗄️</span>
+          <h3>Data & Persistence</h3>
+          <div class="tags">
+            <span class="tag purple">Oracle</span>
+            <span class="tag purple">SQL</span>
+            <span class="tag">PostgreSQL</span>
+            <span class="tag">Database Design</span>
+            <span class="tag">Performance Tuning</span>
+          </div>
+        </div>
+        <div class="card skill-card reveal reveal-delay-1">
+          <span class="skill-icon">⚙️</span>
+          <h3>Process & Methodology</h3>
+          <div class="tags">
+            <span class="tag cyan">Scrum</span>
+            <span class="tag cyan">Agile</span>
+            <span class="tag">TDD</span>
+            <span class="tag">Code Review</span>
+            <span class="tag">Mentoring</span>
+            <span class="tag">Git</span>
+          </div>
+        </div>
+        <div class="card skill-card reveal reveal-delay-2">
+          <span class="skill-icon">🌐</span>
+          <h3>Web Technologies</h3>
+          <div class="tags">
+            <span class="tag accent">Servlet</span>
+            <span class="tag accent">JSP</span>
+            <span class="tag">JavaScript</span>
+            <span class="tag">HTML/CSS</span>
+            <span class="tag">Web Components</span>
+          </div>
+        </div>
+        <div class="card skill-card reveal reveal-delay-3">
+          <span class="skill-icon">🗣️</span>
+          <h3>Languages</h3>
+          <div class="tags">
+            <span class="tag purple">Dutch · Native</span>
+            <span class="tag cyan">English · Fluent</span>
+            <span class="tag">French · Professional</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Experience -->
+  <section id="experience">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="section-label">// career</div>
+        <h2>Work experience</h2>
+        <p class="section-desc">A track record of building and shipping software across media, enterprise, and government sectors.</p>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item reveal">
+          <div class="timeline-left">
+            <span class="timeline-period">2018 — present</span>
+            <span class="timeline-company">Vilvoorde, BE</span>
+          </div>
+          <div class="timeline-right">
+            <h3>Senior Software Developer</h3>
+            <span class="timeline-company-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              DPG Media IT
+            </span>
+            <p>Developing and maintaining backend systems for one of Europe's largest digital media groups. Working on high-traffic publishing platforms, data pipelines, and API infrastructure that serves millions of readers across Belgium and the Netherlands.</p>
+            <div class="timeline-tags">
+              <span class="tag accent">Java</span>
+              <span class="tag accent">Spring Boot</span>
+              <span class="tag cyan">AWS</span>
+              <span class="tag">Microservices</span>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item reveal">
+          <div class="timeline-left">
+            <span class="timeline-period">2013 — 2018</span>
+            <span class="timeline-company">Belgium</span>
+          </div>
+          <div class="timeline-right">
+            <h3>Java Software Developer</h3>
+            <span class="timeline-company-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              Enterprise / Consultancy
+            </span>
+            <p>Full-stack Java development across multiple enterprise clients. Focused on Spring-based backend services, REST API design, and integration projects. Earned AWS Certified Developer Associate certification during this period.</p>
+            <div class="timeline-tags">
+              <span class="tag accent">Java</span>
+              <span class="tag accent">Spring</span>
+              <span class="tag">Oracle DB</span>
+              <span class="tag">REST</span>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item reveal">
+          <div class="timeline-left">
+            <span class="timeline-period">2011 — 2013</span>
+            <span class="timeline-company">Belgium</span>
+          </div>
+          <div class="timeline-right">
+            <h3>Software Developer — UNEX Project</h3>
+            <span class="timeline-company-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              Mail Performance Measurement
+            </span>
+            <p>Designed and built the UNEX mail measurement system — a platform used to track and report postal operator performance metrics across Belgium. Built on Java, Spring, Hibernate, and Oracle.</p>
+            <div class="timeline-tags">
+              <span class="tag accent">Java</span>
+              <span class="tag accent">Spring</span>
+              <span class="tag accent">Hibernate</span>
+              <span class="tag purple">Oracle</span>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item reveal">
+          <div class="timeline-left">
+            <span class="timeline-period">2005 — 2011</span>
+            <span class="timeline-company">Belgium / NL</span>
+          </div>
+          <div class="timeline-right">
+            <h3>Junior → Mid Java Developer</h3>
+            <span class="timeline-company-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Early career
+            </span>
+            <p>Started professional career directly after graduating, earning Sun Certified Java Programmer (SCJP) in the first year. Progressed from junior roles to mid-level developer across projects in Belgium and the Netherlands, building web and enterprise applications with Java EE stack.</p>
+            <div class="timeline-tags">
+              <span class="tag accent">Java EE</span>
+              <span class="tag">JSP</span>
+              <span class="tag">Servlet</span>
+              <span class="tag">SQL</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Certifications -->
+  <section id="certifications">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="section-label">// credentials</div>
+        <h2>Certifications</h2>
+        <p class="section-desc">Industry-recognized credentials spanning cloud, agile, and Java enterprise development.</p>
+      </div>
+      <div class="certs-grid">
+        <div class="cert-card reveal reveal-delay-1">
+          <div class="cert-icon">☁️</div>
+          <div class="cert-info">
+            <h4>AWS Certified Developer — Associate</h4>
+            <span>Amazon Web Services · June 2018</span>
+          </div>
+        </div>
+        <div class="cert-card reveal reveal-delay-2">
+          <div class="cert-icon">🏃</div>
+          <div class="cert-info">
+            <h4>Certified Scrum Master (CSM)</h4>
+            <span>Scrum Alliance · March 2013</span>
+          </div>
+        </div>
+        <div class="cert-card reveal reveal-delay-3">
+          <div class="cert-icon">🌱</div>
+          <div class="cert-info">
+            <h4>Spring Certified Professional</h4>
+            <span>Pivotal / VMware · March 2013</span>
+          </div>
+        </div>
+        <div class="cert-card reveal reveal-delay-1">
+          <div class="cert-icon">🌐</div>
+          <div class="cert-info">
+            <h4>Sun Certified Web Component Developer (SCWCD)</h4>
+            <span>Sun Microsystems · January 2007</span>
+          </div>
+        </div>
+        <div class="cert-card reveal reveal-delay-2">
+          <div class="cert-icon">☕</div>
+          <div class="cert-info">
+            <h4>Sun Certified Java Programmer (SCJP)</h4>
+            <span>Sun Microsystems · October 2005</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="wrap">
+      <div class="contact-card reveal">
+        <div class="section-label" style="justify-content: center; display: flex;">// let's connect</div>
+        <h2>Let's work together</h2>
+        <p>Open to interesting projects, challenging problems,<br>and great conversations about technology.</p>
+        <div class="contact-links">
+          <a href="https://be.linkedin.com/in/sebastianvansande" target="_blank" rel="noopener" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            Connect on LinkedIn
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap" style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+      <p>© 2026 Sebastian Van Sande</p>
+      <p>Antwerp, Belgium 🇧🇪</p>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(el => {
+        if (el.isIntersecting) {
+          el.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Nav scroll effect
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      nav.style.background = window.scrollY > 50
+        ? 'rgba(8,8,16,0.9)'
+        : 'rgba(8,8,16,0.6)';
+    });
+  </script>
 </body>
 </html>
