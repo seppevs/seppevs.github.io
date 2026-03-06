@@ -89,8 +89,10 @@
       text-shadow:
         0 0 8px rgba(255,255,255,0.45),
         0 0 22px rgba(255,255,255,0.18),
-        0 0 50px rgba(0,200,255,0.1);
-      animation: jitter 4s steps(1) infinite;
+        0 0 50px rgba(0,200,255,0.1),
+        6px 0 rgba(255,255,255,0.06),
+        12px 0 rgba(255,255,255,0.03);
+      animation: jitter 4s steps(1) infinite, color-loss 11s steps(1) infinite, dropout 13s steps(1) infinite;
     }
 
     /* Red channel */
@@ -156,7 +158,11 @@
       letter-spacing: 0.2em;
       text-transform: lowercase;
       filter: drop-shadow(0 0 12px rgba(0,0,0,1));
-      animation: subglitch 5s steps(1) infinite;
+      text-shadow:
+        0 0 6px rgba(120,255,180,0.28),
+        0 0 18px rgba(0,255,120,0.1),
+        5px 0 rgba(255,255,255,0.05);
+      animation: subglitch 5s steps(1) infinite, phosphor-pulse 9s steps(1) infinite;
     }
 
     .sub::before {
@@ -309,6 +315,86 @@
       56.8% { opacity: 0;   top: 82%; }
     }
 
+    /* Tape wobble wrapper */
+    .tape-wobble {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.2rem;
+      animation: tape-wobble 2.6s ease-in-out infinite;
+    }
+
+    @keyframes tape-wobble {
+      0%, 100% { transform: skewX(0deg); }
+      18%  { transform: skewX(0.35deg); }
+      36%  { transform: skewX(-0.28deg); }
+      54%  { transform: skewX(0.42deg); }
+      72%  { transform: skewX(-0.18deg); }
+      88%  { transform: skewX(0.22deg); }
+    }
+
+    /* Color loss / tape damage on glitch text */
+    @keyframes color-loss {
+      0%,  100% { filter: drop-shadow(0 0 30px rgba(0,0,0,0.8)) saturate(1) hue-rotate(0deg); }
+      20%   { filter: drop-shadow(0 0 30px rgba(0,0,0,0.8)) saturate(1) hue-rotate(0deg); }
+      20.4% { filter: drop-shadow(0 0 30px rgba(0,0,0,0.8)) saturate(0) hue-rotate(0deg); }
+      20.8% { filter: drop-shadow(0 0 30px rgba(0,0,0,0.8)) saturate(1) hue-rotate(0deg); }
+      21.2% { filter: drop-shadow(0 0 30px rgba(0,0,0,0.8)) saturate(0.1) hue-rotate(160deg); }
+      21.6% { filter: drop-shadow(0 0 30px rgba(0,0,0,0.8)) saturate(1) hue-rotate(0deg); }
+      62%   { filter: drop-shadow(0 0 30px rgba(0,0,0,0.8)) saturate(1) hue-rotate(0deg); }
+      62.3% { filter: drop-shadow(0 0 30px rgba(0,0,0,0.8)) saturate(0) hue-rotate(0deg); }
+      62.6% { filter: drop-shadow(0 0 30px rgba(0,0,0,0.8)) saturate(1) hue-rotate(0deg); }
+    }
+
+    /* Tape dropout — a band of text vanishes */
+    @keyframes dropout {
+      0%,  100% { clip-path: none; }
+      37%   { clip-path: none; }
+      37.3% { clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%, 0 47%, 100% 47%, 100% 100%, 0 100%); }
+      37.6% { clip-path: none; }
+      37.9% { clip-path: polygon(0 0, 100% 0, 100% 58%, 0 58%, 0 70%, 100% 70%, 100% 100%, 0 100%); }
+      38.2% { clip-path: none; }
+      78%   { clip-path: none; }
+      78.2% { clip-path: polygon(0 0, 100% 0, 100% 20%, 0 20%, 0 32%, 100% 32%, 100% 100%, 0 100%); }
+      78.4% { clip-path: none; }
+    }
+
+    /* Phosphor glow pulse on subtitles */
+    @keyframes phosphor-pulse {
+      0%,  100% { text-shadow: 0 0 6px rgba(120,255,180,0.28), 0 0 18px rgba(0,255,120,0.1), 5px 0 rgba(255,255,255,0.05); }
+      35%   { text-shadow: 0 0 6px rgba(120,255,180,0.28), 0 0 18px rgba(0,255,120,0.1), 5px 0 rgba(255,255,255,0.05); }
+      35.5% { text-shadow: 0 0 12px rgba(120,255,180,0.55), 0 0 30px rgba(0,255,120,0.28), 0 0 55px rgba(0,200,100,0.12), 5px 0 rgba(255,255,255,0.05); }
+      36%   { text-shadow: 0 0 3px rgba(120,255,180,0.1), 0 0 8px rgba(0,255,120,0.04), 5px 0 rgba(255,255,255,0.05); }
+      36.5% { text-shadow: 0 0 6px rgba(120,255,180,0.28), 0 0 18px rgba(0,255,120,0.1), 5px 0 rgba(255,255,255,0.05); }
+    }
+
+    /* Contact line */
+    .contact {
+      position: fixed;
+      bottom: 1.4rem;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      font-size: clamp(0.6rem, 1.4vw, 0.78rem);
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.14em;
+      z-index: 2;
+      filter: drop-shadow(0 0 8px rgba(0,0,0,1));
+      animation: subglitch 5s steps(1) infinite;
+      animation-delay: 1.7s;
+    }
+
+    .contact a {
+      color: rgba(0,240,255,0.65);
+      text-decoration: none;
+    }
+
+    .contact a:hover {
+      color: rgba(0,240,255,1);
+      text-shadow: 0 0 14px rgba(0,240,255,0.7);
+    }
+
     /* Vertical hold loss */
     @keyframes vert-hold {
       0%,  100%  { transform: translateY(0);    filter: none; }
@@ -338,11 +424,15 @@
 
   <div class="container">
     <div class="sub" data-text="sorry, but there's">sorry, but there's</div>
-    <div class="glitch" data-text="Nothing">Nothing</div>
-    <div class="glitch" data-text="to see here.">to see here.</div>
+    <div class="tape-wobble">
+      <div class="glitch" data-text="Nothing">Nothing</div>
+      <div class="glitch" data-text="to see here.">to see here.</div>
+    </div>
     <div class="sub" data-text="so go away">so go away</div>
   </div>
 
+
+  <div class="contact">Contact me at <a href="mailto:sebastian@vansande.org">sebastian@vansande.org</a></div>
 
   <script>
     (function () {
@@ -365,6 +455,32 @@
         requestAnimationFrame(drawNoise);
       }
       drawNoise();
+    })();
+
+    // Character scramble
+    (function () {
+      const CHARS = '█▓▒░▄▀■□▪▫◆◇▬⣿';
+      const els = document.querySelectorAll('.glitch');
+
+      function scramble() {
+        const el = els[Math.floor(Math.random() * els.length)];
+        const orig = el.getAttribute('data-text');
+        const idx = Math.floor(Math.random() * orig.length);
+        el.textContent = orig.slice(0, idx) + CHARS[Math.floor(Math.random() * CHARS.length)] + orig.slice(idx + 1);
+        setTimeout(() => { el.textContent = orig; }, 60 + Math.random() * 110);
+      }
+
+      function schedule() {
+        setTimeout(() => {
+          scramble();
+          if (Math.random() < 0.35) {
+            setTimeout(scramble, 90);
+            setTimeout(scramble, 180);
+          }
+          schedule();
+        }, 1200 + Math.random() * 4000);
+      }
+      schedule();
     })();
   </script>
 </body>
