@@ -178,18 +178,6 @@
       letter-spacing: 0.05em;
       margin-bottom: 40px;
     }
-    .hero-badge::before {
-      content: '';
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent-2);
-      box-shadow: 0 0 8px var(--accent-2);
-      animation: pulse 2s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.8); }
-    }
 
     h1 {
       font-size: clamp(48px, 7vw, 80px);
@@ -358,9 +346,11 @@
       color: #ffb400;
     }
     .brand-pill.streamz {
-      background: rgba(0, 196, 140, 0.1);
-      border: 1px solid rgba(0, 196, 140, 0.25);
-      color: #00c48c;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 0;
+      overflow: hidden;
+      border-radius: 10px;
     }
     .brand-pill.rtlplay {
       background: rgba(255, 90, 0, 0.1);
@@ -383,6 +373,7 @@
     }
     .rtlplay-logo { height: 26px; }
     .stievie-logo { height: 26px; }
+    .streamz-logo { height: 40px; width: auto; display: block; }
 
     .platform-right {
       display: flex;
@@ -646,6 +637,20 @@
       color: var(--text-muted);
       line-height: 1.65;
     }
+    .oss-stars {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      background: rgba(250,204,21,0.08);
+      border: 1px solid rgba(250,204,21,0.25);
+      color: #facc15;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      margin-top: 10px;
+    }
 
     /* ─── CERTIFICATIONS (minimal) ─── */
     .certs-list {
@@ -844,7 +849,7 @@
             </p>
             <div class="platform-brands">
               <span class="brand-pill vtmgo"><img src="logos/vtmgo.svg" alt="VTM GO" class="brand-logo"></span>
-              <span class="brand-pill streamz"><img src="logos/streamz.svg" alt="Streamz" class="brand-logo"></span>
+              <span class="brand-pill streamz"><img src="logos/streamz_real.png" alt="Streamz" class="brand-logo streamz-logo"></span>
               <span class="brand-pill rtlplay"><img src="logos/rtlplay.svg" alt="RTL Play" class="brand-logo rtlplay-logo"></span>
               <span class="brand-pill stievie"><img src="logos/stievie.svg" alt="Stievie" class="brand-logo stievie-logo"></span>
             </div>
@@ -928,8 +933,8 @@
           <div class="stat-label">migrate-mongo</div>
         </div>
         <div class="stat reveal reveal-delay-4">
-          <div class="stat-number">3</div>
-          <div class="stat-label">Languages spoken</div>
+          <div class="stat-number">26.2</div>
+          <div class="stat-label">Marathon miles</div>
         </div>
       </div>
     </div>
@@ -1206,6 +1211,7 @@
             <h4><a href="https://github.com/seppevs/migrate-mongo" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(99,102,241,0.4);">migrate-mongo</a></h4>
             <span class="oss-role">// maintainer</span>
             <p>Needed a tool to manage MongoDB database migrations — couldn't find a decent one, so I wrote it myself in Node.js. Now used by thousands of projects worldwide.</p>
+            <span class="oss-stars"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>1k stars on GitHub</span>
           </div>
         </div>
         <div class="card oss-card reveal reveal-delay-2">
@@ -1267,8 +1273,9 @@
   </section>
 
   <footer>
-    <div class="wrap" style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+    <div class="wrap" style="display: flex; justify-content: space-between; width: 100%; align-items: center; flex-wrap: wrap; gap: 8px;">
       <p>© 2026 Sebastian Van Sande</p>
+      <p style="color: var(--text-dim);">Dutch · English · French</p>
       <p>Antwerp, Belgium 🇧🇪</p>
     </div>
   </footer>
