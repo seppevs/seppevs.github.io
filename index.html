@@ -352,6 +352,17 @@
       border: 1px solid rgba(99, 102, 241, 0.25);
       color: #818cf8;
     }
+    .brand-logo {
+      height: 22px;
+      width: auto;
+      display: block;
+      object-fit: contain;
+    }
+    .brand-pill.vtmgo, .brand-pill.streamz, .brand-pill.rtlplay {
+      padding: 10px 18px;
+    }
+    .brand-pill.streamz .brand-logo { filter: brightness(0) invert(1); }
+    .rtlplay-logo { height: 26px; }
 
     .platform-right {
       display: flex;
@@ -742,7 +753,7 @@
   <div class="orb orb-3"></div>
 
   <nav>
-    <span class="nav-logo"><span>seb</span>@vansande.org</span>
+    <span class="nav-logo"><span>sebastian</span>@vansande.org</span>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#skills">Skills</a></li>
@@ -803,9 +814,9 @@
               Previously, I also built the streaming platform for <strong>Stievie</strong> during my time at Medialaan.
             </p>
             <div class="platform-brands">
-              <span class="brand-pill vtmgo">▶ VTM GO</span>
-              <span class="brand-pill streamz">▶ Streamz</span>
-              <span class="brand-pill rtlplay">▶ RTL Play</span>
+              <span class="brand-pill vtmgo"><img src="logos/vtmgo.svg" alt="VTM GO" class="brand-logo"></span>
+              <span class="brand-pill streamz"><img src="logos/streamz.png" alt="Streamz" class="brand-logo"></span>
+              <span class="brand-pill rtlplay"><img src="logos/rtlplay.svg" alt="RTL Play" class="brand-logo rtlplay-logo"></span>
               <span class="brand-pill stievie">▶ Stievie</span>
             </div>
           </div>
@@ -823,7 +834,7 @@
               <div class="platform-stat-text">
                 <h4>Video ingestion pipeline</h4>
                 <p>Transcoding, packaging, DRM protection and server-side ad insertion</p>
-                <div class="mono">MediaConvert · MediaPackage · HLS · DASH · DRM · SSAI</div>
+                <div class="mono">MediaConvert · MediaPackage · MediaTailor · HLS · DASH · DRM · SSAI</div>
               </div>
             </div>
             <div class="platform-stat">
@@ -918,6 +929,7 @@
           <div class="tags">
             <span class="tag accent">Node.js</span>
             <span class="tag accent">Express</span>
+            <span class="tag accent">Hono</span>
             <span class="tag accent">Koa</span>
             <span class="tag accent">Nest.js</span>
             <span class="tag">GraphQL</span>
@@ -939,6 +951,7 @@
             <span class="tag cyan">DynamoDB</span>
             <span class="tag cyan">MediaConvert</span>
             <span class="tag cyan">MediaPackage</span>
+            <span class="tag cyan">MediaTailor</span>
             <span class="tag">EC2</span>
           </div>
         </div>
@@ -960,7 +973,7 @@
           <h3>QA &amp; Testing</h3>
           <div class="tags">
             <span class="tag green">TDD</span>
-            <span class="tag green">Jest</span>
+            <span class="tag green">Vitest</span>
             <span class="tag green">Mocha</span>
             <span class="tag green">Sinon</span>
             <span class="tag green">Chai</span>
@@ -974,6 +987,7 @@
           <h3>Databases &amp; Infra</h3>
           <div class="tags">
             <span class="tag">MongoDB</span>
+            <span class="tag cyan">DynamoDB</span>
             <span class="tag">Redis</span>
             <span class="tag">Oracle</span>
             <span class="tag">MySQL</span>
