@@ -117,6 +117,7 @@
       transition: color 0.2s;
     }
     .nav-links a:hover { color: var(--text); }
+    .nav-links a.active { color: var(--text); }
 
     /* ─── LAYOUT ─── */
     .wrap {
@@ -801,6 +802,7 @@
       <li><a href="#experience">Experience</a></li>
       <li><a href="#oss">Open Source</a></li>
       <li><a href="#contact">Contact</a></li>
+      <li><a href="https://github.com/seppevs" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>GitHub</a></li>
     </ul>
   </nav>
 
@@ -863,7 +865,7 @@
               <span class="brand-pill vtmgo"><img src="logos/vtmgo.svg" alt="VTM GO" class="brand-logo"></span>
               <span class="brand-pill streamz"><img src="logos/streamz_real.png" alt="Streamz" class="brand-logo streamz-logo"></span>
               <span class="brand-pill rtlplay"><img src="logos/rtlplay.svg" alt="RTL Play" class="brand-logo rtlplay-logo"></span>
-              <span class="brand-pill stievie"><img src="logos/stievie.svg" alt="Stievie" class="brand-logo stievie-logo"></span>
+              <span class="brand-pill stievie">Stievie</span>
             </div>
           </div>
           <div class="platform-right">
@@ -946,8 +948,8 @@
           <div class="stat-label">Streaming platforms</div>
         </div>
         <div class="stat reveal reveal-delay-3">
-          <div class="stat-number">npm</div>
-          <div class="stat-label">migrate-mongo</div>
+          <div class="stat-number">1k</div>
+          <div class="stat-label">★ migrate-mongo stars</div>
         </div>
         <div class="stat reveal reveal-delay-4">
           <div class="stat-number">26.2</div>
@@ -1275,6 +1277,9 @@
       <div class="contact-card reveal">
         <div class="section-label" style="display: flex; justify-content: center;">// get in touch</div>
         <h2>Let's connect</h2>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent-2);letter-spacing:0.08em;margin-bottom:12px;">
+          NOW: building live &amp; VOD streaming infrastructure at DPG Media
+        </p>
         <p>
           Not currently available for new projects, but always happy to have a chat.<br>
           Reach me at <a href="mailto:sebastian@vansande.org" class="contact-email">sebastian@vansande.org</a>
@@ -1287,6 +1292,10 @@
           <a href="https://be.linkedin.com/in/sebastianvansande" target="_blank" rel="noopener" class="btn btn-ghost">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
             LinkedIn
+          </a>
+          <a href="https://github.com/seppevs" target="_blank" rel="noopener" class="btn btn-ghost">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
           </a>
         </div>
       </div>
@@ -1316,6 +1325,20 @@
         ? 'rgba(8,8,16,0.92)'
         : 'rgba(8,8,16,0.6)';
     });
+
+    // Scroll-aware nav
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(a => a.classList.remove('active'));
+          const active = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { threshold: 0.3 });
+    sections.forEach(s => navObserver.observe(s));
   </script>
 </body>
 </html>
