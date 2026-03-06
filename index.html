@@ -47,8 +47,8 @@
         0deg,
         transparent,
         transparent 3px,
-        rgba(0,0,0,0.06) 3px,
-        rgba(0,0,0,0.06) 4px
+        rgba(0,0,0,0.09) 3px,
+        rgba(0,0,0,0.09) 4px
       );
       animation: scanroll 8s linear infinite;
     }
@@ -70,6 +70,7 @@
       gap: 1.2rem;
       padding: 2rem;
       text-align: center;
+      animation: vert-hold 13s steps(1) infinite;
     }
 
     /* --- Main glitch text --- */
@@ -85,6 +86,10 @@
       -webkit-text-stroke: 2px rgba(0,0,0,0.5);
       paint-order: stroke fill;
       filter: drop-shadow(0 0 30px rgba(0,0,0,0.8));
+      text-shadow:
+        0 0 8px rgba(255,255,255,0.45),
+        0 0 22px rgba(255,255,255,0.18),
+        0 0 50px rgba(0,200,255,0.1);
       animation: jitter 4s steps(1) infinite;
     }
 
@@ -212,13 +217,120 @@
       6%  { opacity: 0.35; transform: scaleX(1); }
       7%  { opacity: 0; }
     }
+
+    /* TV static noise canvas */
+    #noise {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 1;
+      image-rendering: pixelated;
+      mix-blend-mode: screen;
+    }
+
+    /* Rolling CRT refresh band */
+    .scanband {
+      position: fixed;
+      left: 0;
+      width: 100%;
+      height: 180px;
+      background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(255,255,255,0.01) 20%,
+        rgba(255,255,255,0.04) 50%,
+        rgba(255,255,255,0.01) 80%,
+        transparent 100%
+      );
+      pointer-events: none;
+      z-index: 1;
+      animation: scanband 3.8s linear infinite;
+    }
+
+    @keyframes scanband {
+      from { transform: translateY(-180px); }
+      to   { transform: translateY(100vh); }
+    }
+
+    /* Screen flicker */
+    .flicker {
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      animation: flicker 7s steps(1) infinite;
+    }
+
+    @keyframes flicker {
+      0%,  100%   { opacity: 0; }
+      11%   { opacity: 0.04; }
+      11.1% { opacity: 0; }
+      11.2% { opacity: 0.07; }
+      11.3% { opacity: 0; }
+      42%   { opacity: 0.025; }
+      42.1% { opacity: 0; }
+      79%   { opacity: 0.05; }
+      79.1% { opacity: 0.015; }
+      79.2% { opacity: 0; }
+    }
+
+    /* VHS tracking error bars */
+    .hbars {
+      position: fixed;
+      left: 0;
+      width: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      background: linear-gradient(
+        to right,
+        rgba(255,20,80,0.8),
+        rgba(0,240,255,0.55) 50%,
+        rgba(255,255,255,0.45)
+      );
+      mix-blend-mode: screen;
+      animation: hbars 9s steps(1) infinite;
+    }
+
+    .hbars:nth-of-type(1) { height: 6px;  animation-delay: 0s; }
+    .hbars:nth-of-type(2) { height: 3px;  animation-delay: 3.1s; }
+    .hbars:nth-of-type(3) { height: 10px; animation-delay: 6.4s; }
+
+    @keyframes hbars {
+      0%,  100%  { opacity: 0; top: 0%; transform: skewX(0deg); }
+      56%   { opacity: 0;   top: 20%; }
+      56.2% { opacity: 0.9; top: 45%; transform: skewX(-3deg); }
+      56.5% { opacity: 0.8; top: 68%; transform: skewX(2deg); }
+      56.8% { opacity: 0;   top: 82%; }
+    }
+
+    /* Vertical hold loss */
+    @keyframes vert-hold {
+      0%,  100%  { transform: translateY(0);    filter: none; }
+      85%   { transform: translateY(0);    filter: none; }
+      85.3% { transform: translateY(-80px); filter: brightness(1.5) saturate(0.2); }
+      85.6% { transform: translateY(50px);  filter: brightness(0.65); }
+      85.9% { transform: translateY(-15px); filter: brightness(1.1); }
+      86.2% { transform: translateY(0);    filter: none; }
+    }
   </style>
 </head>
 <body>
 
   <iframe id="bg" src="https://tv.giphy.com/" allowfullscreen></iframe>
 
+  <canvas id="noise"></canvas>
   <div class="overlay"></div>
+  <div class="scanband"></div>
+  <div class="flicker"></div>
+  <div class="hbars"></div>
+  <div class="hbars"></div>
+  <div class="hbars"></div>
 
   <div class="tear"></div>
   <div class="tear"></div>
@@ -231,5 +343,29 @@
     <div class="sub" data-text="so go away">so go away</div>
   </div>
 
+
+  <script>
+    (function () {
+      const canvas = document.getElementById('noise');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 256;
+      canvas.height = 144;
+      let frame = 0;
+      function drawNoise() {
+        if (++frame % 4 === 0) {
+          const img = ctx.createImageData(256, 144);
+          const d = img.data;
+          for (let i = 0; i < d.length; i += 4) {
+            const v = Math.random() * 255 | 0;
+            d[i] = d[i + 1] = d[i + 2] = v;
+            d[i + 3] = 255;
+          }
+          ctx.putImageData(img, 0, 0);
+        }
+        requestAnimationFrame(drawNoise);
+      }
+      drawNoise();
+    })();
+  </script>
 </body>
 </html>
