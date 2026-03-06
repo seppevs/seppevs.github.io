@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sebastian Van Sande — Java & JavaScript Developer</title>
-  <meta name="description" content="Sebastian Van Sande — Java & JavaScript software developer building live & video streaming platforms for VTM GO, Streamz and RTL Play.">
+  <meta name="description" content="Sebastian Van Sande — Java & JavaScript software developer building live & video-on-demand streaming platforms for VTM GO, Streamz and RTL Play.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -142,7 +142,27 @@
       align-items: center;
       padding: 120px 0 80px;
     }
-    .hero-inner { max-width: 800px; }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 64px;
+      align-items: center;
+      width: 100%;
+    }
+    .hero-text { max-width: 640px; }
+    .hero-photo-wrap {
+      flex-shrink: 0;
+    }
+    .hero-photo {
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center top;
+      border: 2px solid var(--border);
+      box-shadow: 0 0 0 8px rgba(99,102,241,0.08), 0 0 60px rgba(99,102,241,0.15);
+      display: block;
+    }
 
     .hero-badge {
       display: inline-flex;
@@ -738,6 +758,9 @@
       nav { padding: 16px 24px; }
       .nav-links { display: none; }
       .wrap { padding: 0 24px; }
+      .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+      .hero-photo-wrap { display: flex; justify-content: center; order: -1; }
+      .hero-photo { width: 160px; height: 160px; }
       .platform-card { padding: 32px 24px; }
       .stats-row { grid-template-columns: repeat(2, 1fr); }
       .skills-grid { grid-template-columns: 1fr; }
@@ -767,24 +790,29 @@
   <section id="hero">
     <div class="wrap">
       <div class="hero-inner">
-        <div class="hero-badge">Java &amp; JavaScript software developer</div>
-        <h1>
-          Sebastian<br>
-          <span class="gradient-text">Van Sande</span>
-        </h1>
-        <p class="hero-subtitle">
-          Building <strong>live &amp; video streaming platforms</strong> for millions of viewers.
-          Pragmatic programmer, TDD evangelist, and open source contributor based in Antwerp, Belgium.
-        </p>
-        <div class="hero-cta">
-          <a href="mailto:sebastian@vansande.org" class="btn btn-primary">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            Get in touch
-          </a>
-          <a href="https://be.linkedin.com/in/sebastianvansande" target="_blank" rel="noopener" class="btn btn-ghost">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-            LinkedIn
-          </a>
+        <div class="hero-text">
+          <div class="hero-badge">Java &amp; JavaScript software developer</div>
+          <h1>
+            Sebastian<br>
+            <span class="gradient-text">Van Sande</span>
+          </h1>
+          <p class="hero-subtitle">
+            Building <strong>live &amp; video-on-demand streaming platforms</strong> for millions of viewers.
+            Pragmatic programmer, TDD evangelist, and open source contributor based in Antwerp, Belgium.
+          </p>
+          <div class="hero-cta">
+            <a href="mailto:sebastian@vansande.org" class="btn btn-primary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              Get in touch
+            </a>
+            <a href="https://be.linkedin.com/in/sebastianvansande" target="_blank" rel="noopener" class="btn btn-ghost">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+              LinkedIn
+            </a>
+          </div>
+        </div>
+        <div class="hero-photo-wrap">
+          <img src="photo.png" alt="Sebastian Van Sande" class="hero-photo">
         </div>
       </div>
     </div>
@@ -1019,7 +1047,7 @@
           <div class="timeline-right">
             <h3>Node.js &amp; Java Developer</h3>
             <span class="timeline-co">DPG Media IT</span>
-            <p>Building the live &amp; video streaming platform (VOD + live TV) that powers VTM GO, Streamz and RTL Play — built from scratch with my team. The platform covers video ingestion (encoding, DRM, SSAI) and the backend for video playback. Previously also built the streaming platform for Stievie.</p>
+            <p>Building the live &amp; video-on-demand streaming platform that powers VTM GO, Streamz and RTL Play — built from scratch with my team. The platform covers video ingestion (encoding, DRM, SSAI) and the backend for video playback. Previously also built the streaming platform for Stievie.</p>
             <div class="timeline-tags">
               <span class="tag accent">Node.js</span>
               <span class="tag accent">TypeScript</span>
