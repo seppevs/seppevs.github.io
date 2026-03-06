@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sebastian Van Sande — Software Developer</title>
-  <meta name="description" content="Sebastian Van Sande — Software Developer at DPG Media IT. Building robust systems with Java, Spring, AWS and modern cloud technologies.">
+  <title>Sebastian Van Sande — Java & JavaScript Developer</title>
+  <meta name="description" content="Sebastian Van Sande — Java & JavaScript software developer building live & video streaming platforms for VTM GO, Streamz and RTL Play.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -23,8 +23,6 @@
       --accent: #6366f1;
       --accent-2: #06b6d4;
       --accent-3: #a855f7;
-      --glow: rgba(99,102,241,0.15);
-      --glow-2: rgba(6,182,212,0.1);
       --radius: 16px;
       --radius-sm: 10px;
     }
@@ -39,7 +37,6 @@
       overflow-x: hidden;
     }
 
-    /* ─── NOISE TEXTURE OVERLAY ─── */
     body::before {
       content: '';
       position: fixed;
@@ -50,14 +47,13 @@
       opacity: 0.4;
     }
 
-    /* ─── GRADIENT ORBS ─── */
     .orb {
       position: fixed;
       border-radius: 50%;
       filter: blur(80px);
       pointer-events: none;
       z-index: 0;
-      opacity: 0.25;
+      opacity: 0.22;
     }
     .orb-1 {
       width: 600px; height: 600px;
@@ -97,9 +93,8 @@
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
-      transition: all 0.3s ease;
+      transition: background 0.3s ease;
     }
-
     .nav-logo {
       font-family: 'JetBrains Mono', monospace;
       font-size: 15px;
@@ -107,7 +102,6 @@
       letter-spacing: 0.02em;
     }
     .nav-logo span { color: var(--accent); }
-
     .nav-links {
       display: flex;
       gap: 32px;
@@ -124,11 +118,19 @@
     }
     .nav-links a:hover { color: var(--text); }
 
-    /* ─── WRAPPER ─── */
+    /* ─── LAYOUT ─── */
     .wrap {
       max-width: 1100px;
       margin: 0 auto;
       padding: 0 40px;
+      position: relative;
+      z-index: 1;
+    }
+    section { padding: 100px 0; }
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
       position: relative;
       z-index: 1;
     }
@@ -140,10 +142,7 @@
       align-items: center;
       padding: 120px 0 80px;
     }
-
-    .hero-inner {
-      max-width: 760px;
-    }
+    .hero-inner { max-width: 800px; }
 
     .hero-badge {
       display: inline-flex;
@@ -179,7 +178,7 @@
       letter-spacing: -0.03em;
       margin-bottom: 24px;
     }
-    h1 .gradient-text {
+    .gradient-text {
       background: linear-gradient(135deg, #6366f1 0%, #06b6d4 50%, #a855f7 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -190,10 +189,11 @@
       font-size: 20px;
       color: var(--text-muted);
       font-weight: 400;
-      max-width: 540px;
+      max-width: 600px;
       margin-bottom: 48px;
       line-height: 1.7;
     }
+    .hero-subtitle strong { color: var(--text); font-weight: 600; }
 
     .hero-cta {
       display: flex;
@@ -236,9 +236,7 @@
       transform: translateY(-2px);
     }
 
-    /* ─── SECTIONS ─── */
-    section { padding: 100px 0; }
-
+    /* ─── SECTION HEADERS ─── */
     .section-label {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
@@ -248,7 +246,6 @@
       text-transform: uppercase;
       margin-bottom: 16px;
     }
-
     h2 {
       font-size: clamp(32px, 4vw, 48px);
       font-weight: 700;
@@ -256,7 +253,6 @@
       margin-bottom: 16px;
       line-height: 1.1;
     }
-
     .section-desc {
       font-size: 17px;
       color: var(--text-muted);
@@ -265,58 +261,144 @@
       margin-bottom: 60px;
     }
 
-    /* ─── DIVIDER ─── */
-    .divider {
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border), transparent);
-      margin: 0;
+    /* ─── FEATURED PLATFORM ─── */
+    #featured {
+      padding-top: 80px;
+      padding-bottom: 100px;
     }
 
-    /* ─── CARDS ─── */
-    .card {
-      background: var(--bg-glass);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 32px;
-      transition: all 0.3s ease;
+    .platform-card {
       position: relative;
+      border-radius: 24px;
+      padding: 56px;
       overflow: hidden;
+      border: 1px solid rgba(99,102,241,0.2);
+      background: linear-gradient(135deg,
+        rgba(99,102,241,0.07) 0%,
+        rgba(6,182,212,0.05) 50%,
+        rgba(168,85,247,0.07) 100%
+      );
     }
-    .card::before {
+    .platform-card::before {
       content: '';
       position: absolute;
-      inset: 0;
-      border-radius: var(--radius);
-      background: linear-gradient(135deg, rgba(99,102,241,0.05) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.3s;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 300px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(99,102,241,0.7), transparent);
     }
-    .card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    .platform-card::after {
+      content: '';
+      position: absolute;
+      bottom: -100px; right: -100px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
+      pointer-events: none;
     }
-    .card:hover::before { opacity: 1; }
 
-    /* ─── ABOUT ─── */
-    .about-grid {
+    .platform-inner {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 24px;
+      gap: 60px;
+      align-items: start;
     }
 
-    .about-main {
-      grid-column: 1 / -1;
-    }
-
-    .about-main p {
-      font-size: 18px;
-      color: var(--text-muted);
-      line-height: 1.8;
+    .platform-left h2 {
+      font-size: clamp(28px, 3.5vw, 42px);
       margin-bottom: 20px;
     }
-    .about-main p:last-child { margin-bottom: 0; }
+    .platform-left p {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+    .platform-left p strong { color: var(--text); }
+
+    .platform-brands {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .brand-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    .brand-pill.vtmgo {
+      background: rgba(255, 180, 0, 0.1);
+      border: 1px solid rgba(255, 180, 0, 0.25);
+      color: #ffb400;
+    }
+    .brand-pill.streamz {
+      background: rgba(0, 196, 140, 0.1);
+      border: 1px solid rgba(0, 196, 140, 0.25);
+      color: #00c48c;
+    }
+    .brand-pill.rtlplay {
+      background: rgba(255, 90, 0, 0.1);
+      border: 1px solid rgba(255, 90, 0, 0.25);
+      color: #ff5a00;
+    }
+    .brand-pill.stievie {
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      color: #818cf8;
+    }
+
+    .platform-right {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .platform-stat {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 20px 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .platform-stat-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .platform-stat-text h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .platform-stat-text p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .platform-stat-text .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--accent-2);
+    }
+
+    /* ─── ABOUT ─── */
+    .about-text p {
+      font-size: 18px;
+      color: var(--text-muted);
+      line-height: 1.85;
+      margin-bottom: 20px;
+      max-width: 720px;
+    }
+    .about-text p:last-child { margin-bottom: 0; }
+    .about-text strong { color: var(--text); font-weight: 600; }
 
     .stats-row {
       display: grid;
@@ -353,30 +435,51 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 20px;
     }
+    .card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(99,102,241,0.05) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .card:hover::before { opacity: 1; }
 
     .skill-card h3 {
       font-size: 14px;
       font-weight: 600;
       color: var(--text);
       margin-bottom: 16px;
-      letter-spacing: 0.01em;
     }
-
     .skill-icon {
-      font-size: 28px;
-      margin-bottom: 16px;
+      font-size: 26px;
+      margin-bottom: 14px;
       display: block;
     }
-
     .tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 7px;
     }
     .tag {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
-      padding: 4px 10px;
+      padding: 3px 9px;
       border-radius: 6px;
       background: rgba(255,255,255,0.04);
       border: 1px solid var(--border);
@@ -384,20 +487,15 @@
       white-space: nowrap;
       transition: all 0.2s;
     }
-    .tag:hover {
-      border-color: rgba(99,102,241,0.4);
-      color: var(--accent);
-      background: rgba(99,102,241,0.08);
-    }
     .tag.accent { border-color: rgba(99,102,241,0.3); color: var(--accent); background: rgba(99,102,241,0.08); }
     .tag.cyan { border-color: rgba(6,182,212,0.3); color: var(--accent-2); background: rgba(6,182,212,0.08); }
     .tag.purple { border-color: rgba(168,85,247,0.3); color: var(--accent-3); background: rgba(168,85,247,0.08); }
+    .tag.green { border-color: rgba(34,197,94,0.3); color: #4ade80; background: rgba(34,197,94,0.08); }
 
-    /* ─── EXPERIENCE ─── */
+    /* ─── EXPERIENCE TIMELINE ─── */
     .timeline {
       display: flex;
       flex-direction: column;
-      gap: 0;
       position: relative;
     }
     .timeline::before {
@@ -408,28 +506,32 @@
       width: 1px;
       background: linear-gradient(to bottom, transparent, var(--border) 5%, var(--border) 95%, transparent);
     }
-
     .timeline-item {
       display: grid;
       grid-template-columns: 180px 1fr;
       gap: 40px;
-      padding: 40px 0;
+      padding: 36px 0;
       border-bottom: 1px solid var(--border);
       position: relative;
     }
     .timeline-item:last-child { border-bottom: none; }
-
     .timeline-item::before {
       content: '';
       position: absolute;
       left: 185px;
-      top: 48px;
+      top: 44px;
       width: 13px; height: 13px;
       border-radius: 50%;
       background: var(--bg);
       border: 2px solid var(--accent);
       box-shadow: 0 0 12px rgba(99,102,241,0.4);
       z-index: 1;
+    }
+    .timeline-item.featured::before {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 14px rgba(6,182,212,0.5);
+      width: 15px; height: 15px;
+      left: 184px;
     }
 
     .timeline-left {
@@ -441,31 +543,28 @@
       font-size: 12px;
       color: var(--text-dim);
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
-    .timeline-company {
-      font-size: 13px;
-      color: var(--text-muted);
-      font-weight: 500;
+    .timeline-org {
+      font-size: 12px;
+      color: var(--text-dim);
     }
 
     .timeline-right h3 {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 600;
       letter-spacing: -0.01em;
-      margin-bottom: 8px;
+      margin-bottom: 2px;
     }
-    .timeline-right .timeline-company-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .timeline-co {
       font-size: 13px;
       color: var(--accent-2);
       font-weight: 500;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
+      display: block;
     }
     .timeline-right p {
-      font-size: 15px;
+      font-size: 14px;
       color: var(--text-muted);
       line-height: 1.7;
     }
@@ -473,59 +572,79 @@
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-top: 16px;
+      margin-top: 12px;
     }
 
-    /* ─── CERTIFICATIONS ─── */
-    .certs-grid {
+    /* ─── OPEN SOURCE ─── */
+    .oss-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
+      gap: 20px;
     }
-
-    .cert-card {
+    .oss-card {
       display: flex;
       align-items: flex-start;
       gap: 20px;
-      padding: 24px;
-      background: var(--bg-glass);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      transition: all 0.3s ease;
+      padding: 28px;
     }
-    .cert-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-2px);
-    }
-
-    .cert-icon {
+    .oss-icon {
       width: 44px; height: 44px;
       border-radius: 12px;
-      background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(6,182,212,0.15));
+      background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(6,182,212,0.1));
       border: 1px solid rgba(99,102,241,0.2);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
+      font-size: 22px;
       flex-shrink: 0;
     }
-
-    .cert-info h4 {
-      font-size: 14px;
+    .oss-info h4 {
+      font-size: 15px;
       font-weight: 600;
       margin-bottom: 4px;
     }
-    .cert-info span {
-      font-size: 12px;
-      color: var(--text-dim);
+    .oss-info .oss-role {
       font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .oss-info p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* ─── CERTIFICATIONS (minimal) ─── */
+    .certs-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .cert-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .cert-pill:hover {
+      border-color: var(--border-hover);
+      color: var(--text);
+    }
+    .cert-pill span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
     }
 
     /* ─── CONTACT ─── */
-    #contact {
-      padding-bottom: 120px;
-    }
-
     .contact-card {
       background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(6,182,212,0.05) 50%, rgba(168,85,247,0.08) 100%);
       border: 1px solid rgba(99,102,241,0.2);
@@ -543,23 +662,28 @@
       width: 200px; height: 1px;
       background: linear-gradient(90deg, transparent, rgba(99,102,241,0.6), transparent);
     }
-
-    .contact-card h2 {
-      font-size: clamp(28px, 4vw, 42px);
-      margin-bottom: 16px;
-    }
+    .contact-card h2 { margin-bottom: 16px; }
     .contact-card p {
       color: var(--text-muted);
       margin-bottom: 40px;
       font-size: 17px;
     }
-
     .contact-links {
       display: flex;
       justify-content: center;
       gap: 16px;
       flex-wrap: wrap;
     }
+    .contact-email {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      color: var(--accent-2);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(6,182,212,0.3);
+      padding-bottom: 2px;
+      transition: border-color 0.2s;
+    }
+    .contact-email:hover { border-color: var(--accent-2); }
 
     /* ─── FOOTER ─── */
     footer {
@@ -580,31 +704,32 @@
     /* ─── SCROLL ANIMATIONS ─── */
     .reveal {
       opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
     }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
     .reveal-delay-1 { transition-delay: 0.1s; }
     .reveal-delay-2 { transition-delay: 0.2s; }
     .reveal-delay-3 { transition-delay: 0.3s; }
     .reveal-delay-4 { transition-delay: 0.4s; }
 
     /* ─── RESPONSIVE ─── */
-    @media (max-width: 768px) {
+    @media (max-width: 900px) {
+      .platform-inner { grid-template-columns: 1fr; gap: 40px; }
+      .skills-grid { grid-template-columns: repeat(2, 1fr); }
+      .oss-grid { grid-template-columns: 1fr; }
+      .timeline::before { left: 0; }
+      .timeline-item { grid-template-columns: 1fr; gap: 6px; }
+      .timeline-item::before { display: none; }
+      .timeline-left { text-align: left; }
+    }
+    @media (max-width: 640px) {
       nav { padding: 16px 24px; }
       .nav-links { display: none; }
       .wrap { padding: 0 24px; }
+      .platform-card { padding: 32px 24px; }
       .stats-row { grid-template-columns: repeat(2, 1fr); }
       .skills-grid { grid-template-columns: 1fr; }
-      .certs-grid { grid-template-columns: 1fr; }
-      .about-grid { grid-template-columns: 1fr; }
-      .timeline::before { left: 0; }
-      .timeline-item { grid-template-columns: 1fr; gap: 8px; }
-      .timeline-item::before { display: none; }
-      .timeline-left { text-align: left; }
       .contact-card { padding: 40px 24px; }
       footer { flex-direction: column; gap: 12px; text-align: center; }
     }
@@ -612,44 +737,42 @@
 </head>
 <body>
 
-  <!-- Ambient orbs -->
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
 
-  <!-- Navigation -->
   <nav>
     <span class="nav-logo"><span>seb</span>@vansande.org</span>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#experience">Experience</a></li>
-      <li><a href="#certifications">Certs</a></li>
+      <li><a href="#oss">Open Source</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
 
-  <!-- Hero -->
+  <!-- ─── HERO ─── -->
   <section id="hero">
     <div class="wrap">
       <div class="hero-inner">
-        <div class="hero-badge">Available for opportunities</div>
+        <div class="hero-badge">Java &amp; JavaScript software developer</div>
         <h1>
           Sebastian<br>
           <span class="gradient-text">Van Sande</span>
         </h1>
         <p class="hero-subtitle">
-          Senior software developer crafting reliable, scalable systems.
-          Two decades of experience building everything from enterprise Java applications to cloud-native AWS architectures.
+          Building <strong>live &amp; video streaming platforms</strong> for millions of viewers.
+          Pragmatic programmer, TDD evangelist, and open source contributor based in Antwerp, Belgium.
         </p>
         <div class="hero-cta">
-          <a href="https://be.linkedin.com/in/sebastianvansande" target="_blank" rel="noopener" class="btn btn-primary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-            LinkedIn
-          </a>
-          <a href="#contact" class="btn btn-ghost">
+          <a href="mailto:sebastian@vansande.org" class="btn btn-primary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             Get in touch
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="https://be.linkedin.com/in/sebastianvansande" target="_blank" rel="noopener" class="btn btn-ghost">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            LinkedIn
           </a>
         </div>
       </div>
@@ -658,22 +781,92 @@
 
   <div class="divider"></div>
 
-  <!-- About -->
+  <!-- ─── FEATURED: STREAMING PLATFORM ─── -->
+  <section id="featured">
+    <div class="wrap">
+      <div class="platform-card reveal">
+        <div class="platform-inner">
+          <div class="platform-left">
+            <div class="section-label">// what I build</div>
+            <h2>Live &amp; video streaming<br><span class="gradient-text">at scale</span></h2>
+            <p>
+              At <strong>DPG Media</strong>, I've built the streaming platform that powers
+              <strong>VTM GO</strong>, <strong>Streamz</strong> and <strong>RTL Play</strong> —
+              together with my team, from scratch.
+            </p>
+            <p>
+              The platform handles both <strong>video ingestion</strong> (encoding, packaging, DRM, SSAI)
+              and the <strong>backend for video playback</strong>, serving live TV and on-demand content
+              to millions of viewers across Belgium and the Netherlands.
+            </p>
+            <p>
+              Previously, I also built the streaming platform for <strong>Stievie</strong> during my time at Medialaan.
+            </p>
+            <div class="platform-brands">
+              <span class="brand-pill vtmgo">▶ VTM GO</span>
+              <span class="brand-pill streamz">▶ Streamz</span>
+              <span class="brand-pill rtlplay">▶ RTL Play</span>
+              <span class="brand-pill stievie">▶ Stievie</span>
+            </div>
+          </div>
+          <div class="platform-right">
+            <div class="platform-stat">
+              <span class="platform-stat-icon">⚡</span>
+              <div class="platform-stat-text">
+                <h4>Serverless &amp; container runtime</h4>
+                <p>Node.js &amp; TypeScript across Lambda functions and ECS services</p>
+                <div class="mono">Lambda · ECS · Node.js · TypeScript</div>
+              </div>
+            </div>
+            <div class="platform-stat">
+              <span class="platform-stat-icon">🎬</span>
+              <div class="platform-stat-text">
+                <h4>Video ingestion pipeline</h4>
+                <p>Transcoding, packaging, DRM protection and server-side ad insertion</p>
+                <div class="mono">MediaConvert · MediaPackage · HLS · DASH · DRM · SSAI</div>
+              </div>
+            </div>
+            <div class="platform-stat">
+              <span class="platform-stat-icon">📡</span>
+              <div class="platform-stat-text">
+                <h4>Event-driven architecture</h4>
+                <p>Async messaging between microservices for resilient, scalable workflows</p>
+                <div class="mono">SQS · SNS · S3</div>
+              </div>
+            </div>
+            <div class="platform-stat">
+              <span class="platform-stat-icon">🏗️</span>
+              <div class="platform-stat-text">
+                <h4>Infrastructure as code</h4>
+                <p>Fully automated deployments and reproducible infrastructure</p>
+                <div class="mono">Terraform · CodePipeline · CodeDeploy</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─── ABOUT ─── -->
   <section id="about">
     <div class="wrap">
       <div class="reveal">
         <div class="section-label">// about me</div>
-        <h2>Passionate about<br>building great software</h2>
+        <h2>Pragmatic, test-driven,<br>always curious</h2>
       </div>
-      <div class="about-main reveal reveal-delay-1">
+      <div class="about-text reveal reveal-delay-1">
         <p>
-          I'm a highly motivated software developer with a broad technical interest and knowledge, based in the Antwerp area, Belgium. With over 20 years in the industry, I've honed my craft across enterprise Java development, cloud architecture, and agile delivery.
+          I'm a highly motivated software developer with a broad technical interest and knowledge.
+          I have most experience with <strong>Node.js</strong> and the <strong>Java platform</strong>,
+          but I keep up with other technologies as well.
         </p>
         <p>
-          Currently at <strong>DPG Media IT</strong> — one of Europe's largest media groups — I work on the systems that power digital publishing at scale. My background spans everything from backend API design and database engineering to cloud infrastructure and team leadership.
-        </p>
-        <p>
-          I hold certifications from AWS, Scrum Alliance, and Sun/Oracle, and I stay sharp by keeping up with the ever-evolving software landscape. When I'm not coding, I'm exploring new technologies and contributing to meaningful digital products.
+          I'm a pragmatic programmer and an evangelist of <strong>Test Driven Development</strong>.
+          Delivering clean, bug-free code is my primary goal. Over the years I've worked across
+          media, banking, government, healthcare, and transport sectors.
         </p>
       </div>
       <div class="stats-row">
@@ -682,16 +875,16 @@
           <div class="stat-label">Years experience</div>
         </div>
         <div class="stat reveal reveal-delay-2">
-          <div class="stat-number">5</div>
-          <div class="stat-label">Certifications</div>
+          <div class="stat-number">4</div>
+          <div class="stat-label">Streaming platforms</div>
         </div>
         <div class="stat reveal reveal-delay-3">
-          <div class="stat-number">3</div>
-          <div class="stat-label">Languages spoken</div>
+          <div class="stat-number">npm</div>
+          <div class="stat-label">migrate-mongo</div>
         </div>
         <div class="stat reveal reveal-delay-4">
-          <div class="stat-number">∞</div>
-          <div class="stat-label">Curiosity</div>
+          <div class="stat-number">3</div>
+          <div class="stat-label">Languages spoken</div>
         </div>
       </div>
     </div>
@@ -699,82 +892,94 @@
 
   <div class="divider"></div>
 
-  <!-- Skills -->
+  <!-- ─── SKILLS ─── -->
   <section id="skills">
     <div class="wrap">
       <div class="reveal">
-        <div class="section-label">// expertise</div>
+        <div class="section-label">// technology &amp; tools</div>
         <h2>Technical skills</h2>
-        <p class="section-desc">A deep and broad stack built over two decades of production software development.</p>
+        <p class="section-desc">A broad stack accumulated over two decades of production software development.</p>
       </div>
       <div class="skills-grid">
         <div class="card skill-card reveal reveal-delay-1">
-          <span class="skill-icon">☕</span>
-          <h3>Backend Development</h3>
+          <span class="skill-icon">🟨</span>
+          <h3>Languages</h3>
           <div class="tags">
+            <span class="tag accent">JavaScript</span>
+            <span class="tag accent">TypeScript</span>
             <span class="tag accent">Java</span>
-            <span class="tag accent">Spring Boot</span>
-            <span class="tag accent">Spring</span>
-            <span class="tag">Hibernate</span>
-            <span class="tag">JPA</span>
-            <span class="tag">REST APIs</span>
-            <span class="tag">Microservices</span>
+            <span class="tag">Ruby</span>
+            <span class="tag">Bash</span>
           </div>
         </div>
         <div class="card skill-card reveal reveal-delay-2">
-          <span class="skill-icon">☁️</span>
-          <h3>Cloud & Infrastructure</h3>
+          <span class="skill-icon">🟢</span>
+          <h3>Backend &amp; APIs</h3>
           <div class="tags">
-            <span class="tag cyan">AWS</span>
+            <span class="tag accent">Node.js</span>
+            <span class="tag accent">Express</span>
+            <span class="tag accent">Koa</span>
+            <span class="tag accent">Nest.js</span>
+            <span class="tag">GraphQL</span>
+            <span class="tag">Spring Boot</span>
+            <span class="tag">REST</span>
+            <span class="tag">JPA/Hibernate</span>
+          </div>
+        </div>
+        <div class="card skill-card reveal reveal-delay-3">
+          <span class="skill-icon">☁️</span>
+          <h3>Amazon AWS</h3>
+          <div class="tags">
             <span class="tag cyan">Lambda</span>
-            <span class="tag cyan">EC2</span>
+            <span class="tag cyan">ECS</span>
+            <span class="tag cyan">SQS</span>
+            <span class="tag cyan">SNS</span>
             <span class="tag cyan">S3</span>
-            <span class="tag">Docker</span>
-            <span class="tag">CI/CD</span>
-            <span class="tag">Serverless</span>
+            <span class="tag cyan">API Gateway</span>
+            <span class="tag cyan">DynamoDB</span>
+            <span class="tag cyan">MediaConvert</span>
+            <span class="tag cyan">MediaPackage</span>
+            <span class="tag">EC2</span>
+          </div>
+        </div>
+        <div class="card skill-card reveal reveal-delay-1">
+          <span class="skill-icon">📺</span>
+          <h3>Video Streaming</h3>
+          <div class="tags">
+            <span class="tag purple">HLS</span>
+            <span class="tag purple">DASH</span>
+            <span class="tag purple">DRM</span>
+            <span class="tag purple">SSAI</span>
+            <span class="tag">VOD</span>
+            <span class="tag">Live streaming</span>
+            <span class="tag">Transcoding</span>
+          </div>
+        </div>
+        <div class="card skill-card reveal reveal-delay-2">
+          <span class="skill-icon">🧪</span>
+          <h3>QA &amp; Testing</h3>
+          <div class="tags">
+            <span class="tag green">TDD</span>
+            <span class="tag green">Jest</span>
+            <span class="tag green">Mocha</span>
+            <span class="tag green">Sinon</span>
+            <span class="tag green">Chai</span>
+            <span class="tag">JUnit</span>
+            <span class="tag">Mockito</span>
+            <span class="tag">ESLint</span>
           </div>
         </div>
         <div class="card skill-card reveal reveal-delay-3">
           <span class="skill-icon">🗄️</span>
-          <h3>Data & Persistence</h3>
+          <h3>Databases &amp; Infra</h3>
           <div class="tags">
-            <span class="tag purple">Oracle</span>
-            <span class="tag purple">SQL</span>
-            <span class="tag">PostgreSQL</span>
-            <span class="tag">Database Design</span>
-            <span class="tag">Performance Tuning</span>
-          </div>
-        </div>
-        <div class="card skill-card reveal reveal-delay-1">
-          <span class="skill-icon">⚙️</span>
-          <h3>Process & Methodology</h3>
-          <div class="tags">
-            <span class="tag cyan">Scrum</span>
-            <span class="tag cyan">Agile</span>
-            <span class="tag">TDD</span>
-            <span class="tag">Code Review</span>
-            <span class="tag">Mentoring</span>
-            <span class="tag">Git</span>
-          </div>
-        </div>
-        <div class="card skill-card reveal reveal-delay-2">
-          <span class="skill-icon">🌐</span>
-          <h3>Web Technologies</h3>
-          <div class="tags">
-            <span class="tag accent">Servlet</span>
-            <span class="tag accent">JSP</span>
-            <span class="tag">JavaScript</span>
-            <span class="tag">HTML/CSS</span>
-            <span class="tag">Web Components</span>
-          </div>
-        </div>
-        <div class="card skill-card reveal reveal-delay-3">
-          <span class="skill-icon">🗣️</span>
-          <h3>Languages</h3>
-          <div class="tags">
-            <span class="tag purple">Dutch · Native</span>
-            <span class="tag cyan">English · Fluent</span>
-            <span class="tag">French · Professional</span>
+            <span class="tag">MongoDB</span>
+            <span class="tag">Redis</span>
+            <span class="tag">Oracle</span>
+            <span class="tag">MySQL</span>
+            <span class="tag">Firebase</span>
+            <span class="tag">Terraform</span>
+            <span class="tag">Docker</span>
           </div>
         </div>
       </div>
@@ -783,92 +988,151 @@
 
   <div class="divider"></div>
 
-  <!-- Experience -->
+  <!-- ─── EXPERIENCE ─── -->
   <section id="experience">
     <div class="wrap">
       <div class="reveal">
-        <div class="section-label">// career</div>
-        <h2>Work experience</h2>
-        <p class="section-desc">A track record of building and shipping software across media, enterprise, and government sectors.</p>
+        <div class="section-label">// work history</div>
+        <h2>Career</h2>
+        <p class="section-desc">Two decades across media, banking, government, healthcare, and railways.</p>
       </div>
       <div class="timeline">
-        <div class="timeline-item reveal">
+        <div class="timeline-item featured reveal">
           <div class="timeline-left">
-            <span class="timeline-period">2018 — present</span>
-            <span class="timeline-company">Vilvoorde, BE</span>
+            <span class="timeline-period">Jun 2018 — now</span>
+            <span class="timeline-org">Vilvoorde, BE</span>
           </div>
           <div class="timeline-right">
-            <h3>Senior Software Developer</h3>
-            <span class="timeline-company-badge">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              DPG Media IT
-            </span>
-            <p>Developing and maintaining backend systems for one of Europe's largest digital media groups. Working on high-traffic publishing platforms, data pipelines, and API infrastructure that serves millions of readers across Belgium and the Netherlands.</p>
+            <h3>Node.js &amp; Java Developer</h3>
+            <span class="timeline-co">DPG Media IT</span>
+            <p>Building the live &amp; video streaming platform (VOD + live TV) that powers VTM GO, Streamz and RTL Play — built from scratch with my team. The platform covers video ingestion (encoding, DRM, SSAI) and the backend for video playback. Previously also built the streaming platform for Stievie.</p>
             <div class="timeline-tags">
-              <span class="tag accent">Java</span>
+              <span class="tag accent">Node.js</span>
+              <span class="tag accent">TypeScript</span>
+              <span class="tag cyan">AWS Lambda</span>
+              <span class="tag cyan">ECS</span>
+              <span class="tag cyan">SQS/SNS</span>
+              <span class="tag cyan">MediaConvert</span>
+              <span class="tag purple">HLS · DASH · DRM</span>
+              <span class="tag">Terraform</span>
               <span class="tag accent">Spring Boot</span>
-              <span class="tag cyan">AWS</span>
-              <span class="tag">Microservices</span>
             </div>
           </div>
         </div>
         <div class="timeline-item reveal">
           <div class="timeline-left">
-            <span class="timeline-period">2013 — 2018</span>
-            <span class="timeline-company">Belgium</span>
+            <span class="timeline-period">Apr 2015 — Jun 2018</span>
+            <span class="timeline-org">Belgium</span>
           </div>
           <div class="timeline-right">
-            <h3>Java Software Developer</h3>
-            <span class="timeline-company-badge">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-              Enterprise / Consultancy
-            </span>
-            <p>Full-stack Java development across multiple enterprise clients. Focused on Spring-based backend services, REST API design, and integration projects. Earned AWS Certified Developer Associate certification during this period.</p>
+            <h3>Lead Node.js Developer</h3>
+            <span class="timeline-co">Medialaan</span>
+            <p>After almost 10 years of Java EE, I switched to Node.js. Led development of the online video platform (live &amp; VOD) powering Stievie Free and VTM.be. Also built a real-time voting backend for TV programs (Belgium Got Talent, The Voice), an Electronic Program Guide, and a GraphQL API to unify backend services.</p>
             <div class="timeline-tags">
-              <span class="tag accent">Java</span>
-              <span class="tag accent">Spring</span>
-              <span class="tag">Oracle DB</span>
-              <span class="tag">REST</span>
+              <span class="tag accent">Node.js</span>
+              <span class="tag">GraphQL</span>
+              <span class="tag">MongoDB</span>
+              <span class="tag purple">HLS · VOD</span>
+              <span class="tag">Redis</span>
             </div>
           </div>
         </div>
         <div class="timeline-item reveal">
           <div class="timeline-left">
-            <span class="timeline-period">2011 — 2013</span>
-            <span class="timeline-company">Belgium</span>
+            <span class="timeline-period">Sep 2014 &amp; Aug 2015</span>
+            <span class="timeline-org">Cronos</span>
           </div>
           <div class="timeline-right">
-            <h3>Software Developer — UNEX Project</h3>
-            <span class="timeline-company-badge">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-              Mail Performance Measurement
-            </span>
-            <p>Designed and built the UNEX mail measurement system — a platform used to track and report postal operator performance metrics across Belgium. Built on Java, Spring, Hibernate, and Oracle.</p>
+            <h3>Node.js Mentor</h3>
+            <span class="timeline-co">Nodeschool.io / Cronos</span>
+            <p>Organised official nodeschool.io sessions, sharing Node.js knowledge with the developer community. Topics: Node.js basics and Node.js Streams.</p>
+            <div class="timeline-tags">
+              <span class="tag accent">Node.js</span>
+              <span class="tag">Mentoring</span>
+              <span class="tag">Community</span>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item reveal">
+          <div class="timeline-left">
+            <span class="timeline-period">Dec 2011 — Apr 2015</span>
+            <span class="timeline-org">Belgium</span>
+          </div>
+          <div class="timeline-right">
+            <h3>Java Developer</h3>
+            <span class="timeline-co">International Post Corporation</span>
+            <p>Spring/Hibernate/Maven project where I first embraced TDD and pair programming. Worked in a Scrum team on eCIP (barcode &amp; RFID packet tracing) and UMMS (measuring postal operator performance via test letters).</p>
             <div class="timeline-tags">
               <span class="tag accent">Java</span>
               <span class="tag accent">Spring</span>
               <span class="tag accent">Hibernate</span>
-              <span class="tag purple">Oracle</span>
+              <span class="tag">Scrum · TDD</span>
             </div>
           </div>
         </div>
         <div class="timeline-item reveal">
           <div class="timeline-left">
-            <span class="timeline-period">2005 — 2011</span>
-            <span class="timeline-company">Belgium / NL</span>
+            <span class="timeline-period">Feb 2011 — Dec 2011</span>
+            <span class="timeline-org">Flemish Government</span>
           </div>
           <div class="timeline-right">
-            <h3>Junior → Mid Java Developer</h3>
-            <span class="timeline-company-badge">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              Early career
-            </span>
-            <p>Started professional career directly after graduating, earning Sun Certified Java Programmer (SCJP) in the first year. Progressed from junior roles to mid-level developer across projects in Belgium and the Netherlands, building web and enterprise applications with Java EE stack.</p>
+            <h3>Java Developer</h3>
+            <span class="timeline-co">Flemish Government — MAGDA Platform</span>
+            <p>Developed the MAGDA platform: a SOAP web services platform for data exchange between government applications, and a framework for async data distribution to consumers.</p>
+            <div class="timeline-tags">
+              <span class="tag accent">Java</span>
+              <span class="tag accent">Spring</span>
+              <span class="tag">Apache Wicket</span>
+              <span class="tag">SOAP</span>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item reveal">
+          <div class="timeline-left">
+            <span class="timeline-period">Jun 2008 — Dec 2010</span>
+            <span class="timeline-org">Belgium</span>
+          </div>
+          <div class="timeline-right">
+            <h3>Java Developer</h3>
+            <span class="timeline-co">ING</span>
+            <p>Built and maintained J2EE applications for ING's online banking activities, including a CRM suite for a single customer view and Consumer Loans Online.</p>
             <div class="timeline-tags">
               <span class="tag accent">Java EE</span>
-              <span class="tag">JSP</span>
-              <span class="tag">Servlet</span>
-              <span class="tag">SQL</span>
+              <span class="tag">J2EE</span>
+              <span class="tag">CRM</span>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item reveal">
+          <div class="timeline-left">
+            <span class="timeline-period">May 2007 — Mar 2008</span>
+            <span class="timeline-org">Belgium</span>
+          </div>
+          <div class="timeline-right">
+            <h3>Java Developer</h3>
+            <span class="timeline-co">Agfa Healthcare</span>
+            <p>Worked on embedded Java software for medical printers — building the LCD display UI and the remote management web application.</p>
+            <div class="timeline-tags">
+              <span class="tag accent">Java</span>
+              <span class="tag">Embedded</span>
+              <span class="tag">Swing</span>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item reveal">
+          <div class="timeline-left">
+            <span class="timeline-period">Dec 2005 — Dec 2006</span>
+            <span class="timeline-org">Netherlands</span>
+          </div>
+          <div class="timeline-right">
+            <h3>Java Developer</h3>
+            <span class="timeline-co">Dutch Railways (NS)</span>
+            <p>Developed a desktop application for planning Dutch railway infrastructure usage (Eclipse RCP / SWT) and a data warehouse (Microsoft SQL Server) to track project status.</p>
+            <div class="timeline-tags">
+              <span class="tag accent">Java</span>
+              <span class="tag">Eclipse RCP</span>
+              <span class="tag">SWT</span>
+              <span class="tag">SQL Server</span>
             </div>
           </div>
         </div>
@@ -878,48 +1142,29 @@
 
   <div class="divider"></div>
 
-  <!-- Certifications -->
-  <section id="certifications">
+  <!-- ─── OPEN SOURCE ─── -->
+  <section id="oss">
     <div class="wrap">
       <div class="reveal">
-        <div class="section-label">// credentials</div>
-        <h2>Certifications</h2>
-        <p class="section-desc">Industry-recognized credentials spanning cloud, agile, and Java enterprise development.</p>
+        <div class="section-label">// open source</div>
+        <h2>Community contributions</h2>
+        <p class="section-desc">Building tools for others and giving back to the ecosystem.</p>
       </div>
-      <div class="certs-grid">
-        <div class="cert-card reveal reveal-delay-1">
-          <div class="cert-icon">☁️</div>
-          <div class="cert-info">
-            <h4>AWS Certified Developer — Associate</h4>
-            <span>Amazon Web Services · June 2018</span>
+      <div class="oss-grid">
+        <div class="card oss-card reveal reveal-delay-1">
+          <div class="oss-icon">🍃</div>
+          <div class="oss-info">
+            <h4>migrate-mongo</h4>
+            <span class="oss-role">// maintainer</span>
+            <p>Needed a tool to manage MongoDB database migrations — couldn't find a decent one, so I wrote it myself in Node.js. Now used by thousands of projects worldwide.</p>
           </div>
         </div>
-        <div class="cert-card reveal reveal-delay-2">
-          <div class="cert-icon">🏃</div>
-          <div class="cert-info">
-            <h4>Certified Scrum Master (CSM)</h4>
-            <span>Scrum Alliance · March 2013</span>
-          </div>
-        </div>
-        <div class="cert-card reveal reveal-delay-3">
-          <div class="cert-icon">🌱</div>
-          <div class="cert-info">
-            <h4>Spring Certified Professional</h4>
-            <span>Pivotal / VMware · March 2013</span>
-          </div>
-        </div>
-        <div class="cert-card reveal reveal-delay-1">
-          <div class="cert-icon">🌐</div>
-          <div class="cert-info">
-            <h4>Sun Certified Web Component Developer (SCWCD)</h4>
-            <span>Sun Microsystems · January 2007</span>
-          </div>
-        </div>
-        <div class="cert-card reveal reveal-delay-2">
-          <div class="cert-icon">☕</div>
-          <div class="cert-info">
-            <h4>Sun Certified Java Programmer (SCJP)</h4>
-            <span>Sun Microsystems · October 2005</span>
+        <div class="card oss-card reveal reveal-delay-2">
+          <div class="oss-icon">🤝</div>
+          <div class="oss-info">
+            <h4>Ecosystem contributions</h4>
+            <span class="oss-role">// contributor</span>
+            <p>Made contributions to several open source projects including Node.js, Mocha, Sinon, Express, and Homebrew.</p>
           </div>
         </div>
       </div>
@@ -928,17 +1173,44 @@
 
   <div class="divider"></div>
 
-  <!-- Contact -->
-  <section id="contact">
+  <!-- ─── CERTIFICATIONS (minimal) ─── -->
+  <section id="certifications">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="section-label">// education &amp; credentials</div>
+        <h2>Background</h2>
+        <p class="section-desc">Bachelor Applied Computer Sciences — Karel de Grote Hogeschool, Antwerp (2005)</p>
+      </div>
+      <div class="certs-list reveal">
+        <div class="cert-pill">☁️ AWS Certified Developer Associate <span>2018</span></div>
+        <div class="cert-pill">🌱 Spring Core Developer <span>2013</span></div>
+        <div class="cert-pill">🏃 Certified Scrum Master <span>2013</span></div>
+        <div class="cert-pill">🌐 Sun Certified Web Component Developer <span>2007</span></div>
+        <div class="cert-pill">☕ Sun Certified Java Programmer <span>2005</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─── CONTACT ─── -->
+  <section id="contact" style="padding-bottom: 120px;">
     <div class="wrap">
       <div class="contact-card reveal">
-        <div class="section-label" style="justify-content: center; display: flex;">// let's connect</div>
-        <h2>Let's work together</h2>
-        <p>Open to interesting projects, challenging problems,<br>and great conversations about technology.</p>
+        <div class="section-label" style="display: flex; justify-content: center;">// get in touch</div>
+        <h2>Let's connect</h2>
+        <p>
+          Open to interesting projects and conversations about technology.<br>
+          Reach me at <a href="mailto:sebastian@vansande.org" class="contact-email">sebastian@vansande.org</a>
+        </p>
         <div class="contact-links">
-          <a href="https://be.linkedin.com/in/sebastianvansande" target="_blank" rel="noopener" class="btn btn-primary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-            Connect on LinkedIn
+          <a href="mailto:sebastian@vansande.org" class="btn btn-primary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            Send email
+          </a>
+          <a href="https://be.linkedin.com/in/sebastianvansande" target="_blank" rel="noopener" class="btn btn-ghost">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            LinkedIn
           </a>
         </div>
       </div>
@@ -953,22 +1225,18 @@
   </footer>
 
   <script>
-    // Scroll reveal
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(el => {
-        if (el.isIntersecting) {
-          el.target.classList.add('visible');
-        }
+        if (el.isIntersecting) el.target.classList.add('visible');
       });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // Nav scroll effect
     const nav = document.querySelector('nav');
     window.addEventListener('scroll', () => {
       nav.style.background = window.scrollY > 50
-        ? 'rgba(8,8,16,0.9)'
+        ? 'rgba(8,8,16,0.92)'
         : 'rgba(8,8,16,0.6)';
     });
   </script>
