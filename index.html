@@ -611,19 +611,6 @@
           else               { d[i] = 120; d[i+1] = 55;  d[i+2] = 255; } // purple
           d[i+3] = Math.random() * maxAlpha | 0;
         }
-        // Head-switch noise band — bottom 2 rows, always colorful + visible
-        for (let y = H - 2; y < H; y++) {
-          for (let x = 0; x < W; x++) {
-            const i = (y * W + x) * 4;
-            const t = Math.random();
-            if      (t < 0.25) { d[i] = 255; d[i+1] = 30;  d[i+2] = 80;  }
-            else if (t < 0.50) { d[i] = 0;   d[i+1] = 240; d[i+2] = 255; }
-            else if (t < 0.70) { d[i] = 255; d[i+1] = 240; d[i+2] = 0;   }
-            else if (t < 0.85) { d[i] = 0;   d[i+1] = 100; d[i+2] = 255; }
-            else               { d[i] = d[i+1] = d[i+2] = 255; }
-            d[i+3] = 130 + (Math.random() * 110 | 0);
-          }
-        }
         ctx.putImageData(img, 0, 0);
       }
 
