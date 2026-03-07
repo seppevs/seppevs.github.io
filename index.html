@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>vansande.org</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@900&family=Bebas+Neue&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after {
       margin: 0;
@@ -805,13 +808,24 @@
     (function () {
       const CHARS = '█▓▒░▄▀■□▪▫◆◇▬⣿';
       const els   = document.querySelectorAll('.glitch');
+      const FONTS = [
+        "'Arial Black', 'Helvetica Neue', sans-serif",
+        "'Impact', 'Haettenschweiler', sans-serif",
+        "'Courier New', monospace",
+        "'VT323', monospace",
+        "'Orbitron', sans-serif",
+        "'Bebas Neue', sans-serif",
+        "'Share Tech Mono', monospace",
+      ];
 
       function scramble() {
-        const el   = els[Math.floor(Math.random() * els.length)];
-        const orig = el.getAttribute('data-text');
-        const idx  = Math.floor(Math.random() * orig.length);
+        const el       = els[Math.floor(Math.random() * els.length)];
+        const orig     = el.getAttribute('data-text');
+        const idx      = Math.floor(Math.random() * orig.length);
+        const newFont  = FONTS[Math.floor(Math.random() * FONTS.length)];
+        el.style.fontFamily = newFont;
         el.textContent = orig.slice(0, idx) + CHARS[Math.floor(Math.random() * CHARS.length)] + orig.slice(idx + 1);
-        setTimeout(() => { el.textContent = orig; }, 60 + Math.random() * 110);
+        setTimeout(() => { el.textContent = orig; el.style.fontFamily = ''; }, 60 + Math.random() * 110);
       }
 
       function schedule() {
