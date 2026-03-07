@@ -542,7 +542,66 @@
       25.2% { opacity: 0; }
     }
 
-/* ── Reduced-motion: only suppress large screen movements ──────── */
+/* ── SMPTE color bars flash ─────────────────────────────────────── */
+    .color-bars {
+      position: fixed;
+      inset: 0;
+      z-index: 45;
+      pointer-events: none;
+      opacity: 0;
+      background: linear-gradient(to right,
+        #c0c0c0 0% 14.28%,
+        #c0c000 14.28% 28.57%,
+        #00c0c0 28.57% 42.86%,
+        #00c000 42.86% 57.14%,
+        #c000c0 57.14% 71.43%,
+        #c00000 71.43% 85.71%,
+        #0000c0 85.71% 100%
+      );
+      animation: colorbars-flash 32s steps(1) infinite;
+    }
+
+    @keyframes colorbars-flash {
+      0%, 100%  { opacity: 0; }
+      68%   { opacity: 0; }
+      68.2% { opacity: 0.95; }
+      68.4% { opacity: 0.55; }
+      68.6% { opacity: 0.92; }
+      68.9% { opacity: 0; }
+    }
+
+    /* ── Tracking OSD ───────────────────────────────────────────────── */
+    #tracking-osd {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Courier New', monospace;
+      font-size: clamp(0.65rem, 1.8vw, 0.85rem);
+      color: rgba(255,255,255,0.8);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      z-index: 32;
+      pointer-events: none;
+      opacity: 0;
+      animation: tracking-osd 13s steps(1) infinite;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,1));
+    }
+
+    @keyframes tracking-osd {
+      0%, 84.8%, 86.5%, 100% { opacity: 0; }
+      85%  { opacity: 0.9; }
+      85.6%{ opacity: 0.55; }
+      86.1%{ opacity: 0.85; }
+    }
+
+    /* ── Tape mode label (SP/EP) ────────────────────────────────────── */
+    .vhs-mode {
+      margin-left: 0.45em;
+      opacity: 0.55;
+    }
+
+    /* ── Reduced-motion: only suppress large screen movements ──────── */
     @media (prefers-reduced-motion: reduce) {
       /* Kill things that move large distances across the screen */
       .container  { animation: none !important; }
@@ -562,7 +621,7 @@
   <div class="overlay"></div>
   <div class="phosphor"></div>
   <div class="crt-corners"></div>
-  <div id="vhs-rec" aria-hidden="true"><span class="rec-dot"></span><span id="vhs-timer">0:00:00</span></div>
+  <div id="vhs-rec" aria-hidden="true"><span class="rec-dot"></span><span id="vhs-timer">0:00:00</span><span class="vhs-mode">SP</span></div>
   <div class="vhs-edge top"></div>
   <div class="vhs-edge bottom"></div>
   <div class="scanband"></div>
@@ -570,6 +629,8 @@
   <div class="hbars"></div>
   <div class="hbars"></div>
   <div class="hbars"></div>
+  <div class="color-bars" aria-hidden="true"></div>
+  <div id="tracking-osd" aria-hidden="true">TRACKING ▲</div>
 
   <div class="tear"></div>
   <div class="tear"></div>
@@ -601,12 +662,36 @@
       canvas.width = 256; canvas.height = 144;
       const img = ctx.createImageData(256, 144);
       const d   = img.data;
-      for (let i = 0; i < d.length; i += 4) { d[i] = d[i+1] = d[i+2] = 255; }
+      // RGB set per-frame; zero out alpha initially
+      for (let i = 3; i < d.length; i += 4) { d[i] = 0; }
 
       let maxAlpha = 22;
+      const W = 256, H = 144;
 
       function drawNoise() {
-        for (let i = 3; i < d.length; i += 4) { d[i] = Math.random() * maxAlpha | 0; }
+        // Colorized video noise — warm/cool tints like real tape grain
+        for (let i = 0; i < d.length; i += 4) {
+          const t = Math.random();
+          if      (t < 0.55) { d[i] = d[i+1] = d[i+2] = 255; }         // white
+          else if (t < 0.68) { d[i] = 255; d[i+1] = 215; d[i+2] = 45; } // warm yellow
+          else if (t < 0.80) { d[i] = 45;  d[i+1] = 215; d[i+2] = 255; }// cyan
+          else if (t < 0.90) { d[i] = 255; d[i+1] = 45;  d[i+2] = 120; }// pink
+          else               { d[i] = 120; d[i+1] = 55;  d[i+2] = 255; } // purple
+          d[i+3] = Math.random() * maxAlpha | 0;
+        }
+        // Head-switch noise band — bottom 2 rows, always colorful + visible
+        for (let y = H - 2; y < H; y++) {
+          for (let x = 0; x < W; x++) {
+            const i = (y * W + x) * 4;
+            const t = Math.random();
+            if      (t < 0.25) { d[i] = 255; d[i+1] = 30;  d[i+2] = 80;  }
+            else if (t < 0.50) { d[i] = 0;   d[i+1] = 240; d[i+2] = 255; }
+            else if (t < 0.70) { d[i] = 255; d[i+1] = 240; d[i+2] = 0;   }
+            else if (t < 0.85) { d[i] = 0;   d[i+1] = 100; d[i+2] = 255; }
+            else               { d[i] = d[i+1] = d[i+2] = 255; }
+            d[i+3] = 130 + (Math.random() * 110 | 0);
+          }
+        }
         ctx.putImageData(img, 0, 0);
       }
 
