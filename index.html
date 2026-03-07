@@ -434,17 +434,11 @@
 
     /* ── Music hint + control ───────────────────────────────────────── */
     #play-hint {
-      position: fixed;
-      top: max(1.3rem, env(safe-area-inset-top));
-      left: 0;
-      right: 0;
-      text-align: center;
       font-family: 'Courier New', monospace;
-      font-size: clamp(0.58rem, 1.4vw, 0.7rem);
-      color: rgba(255,255,255,0.75);
-      letter-spacing: 0.18em;
+      font-size: clamp(0.65rem, 1.5vw, 0.78rem);
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.12em;
       text-transform: lowercase;
-      z-index: 2;
       pointer-events: none;
       filter: drop-shadow(0 0 8px rgba(0,0,0,1));
       animation: hint-pulse 2.5s ease-in-out infinite;
@@ -548,17 +542,7 @@
       25.2% { opacity: 0; }
     }
 
-    #music-hint {
-      font-family: 'Courier New', monospace;
-      font-size: clamp(0.65rem, 1.5vw, 0.78rem);
-      color: rgba(255,255,255,0.7);
-      letter-spacing: 0.12em;
-      filter: drop-shadow(0 0 8px rgba(0,0,0,1));
-      animation: hint-pulse 2.5s ease-in-out infinite;
-      transition: opacity 0.5s;
-    }
-
-    /* ── Reduced-motion: only suppress large screen movements ──────── */
+/* ── Reduced-motion: only suppress large screen movements ──────── */
     @media (prefers-reduced-motion: reduce) {
       /* Kill things that move large distances across the screen */
       .container  { animation: none !important; }
@@ -596,14 +580,13 @@
     <div class="tape-wobble">
       <div class="glitch" data-text="vansande.org">vansande.org</div>
     </div>
-    <div id="music-hint">click/tap for music</div>
+    <div id="play-hint" aria-hidden="true">▶ click anywhere to play</div>
   </div>
 
 
   <div class="contact"><a href="/cv.html">Find more about me here</a></div>
 
   <audio id="music" preload="none"></audio>
-  <div id="play-hint" aria-hidden="true">▶ click anywhere to play</div>
   <button id="music-btn" hidden aria-label="Pause music">⏸</button>
 
   <script>
@@ -663,10 +646,9 @@
       ];
       const stream = STREAMS[Math.floor(Math.random() * STREAMS.length)];
 
-      const audio     = document.getElementById('music');
-      const hint      = document.getElementById('play-hint');
-      const musicHint = document.getElementById('music-hint');
-      const btn       = document.getElementById('music-btn');
+      const audio = document.getElementById('music');
+      const hint  = document.getElementById('play-hint');
+      const btn   = document.getElementById('music-btn');
 
       audio.src    = stream.url;
       audio.volume = 0.3;
@@ -676,9 +658,8 @@
       function onStarted() {
         if (started) return;
         started = true;
-        hint.style.opacity      = '0';
-        musicHint.style.opacity = '0';
-        setTimeout(() => { hint.hidden = true; musicHint.hidden = true; }, 500);
+        hint.style.opacity = '0';
+        setTimeout(() => { hint.hidden = true; }, 500);
         btn.hidden      = false;
         btn.textContent = '⏸ ' + stream.label;
         setTimeout(() => { if (!audio.paused) btn.textContent = '⏸'; }, 3000);
