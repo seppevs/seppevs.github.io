@@ -103,7 +103,6 @@
 
     /* --- Main glitch text --- */
     .glitch {
-      position: relative;
       font-size: clamp(1.8rem, 8vw, 8rem);
       font-weight: 900;
       text-transform: uppercase;
@@ -539,7 +538,7 @@
       .tape-wobble { animation: none !important; }
       .scanband   { display: none; }
       .tear       { display: none; }
-      /* Keep: glitch channel split, jitter, dropout, sub glitch, hbars, flicker
+      /* Keep: jitter, dropout, sub glitch, hbars, flicker
          — these are colour/distortion effects, not vestibular-triggering motion */
     }
   </style>
@@ -568,7 +567,7 @@
   <div class="tear"></div>
 
   <div class="container">
-    <div class="sub" data-text="welcome to">welcome to</div>
+    <div class="sub">welcome to</div>
     <div class="tape-wobble">
       <div class="glitch" data-text="vansande.org">vansande.org</div>
     </div>
@@ -662,6 +661,7 @@
         started = true;
         document.removeEventListener('click',    go);
         document.removeEventListener('touchend', go);
+        hint.style.animation = 'none';
         hint.style.opacity = '0';
         setTimeout(() => { hint.style.visibility = 'hidden'; }, 500);
         btn.hidden      = false;
