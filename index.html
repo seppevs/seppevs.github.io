@@ -599,8 +599,8 @@
 
   <script>
     // Performance tier – reduce JS effects on constrained devices
-    const LOW_END = (navigator.hardwareConcurrency || 4) <= 2
-                 || (navigator.deviceMemory       || 4) <  2;
+    // hardwareConcurrency is unreliable (Firefox caps it to 2 for privacy)
+    const LOW_END = (navigator.deviceMemory || 4) < 2;
 
     // ── Canvas noise + occasional static burst ───────────────────────
     (function () {
@@ -719,8 +719,8 @@
       setInterval(tick, 1000);
     })();
 
-    // ── Character scramble – skip on low-end ────────────────────────
-    if (!LOW_END) (function () {
+    // ── Character scramble ───────────────────────────────────────────
+    (function () {
       const CHARS = '█▓▒░▄▀■□▪▫◆◇▬⣿';
       const els   = document.querySelectorAll('.glitch');
 
