@@ -702,17 +702,18 @@
       });
     })();
 
-    // ── VHS REC timer ────────────────────────────────────────────────
+    // ── VHS clock — current time ─────────────────────────────────────
     (function () {
       const el = document.getElementById('vhs-timer');
-      let secs = Math.floor(Math.random() * 5400); // random tape position 0–90 min
-      setInterval(() => {
-        secs++;
-        const h = Math.floor(secs / 3600);
-        const m = String(Math.floor((secs % 3600) / 60)).padStart(2, '0');
-        const s = String(secs % 60).padStart(2, '0');
+      function tick() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        const s = String(now.getSeconds()).padStart(2, '0');
         el.textContent = h + ':' + m + ':' + s;
-      }, 1000);
+      }
+      tick();
+      setInterval(tick, 1000);
     })();
 
     // ── Character scramble – skip on low-end ────────────────────────
