@@ -403,6 +403,122 @@
       .contact   { bottom: max(0.4rem, env(safe-area-inset-bottom)); font-size: 0.65rem; }
     }
 
+    /* ── Music hint + control ───────────────────────────────────────── */
+    #play-hint {
+      position: fixed;
+      top: max(1.3rem, env(safe-area-inset-top));
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      font-size: clamp(0.58rem, 1.4vw, 0.7rem);
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.18em;
+      text-transform: lowercase;
+      z-index: 2;
+      pointer-events: none;
+      filter: drop-shadow(0 0 8px rgba(0,0,0,1));
+      animation: hint-pulse 2.5s ease-in-out infinite;
+      transition: opacity 0.5s;
+    }
+
+    @keyframes hint-pulse {
+      0%, 100% { opacity: 0.35; }
+      50%       { opacity: 0.8; }
+    }
+
+    #music-btn {
+      position: fixed;
+      top: max(1.1rem, env(safe-area-inset-top));
+      right: max(1.3rem, env(safe-area-inset-right));
+      background: none;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.4);
+      font-family: 'Courier New', monospace;
+      font-size: clamp(0.6rem, 1.4vw, 0.7rem);
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      z-index: 4;
+      padding: 0.35em 0.65em;
+      line-height: 1;
+      filter: drop-shadow(0 0 8px rgba(0,0,0,1));
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    #music-btn:hover,
+    #music-btn:focus {
+      color: rgba(0,240,255,0.85);
+      border-color: rgba(0,240,255,0.4);
+      outline: none;
+    }
+
+    /* ── VHS REC indicator ──────────────────────────────────────────── */
+    #vhs-rec {
+      position: fixed;
+      top: max(1.1rem, env(safe-area-inset-top));
+      left: max(1.3rem, env(safe-area-inset-left));
+      font-family: 'Courier New', monospace;
+      font-size: clamp(0.58rem, 1.4vw, 0.68rem);
+      color: rgba(255,255,255,0.6);
+      z-index: 4;
+      letter-spacing: 0.1em;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,1));
+      pointer-events: none;
+    }
+
+    .rec-dot {
+      display: inline-block;
+      width: 0.55em;
+      height: 0.55em;
+      background: #ff2050;
+      border-radius: 50%;
+      margin-right: 0.35em;
+      vertical-align: middle;
+      animation: rec-blink 1s steps(1) infinite;
+    }
+
+    @keyframes rec-blink {
+      0%,  49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    /* ── VHS color noise bands at screen edges ──────────────────────── */
+    .vhs-edge {
+      position: fixed;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      pointer-events: none;
+      z-index: 3;
+      opacity: 0;
+      animation: vhs-edge-flash 13s steps(1) infinite;
+    }
+
+    .vhs-edge.top {
+      top: 0;
+      background: linear-gradient(to right,
+        rgba(255,0,80,0.75), rgba(0,240,255,0.5) 35%,
+        rgba(255,210,0,0.4) 65%, rgba(255,0,80,0.65));
+      animation-delay: 0s;
+    }
+
+    .vhs-edge.bottom {
+      bottom: 0;
+      background: linear-gradient(to right,
+        rgba(0,240,255,0.65), rgba(255,0,80,0.45) 40%,
+        rgba(0,255,120,0.35) 70%, rgba(0,240,255,0.55));
+      animation-delay: 6.5s;
+    }
+
+    @keyframes vhs-edge-flash {
+      0%,   100%  { opacity: 0; height: 5px; }
+      24%   { opacity: 0; }
+      24.3% { opacity: 0.9; height: 7px; }
+      24.6% { opacity: 0.5; height: 3px; }
+      24.9% { opacity: 0.85; height: 9px; }
+      25.2% { opacity: 0; }
+    }
+
     /* ── Reduced-motion: strip all animation for accessibility ──────── */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -418,6 +534,9 @@
 
   <canvas id="noise"></canvas>
   <div class="overlay"></div>
+  <div id="vhs-rec" aria-hidden="true"><span class="rec-dot"></span><span id="vhs-timer">0:00:00</span></div>
+  <div class="vhs-edge top"></div>
+  <div class="vhs-edge bottom"></div>
   <div class="scanband"></div>
   <div class="flicker"></div>
   <div class="hbars"></div>
@@ -440,43 +559,140 @@
 
   <div class="contact">Contact me at <a href="mailto:sebastian@vansande.org">sebastian@vansande.org</a></div>
 
+  <audio id="music" preload="none"></audio>
+  <div id="play-hint" aria-hidden="true">▶ click anywhere to play</div>
+  <button id="music-btn" hidden aria-label="Pause music">⏸</button>
+
   <script>
+    // Performance tier – reduce JS effects on constrained devices
+    const LOW_END = (navigator.hardwareConcurrency || 4) <= 2
+                 || (navigator.deviceMemory       || 4) <  2;
+
+    // ── Canvas noise + occasional static burst ───────────────────────
     (function () {
       const canvas = document.getElementById('noise');
-      const ctx = canvas.getContext('2d');
-      canvas.width = 256;
-      canvas.height = 144;
-      // Reuse allocation; white pixels at random low alpha avoids mix-blend-mode
+      const ctx    = canvas.getContext('2d');
+      canvas.width = 256; canvas.height = 144;
       const img = ctx.createImageData(256, 144);
-      const d = img.data;
+      const d   = img.data;
       for (let i = 0; i < d.length; i += 4) { d[i] = d[i+1] = d[i+2] = 255; }
 
+      let maxAlpha = 22;
+
       function drawNoise() {
-        for (let i = 3; i < d.length; i += 4) { d[i] = Math.random() * 22 | 0; }
+        for (let i = 3; i < d.length; i += 4) { d[i] = Math.random() * maxAlpha | 0; }
         ctx.putImageData(img, 0, 0);
       }
 
-      let timer = setInterval(drawNoise, 80); // ~12 fps, not competing with RAF
+      const ms    = LOW_END ? 150 : 80;
+      let   timer = setInterval(drawNoise, ms);
+
+      // Full-screen static burst — skip on low-end
+      if (!LOW_END) {
+        function scheduleBurst() {
+          setTimeout(() => {
+            maxAlpha = 200;
+            setTimeout(() => {
+              maxAlpha = 22;
+              if (Math.random() < 0.4) {           // occasional double-flash
+                setTimeout(() => { maxAlpha = 160; }, 130);
+                setTimeout(() => { maxAlpha = 22;  }, 210);
+              }
+            }, 80 + Math.random() * 100);
+            scheduleBurst();
+          }, 12000 + Math.random() * 18000);
+        }
+        scheduleBurst();
+      }
 
       document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          clearInterval(timer);
-          ctx.clearRect(0, 0, 256, 144);
-        } else {
-          timer = setInterval(drawNoise, 80);
-        }
+        if (document.hidden) { clearInterval(timer); ctx.clearRect(0, 0, 256, 144); }
+        else                  { timer = setInterval(drawNoise, ms); }
       });
     })();
 
-    // Character scramble
+    // ── Background music – autoplay, fall back to click-to-play ─────
     (function () {
+      const STREAMS = [
+        { url: 'https://ice2.somafm.com/groovesalad-128-mp3',  label: 'groove salad' },
+        { url: 'https://ice2.somafm.com/beatblender-128-mp3',  label: 'beat blender' },
+        { url: 'https://ice2.somafm.com/deepspaceone-128-mp3', label: 'deep space one' },
+      ];
+      const stream = STREAMS[Math.floor(Math.random() * STREAMS.length)];
+
+      const audio = document.getElementById('music');
+      const hint  = document.getElementById('play-hint');
+      const btn   = document.getElementById('music-btn');
+
+      audio.src    = stream.url;
+      audio.volume = 0.3;
+
+      let started = false;
+
+      function onStarted() {
+        if (started) return;
+        started = true;
+        hint.style.opacity = '0';
+        setTimeout(() => { hint.hidden = true; }, 500);
+        btn.hidden      = false;
+        btn.textContent = '⏸ ' + stream.label;
+        setTimeout(() => { if (!audio.paused) btn.textContent = '⏸'; }, 3000);
+      }
+
+      // Try autoplay immediately (works on repeat visits / some browsers)
+      audio.play().then(onStarted).catch(() => {
+        // Blocked – wait for first interaction
+        const go = () => { audio.play().then(onStarted).catch(() => {}); };
+        document.addEventListener('click',      go, { once: true });
+        document.addEventListener('touchstart', go, { once: true, passive: true });
+      });
+
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (audio.paused) {
+          audio.play().catch(() => {});
+          btn.textContent = '⏸';
+          btn.setAttribute('aria-label', 'Pause music');
+        } else {
+          audio.pause();
+          btn.textContent = '▶';
+          btn.setAttribute('aria-label', 'Play music');
+        }
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) { audio.pause(); }
+        else if (started)    { audio.play().catch(() => {}); }
+      });
+
+      audio.addEventListener('error', () => {
+        btn.textContent = '✕ no signal';
+        btn.disabled    = true;
+      });
+    })();
+
+    // ── VHS REC timer ────────────────────────────────────────────────
+    (function () {
+      const el = document.getElementById('vhs-timer');
+      let secs = Math.floor(Math.random() * 5400); // random tape position 0–90 min
+      setInterval(() => {
+        secs++;
+        const h = Math.floor(secs / 3600);
+        const m = String(Math.floor((secs % 3600) / 60)).padStart(2, '0');
+        const s = String(secs % 60).padStart(2, '0');
+        el.textContent = h + ':' + m + ':' + s;
+      }, 1000);
+    })();
+
+    // ── Character scramble – skip on low-end ────────────────────────
+    if (!LOW_END) (function () {
       const CHARS = '█▓▒░▄▀■□▪▫◆◇▬⣿';
-      const els = document.querySelectorAll('.glitch');
+      const els   = document.querySelectorAll('.glitch');
 
       function scramble() {
-        const el = els[Math.floor(Math.random() * els.length)];
+        const el   = els[Math.floor(Math.random() * els.length)];
         const orig = el.getAttribute('data-text');
-        const idx = Math.floor(Math.random() * orig.length);
+        const idx  = Math.floor(Math.random() * orig.length);
         el.textContent = orig.slice(0, idx) + CHARS[Math.floor(Math.random() * CHARS.length)] + orig.slice(idx + 1);
         setTimeout(() => { el.textContent = orig; }, 60 + Math.random() * 110);
       }
@@ -484,10 +700,7 @@
       function schedule() {
         setTimeout(() => {
           scramble();
-          if (Math.random() < 0.35) {
-            setTimeout(scramble, 90);
-            setTimeout(scramble, 180);
-          }
+          if (Math.random() < 0.35) { setTimeout(scramble, 90); setTimeout(scramble, 180); }
           schedule();
         }, 1200 + Math.random() * 4000);
       }
