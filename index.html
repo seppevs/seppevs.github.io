@@ -580,7 +580,7 @@
     <div class="tape-wobble">
       <div class="glitch" data-text="vansande.org">vansande.org</div>
     </div>
-    <div id="play-hint" aria-hidden="true">▶ click anywhere to play</div>
+    <div id="play-hint" aria-hidden="true">▶ click/tap anywhere to play music</div>
   </div>
 
 
@@ -658,6 +658,8 @@
       function onStarted() {
         if (started) return;
         started = true;
+        document.removeEventListener('click',    go);
+        document.removeEventListener('touchend', go);
         hint.style.opacity = '0';
         setTimeout(() => { hint.hidden = true; }, 500);
         btn.hidden      = false;
@@ -665,12 +667,15 @@
         setTimeout(() => { if (!audio.paused) btn.textContent = '⏸'; }, 3000);
       }
 
+      // Keep listeners active until audio actually starts (fixes iOS double-tap)
+      function go() { audio.play().then(onStarted).catch(() => {}); }
+
       // Try autoplay immediately (works on repeat visits / some browsers)
       audio.play().then(onStarted).catch(() => {
         // Blocked – wait for first interaction
-        const go = () => { audio.play().then(onStarted).catch(() => {}); };
-        document.addEventListener('click',      go, { once: true });
-        document.addEventListener('touchstart', go, { once: true, passive: true });
+        // touchend is used (not touchstart) for reliable iOS audio unlock
+        document.addEventListener('click',    go);
+        document.addEventListener('touchend', go, { passive: true });
       });
 
       btn.addEventListener('click', (e) => {
