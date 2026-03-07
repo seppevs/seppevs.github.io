@@ -678,7 +678,7 @@
         document.removeEventListener('click',    go);
         document.removeEventListener('touchend', go);
         hint.style.opacity = '0';
-        setTimeout(() => { hint.hidden = true; }, 500);
+        setTimeout(() => { hint.style.visibility = 'hidden'; }, 500);
         btn.hidden      = false;
         btn.textContent = '⏸ ' + stream.label;
         setTimeout(() => { if (!audio.paused) btn.textContent = '⏸'; }, 3000);
