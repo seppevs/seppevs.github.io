@@ -129,7 +129,7 @@
       content: attr(data-text);
       position: absolute;
       inset: 0;
-      color: #cc0066;
+      color: var(--glitch-warm, #cc0066);
       -webkit-text-stroke: 0;
       animation: glitch-r 3s steps(1) infinite;
     }
@@ -139,7 +139,7 @@
       content: attr(data-text);
       position: absolute;
       inset: 0;
-      color: #009977;
+      color: var(--glitch-cool, #009977);
       -webkit-text-stroke: 0;
       animation: glitch-b 3s steps(1) infinite;
     }
@@ -198,7 +198,7 @@
       content: attr(data-text);
       position: absolute;
       inset: 0;
-      color: #cc0066;
+      color: var(--glitch-warm, #cc0066);
       animation: subglitch-r 5s steps(1) infinite;
     }
 
@@ -206,7 +206,7 @@
       content: attr(data-text);
       position: absolute;
       inset: 0;
-      color: #009977;
+      color: var(--glitch-cool, #009977);
       animation: subglitch-b 5s steps(1) infinite;
     }
 
@@ -802,6 +802,27 @@
       }
       tick();
       setInterval(tick, 1000);
+    })();
+
+    // ── Glitch palette rotation ──────────────────────────────────────
+    (function () {
+      const PALETTES = [
+        { warm: '#cc0066', cool: '#009977' },  // Magenta + Teal
+        { warm: '#bb0000', cool: '#0033cc' },  // Crimson + Cobalt
+        { warm: '#cc2200', cool: '#1155dd' },  // Orange-Red + Electric Blue
+      ];
+      let current = 0;
+
+      function rotatePalette() {
+        let next;
+        do { next = Math.floor(Math.random() * PALETTES.length); } while (next === current);
+        current = next;
+        const p = PALETTES[current];
+        document.documentElement.style.setProperty('--glitch-warm', p.warm);
+        document.documentElement.style.setProperty('--glitch-cool', p.cool);
+        setTimeout(rotatePalette, 6000 + Math.random() * 8000);
+      }
+      setTimeout(rotatePalette, 6000 + Math.random() * 8000);
     })();
 
     // ── Character scramble ───────────────────────────────────────────
