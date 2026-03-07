@@ -256,9 +256,9 @@
       animation: hbars 9s steps(1) infinite;
     }
 
-    .hbars:nth-of-type(1) { top: 0; height: 6px;  animation-delay: 0s; }
-    .hbars:nth-of-type(2) { top: 0; height: 3px;  animation-delay: 3.1s; }
-    .hbars:nth-of-type(3) { top: 0; height: 10px; animation-delay: 6.4s; }
+    .hbars-1 { top: 0; height: 6px;  animation-delay: 0s; }
+    .hbars-2 { top: 0; height: 3px;  animation-delay: 3.1s; }
+    .hbars-3 { top: 0; height: 10px; animation-delay: 6.4s; }
 
     @keyframes hbars {
       0%,  100%  { opacity: 0; transform: translateY(0) skewX(0deg); }
@@ -273,7 +273,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1.2rem;
       will-change: transform;
       animation: tape-wobble 2.6s ease-in-out infinite;
     }
@@ -556,9 +555,9 @@
   <div class="vhs-edge bottom"></div>
   <div class="scanband"></div>
   <div class="flicker"></div>
-  <div class="hbars"></div>
-  <div class="hbars"></div>
-  <div class="hbars"></div>
+  <div class="hbars hbars-1"></div>
+  <div class="hbars hbars-2"></div>
+  <div class="hbars hbars-3"></div>
   <div class="color-bars" aria-hidden="true"></div>
   <div id="tracking-osd" aria-hidden="true">TRACKING ▲</div>
 
