@@ -135,7 +135,6 @@
 
     /* --- Subtitle --- */
     .sub {
-      position: relative;
       font-size: clamp(0.75rem, 3vw, 1.3rem);
       font-weight: 400;
       font-family: 'Courier New', monospace;
@@ -598,7 +597,6 @@
       for (let i = 3; i < d.length; i += 4) { d[i] = 0; }
 
       let maxAlpha = 22;
-      const W = 256, H = 144;
 
       function drawNoise() {
         // Colorized video noise — warm/cool tints like real tape grain
@@ -733,12 +731,16 @@
         "'Bebas Neue', sans-serif",
         "'Share Tech Mono', monospace",
       ];
+      const lastFont = new WeakMap();
 
       function scramble() {
-        const el       = els[Math.floor(Math.random() * els.length)];
-        const orig     = el.getAttribute('data-text');
-        const idx      = Math.floor(Math.random() * orig.length);
-        const newFont  = FONTS[Math.floor(Math.random() * FONTS.length)];
+        const el      = els[Math.floor(Math.random() * els.length)];
+        const orig    = el.getAttribute('data-text');
+        const idx     = Math.floor(Math.random() * orig.length);
+        const current = lastFont.get(el) || FONTS[0];
+        const pool    = FONTS.filter(f => f !== current);
+        const newFont = pool[Math.floor(Math.random() * pool.length)];
+        lastFont.set(el, newFont);
         el.style.fontFamily = newFont;
         el.textContent = orig.slice(0, idx) + CHARS[Math.floor(Math.random() * CHARS.length)] + orig.slice(idx + 1);
         setTimeout(() => { el.textContent = orig; el.style.fontFamily = ''; }, 60 + Math.random() * 110);
