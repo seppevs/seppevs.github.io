@@ -124,50 +124,6 @@
       animation: jitter 4s steps(1) infinite, dropout 13s steps(1) infinite;
     }
 
-    /* Red channel */
-    .glitch::before {
-      content: attr(data-text);
-      position: absolute;
-      inset: 0;
-      color: var(--glitch-warm, #cc0066);
-      -webkit-text-stroke: 0;
-      animation: glitch-r 3s steps(1) infinite;
-    }
-
-    /* Cyan channel */
-    .glitch::after {
-      content: attr(data-text);
-      position: absolute;
-      inset: 0;
-      color: var(--glitch-cool, #009977);
-      -webkit-text-stroke: 0;
-      animation: glitch-b 3s steps(1) infinite;
-    }
-
-    @keyframes glitch-r {
-      0%   { transform: translate(0); clip-path: polygon(0 0,0 0,0 0,0 0); opacity: 0; }
-      5%   { transform: translate(-5px, 2px); clip-path: polygon(0 10%, 100% 10%, 100% 30%, 0 30%); opacity: 0.8; }
-      8%   { transform: translate(4px, -1px); clip-path: polygon(0 55%, 100% 55%, 100% 68%, 0 68%); opacity: 0.8; }
-      11%  { transform: translate(0); clip-path: polygon(0 0,0 0,0 0,0 0); opacity: 0; }
-      70%  { transform: translate(0); clip-path: polygon(0 0,0 0,0 0,0 0); opacity: 0; }
-      73%  { transform: translate(6px, 1px); clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); opacity: 0.8; }
-      76%  { transform: translate(-3px,-2px); clip-path: polygon(0 70%, 100% 70%, 100% 85%, 0 85%); opacity: 0.8; }
-      79%  { transform: translate(0); clip-path: polygon(0 0,0 0,0 0,0 0); opacity: 0; }
-      100% { transform: translate(0); clip-path: polygon(0 0,0 0,0 0,0 0); opacity: 0; }
-    }
-
-    @keyframes glitch-b {
-      0%   { transform: translate(0); clip-path: polygon(0 0,0 0,0 0,0 0); opacity: 0; }
-      5%   { transform: translate(5px, -2px); clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%); opacity: 0.8; }
-      8%   { transform: translate(-4px, 1px); clip-path: polygon(0 65%, 100% 65%, 100% 75%, 0 75%); opacity: 0.8; }
-      11%  { transform: translate(0); clip-path: polygon(0 0,0 0,0 0,0 0); opacity: 0; }
-      70%  { transform: translate(0); clip-path: polygon(0 0,0 0,0 0,0 0); opacity: 0; }
-      73%  { transform: translate(-6px, 2px); clip-path: polygon(0 5%,  100% 5%,  100% 20%, 0 20%); opacity: 0.8; }
-      76%  { transform: translate(3px,  1px); clip-path: polygon(0 50%, 100% 50%, 100% 60%, 0 60%); opacity: 0.8; }
-      79%  { transform: translate(0); clip-path: polygon(0 0,0 0,0 0,0 0); opacity: 0; }
-      100% { transform: translate(0); clip-path: polygon(0 0,0 0,0 0,0 0); opacity: 0; }
-    }
-
     @keyframes jitter {
       0%, 4%, 8%, 100% { transform: translate(0); }
       2%  { transform: translate(-2px, 1px) skewX(-1deg); }
@@ -194,33 +150,6 @@
       animation: subglitch 5s steps(1) infinite, phosphor-pulse 9s steps(1) infinite;
     }
 
-    .sub::before {
-      content: attr(data-text);
-      position: absolute;
-      inset: 0;
-      color: var(--glitch-warm, #cc0066);
-      animation: subglitch-r 5s steps(1) infinite;
-    }
-
-    .sub::after {
-      content: attr(data-text);
-      position: absolute;
-      inset: 0;
-      color: var(--glitch-cool, #009977);
-      animation: subglitch-b 5s steps(1) infinite;
-    }
-
-    @keyframes subglitch-r {
-      0%, 100% { transform: translate(0); opacity: 0; }
-      30%  { transform: translate(4px, 0); opacity: 0.9; }
-      30.4%{ transform: translate(0); opacity: 0; }
-    }
-
-    @keyframes subglitch-b {
-      0%, 100% { transform: translate(0); opacity: 0; }
-      30%  { transform: translate(-4px, 0); opacity: 0.9; }
-      30.4%{ transform: translate(0); opacity: 0; }
-    }
 
     @keyframes subglitch {
       0%, 100% { transform: translate(0); }
@@ -802,27 +731,6 @@
       }
       tick();
       setInterval(tick, 1000);
-    })();
-
-    // ── Glitch palette rotation ──────────────────────────────────────
-    (function () {
-      const PALETTES = [
-        { warm: '#cc0066', cool: '#009977' },  // Magenta + Teal
-        { warm: '#bb0000', cool: '#0033cc' },  // Crimson + Cobalt
-        { warm: '#cc2200', cool: '#1155dd' },  // Orange-Red + Electric Blue
-      ];
-      let current = 0;
-
-      function rotatePalette() {
-        let next;
-        do { next = Math.floor(Math.random() * PALETTES.length); } while (next === current);
-        current = next;
-        const p = PALETTES[current];
-        document.documentElement.style.setProperty('--glitch-warm', p.warm);
-        document.documentElement.style.setProperty('--glitch-cool', p.cool);
-        setTimeout(rotatePalette, 6000 + Math.random() * 8000);
-      }
-      setTimeout(rotatePalette, 6000 + Math.random() * 8000);
     })();
 
     // ── Character scramble ───────────────────────────────────────────
