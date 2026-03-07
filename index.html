@@ -548,12 +548,15 @@
       25.2% { opacity: 0; }
     }
 
-    /* ── Reduced-motion: strip all animation for accessibility ──────── */
+    /* ── Reduced-motion: only suppress large screen movements ──────── */
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation: none !important; transition: none !important; }
-      .glitch::before, .glitch::after,
-      .sub::before,   .sub::after  { display: none; }
-      .tear, .scanband, .flicker, .hbars { display: none; }
+      /* Kill things that move large distances across the screen */
+      .container  { animation: none !important; }
+      .tape-wobble { animation: none !important; }
+      .scanband   { display: none; }
+      .tear       { display: none; }
+      /* Keep: glitch channel split, jitter, dropout, sub glitch, hbars, flicker
+         — these are colour/distortion effects, not vestibular-triggering motion */
     }
   </style>
 </head>
