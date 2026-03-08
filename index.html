@@ -366,7 +366,7 @@
       top: max(1.1rem, env(safe-area-inset-top));
       left: max(1.3rem, env(safe-area-inset-left));
       font-family: 'VT323', monospace;
-      font-size: clamp(0.58rem, 1.4vw, 0.68rem);
+      font-size: clamp(0.78rem, 1.8vw, 0.92rem);
       color: rgba(255,255,255,0.6);
       z-index: 31;
       letter-spacing: 0.1em;
@@ -493,6 +493,51 @@
     .vhs-mode {
       margin-left: 0.45em;
       opacity: 0.55;
+    }
+
+    /* VHS text glitch keyframes — triggered by JS at random intervals */
+    @keyframes g-rgb {
+      0%   { text-shadow: -4px 0 rgba(255,0,80,0.9),  4px 0 rgba(0,240,255,0.9); }
+      33%  { text-shadow:  3px 0 rgba(255,0,80,0.75), -3px 0 rgba(0,240,255,0.75); }
+      66%  { text-shadow: -6px 0 rgba(255,0,80,0.95),  6px 0 rgba(0,240,255,0.95); }
+      100% { text-shadow: none; }
+    }
+
+    @keyframes g-hshift {
+      0%   { transform: translateX(0); }
+      25%  { transform: translateX(-14px); }
+      50%  { transform: translateX(9px); }
+      75%  { transform: translateX(-4px); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes g-skew {
+      0%   { transform: skewX(0deg); }
+      25%  { transform: skewX(-10deg) translateX(-3px); }
+      50%  { transform: skewX(8deg) translateX(4px); }
+      75%  { transform: skewX(-4deg); }
+      100% { transform: skewX(0deg); }
+    }
+
+    @keyframes g-stretch {
+      0%   { transform: scaleX(1); }
+      33%  { transform: scaleX(1.12); }
+      66%  { transform: scaleX(0.91); }
+      100% { transform: scaleX(1); }
+    }
+
+    @keyframes g-blink {
+      0%   { opacity: 1; }
+      25%  { opacity: 0; }
+      50%  { opacity: 0.9; }
+      75%  { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes g-color {
+      0%, 100% { color: #fff; }
+      33%  { color: rgba(0,240,255,0.95); }
+      66%  { color: rgba(255,60,0,0.9); }
     }
 
     /* ── Reduced-motion: only suppress large screen movements ──────── */
@@ -703,6 +748,51 @@
       }
       tick();
       setInterval(tick, 1000);
+    })();
+
+    // ── VHS text glitch effects ───────────────────────────────────────
+    (function () {
+      const TITLE_FX = [
+        { css: 'g-rgb 180ms steps(3) 1',     dur: 180 },
+        { css: 'g-rgb 180ms steps(3) 1',     dur: 180 },
+        { css: 'g-hshift 160ms steps(4) 1',  dur: 160 },
+        { css: 'g-hshift 160ms steps(4) 1',  dur: 160 },
+        { css: 'g-skew 200ms steps(4) 1',    dur: 200 },
+        { css: 'g-stretch 180ms steps(3) 1', dur: 180 },
+        { css: 'g-blink 140ms steps(4) 1',   dur: 140 },
+        { css: 'g-color 160ms steps(3) 1',   dur: 160 },
+        { css: 'g-rgb 200ms steps(3) 1, g-hshift 200ms steps(4) 1', dur: 200 },
+        { css: 'g-rgb 220ms steps(3) 1, g-skew 220ms steps(4) 1',  dur: 220 },
+      ];
+
+      const CLOCK_FX = [
+        { css: 'g-rgb 130ms steps(3) 1',    dur: 130 },
+        { css: 'g-hshift 110ms steps(4) 1', dur: 110 },
+        { css: 'g-blink 100ms steps(4) 1',  dur: 100 },
+        { css: 'g-color 120ms steps(3) 1',  dur: 120 },
+      ];
+
+      function scheduleGlitch(el, fx) {
+        setTimeout(() => {
+          const e = fx[Math.floor(Math.random() * fx.length)];
+          el.style.animation = e.css;
+          setTimeout(() => {
+            el.style.animation = '';
+            if (Math.random() < 0.25) {
+              setTimeout(() => {
+                const e2 = fx[Math.floor(Math.random() * fx.length)];
+                el.style.animation = e2.css;
+                setTimeout(() => { el.style.animation = ''; scheduleGlitch(el, fx); }, e2.dur);
+              }, 40 + Math.random() * 80);
+            } else {
+              scheduleGlitch(el, fx);
+            }
+          }, e.dur + 16);
+        }, 800 + Math.random() * 6000);
+      }
+
+      scheduleGlitch(document.querySelector('.glitch'), TITLE_FX);
+      scheduleGlitch(document.getElementById('vhs-rec'), CLOCK_FX);
     })();
 
   </script>
