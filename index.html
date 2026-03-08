@@ -404,6 +404,30 @@
       outline: none;
     }
 
+    #station-btn {
+      position: fixed;
+      top: calc(max(1.1rem, env(safe-area-inset-top)) + 2.2em);
+      right: max(1.3rem, env(safe-area-inset-right));
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.2);
+      font-family: 'Courier New', monospace;
+      font-size: clamp(0.5rem, 1.1vw, 0.58rem);
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      z-index: 31;
+      padding: 0.2em 0.4em;
+      line-height: 1;
+      filter: drop-shadow(0 0 8px rgba(0,0,0,1));
+      transition: color 0.2s;
+    }
+
+    #station-btn:hover,
+    #station-btn:focus {
+      color: rgba(0,240,255,0.5);
+      outline: none;
+    }
+
     /* ── VHS REC indicator ──────────────────────────────────────────── */
     #vhs-rec {
       position: fixed;
@@ -577,6 +601,7 @@
 
   <audio id="music" preload="none"></audio>
   <button id="music-btn" hidden aria-label="Pause music">⏸</button>
+  <button id="station-btn" hidden aria-label="Switch station">⇄ station</button>
 
   <script>
     // Performance tier – reduce JS effects on constrained devices
@@ -640,16 +665,23 @@
     (function () {
       const STREAMS = [
         { url: 'https://ice2.somafm.com/groovesalad-128-mp3',  label: 'groove salad' },
+        { url: 'https://ice2.somafm.com/gsclassic-128-mp3',    label: 'groove salad classic' },
         { url: 'https://ice2.somafm.com/beatblender-128-mp3',  label: 'beat blender' },
-        { url: 'https://ice2.somafm.com/deepspaceone-128-mp3', label: 'deep space one' },
       ];
-      const stream = STREAMS[Math.floor(Math.random() * STREAMS.length)];
+      let streamIdx = Math.floor(Math.random() * STREAMS.length);
 
-      const audio = document.getElementById('music');
-      const hint  = document.getElementById('play-hint');
-      const btn   = document.getElementById('music-btn');
+      const audio      = document.getElementById('music');
+      const hint       = document.getElementById('play-hint');
+      const btn        = document.getElementById('music-btn');
+      const stationBtn = document.getElementById('station-btn');
 
-      audio.src    = stream.url;
+      function loadStream() {
+        const wasPlaying = !audio.paused;
+        audio.src = STREAMS[streamIdx].url;
+        if (wasPlaying) audio.play().catch(() => {});
+      }
+
+      audio.src    = STREAMS[streamIdx].url;
       audio.volume = 0.3;
 
       let started = false;
@@ -662,8 +694,9 @@
         hint.style.animation = 'none';
         hint.style.opacity = '0';
         setTimeout(() => { hint.style.visibility = 'hidden'; }, 500);
-        btn.hidden      = false;
-        btn.textContent = '⏸ ' + stream.label;
+        btn.hidden         = false;
+        stationBtn.hidden  = false;
+        btn.textContent    = '⏸ ' + STREAMS[streamIdx].label;
         setTimeout(() => { if (!audio.paused) btn.textContent = '⏸'; }, 3000);
       }
 
@@ -689,6 +722,14 @@
           btn.textContent = '▶';
           btn.setAttribute('aria-label', 'Play music');
         }
+      });
+
+      stationBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        streamIdx = (streamIdx + 1) % STREAMS.length;
+        loadStream();
+        stationBtn.textContent = STREAMS[streamIdx].label;
+        setTimeout(() => { stationBtn.textContent = '⇄ station'; }, 2000);
       });
 
       document.addEventListener('visibilitychange', () => {
