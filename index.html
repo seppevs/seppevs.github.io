@@ -576,7 +576,7 @@
     <div class="tape-wobble">
       <div class="glitch" data-text="vansande.org">vansande.org</div>
     </div>
-    <div id="play-hint" aria-hidden="true">▶ click/tap anywhere to unmute</div>
+    <div id="play-hint" aria-hidden="true">▶ click / double tap anywhere to start the music</div>
   </div>
 
 
@@ -646,11 +646,11 @@
       });
     })();
 
-    // ── Background music – autoplay, fall back to click-to-play ─────
+    // ── Background music ─────────────────────────────────────────────
     (function () {
       const STREAMS = [
-        { url: 'https://ice2.somafm.com/groovesalad-128-mp3',  label: 'groove salad' },
         { url: 'https://ice2.somafm.com/beatblender-128-mp3',  label: 'beat blender' },
+        { url: 'https://ice2.somafm.com/groovesalad-128-mp3',  label: 'groove salad' },
         { url: 'https://ice2.somafm.com/gsclassic-128-mp3',    label: 'groove salad classic' },
         { url: 'https://ice2.somafm.com/vaporwaves-128-mp3',   label: 'vaporwaves' },
         { url: 'https://ice2.somafm.com/suburbsofgoa-128-mp3', label: 'suburbs of goa' },
@@ -665,69 +665,35 @@
       const btn        = document.getElementById('music-btn');
       const stationBtn = document.getElementById('station-btn');
 
-      function loadStream() {
-        const wasPlaying = !audio.paused;
-        audio.src = STREAMS[streamIdx].url;
-        if (wasPlaying) audio.play().catch(() => {});
-      }
-
+      // Preload muted in background so first interaction is instant
       audio.src    = STREAMS[streamIdx].url;
       audio.volume = 0.3;
       audio.muted  = true;
+      audio.play().catch(() => {}); // best-effort; failure is fine
 
-      let started = false;
-      let unmuted = false;
+      let activated = false;
 
-      function showControls() {
-        if (started) return;
-        started = true;
+      function activate() {
+        if (activated) return;
+        activated = true;
+        document.removeEventListener('click',    activate);
+        document.removeEventListener('touchend', activate);
+        audio.muted = false;
+        if (audio.paused) audio.play().catch(() => {});
+        hint.style.animation = 'none';
+        hint.style.opacity   = '0';
+        setTimeout(() => { hint.style.visibility = 'hidden'; }, 500);
         btn.hidden             = false;
         stationBtn.hidden      = false;
         btn.textContent        = '⏸';
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
       }
 
-      function hideHint() {
-        hint.style.animation = 'none';
-        hint.style.opacity   = '0';
-        setTimeout(() => { hint.style.visibility = 'hidden'; }, 500);
-      }
-
-      function unmute() {
-        if (unmuted) return;
-        unmuted = true;
-        document.removeEventListener('click',    unmute);
-        document.removeEventListener('touchend', unmute);
-        audio.muted = false;
-        hideHint();
-      }
-
-      // Try muted autoplay — works in most browsers
-      audio.play().then(() => {
-        showControls();
-        hint.textContent = '▶ click/tap anywhere to unmute';
-        document.addEventListener('click',    unmute);
-        document.addEventListener('touchend', unmute, { passive: true });
-      }).catch(() => {
-        // Muted autoplay blocked (iOS, low MEI) — wait for first interaction
-        function start() {
-          document.removeEventListener('click',    start);
-          document.removeEventListener('touchend', start);
-          audio.play().then(() => {
-            showControls();
-            unmute(); // user just interacted, unmute immediately
-          }).catch(() => {
-            document.addEventListener('click',    start);
-            document.addEventListener('touchend', start, { passive: true });
-          });
-        }
-        document.addEventListener('click',    start);
-        document.addEventListener('touchend', start, { passive: true });
-      });
+      document.addEventListener('click',    activate);
+      document.addEventListener('touchend', activate, { passive: true });
 
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        unmute();
         if (audio.paused) {
           audio.play().catch(() => {});
           btn.textContent = '⏸';
@@ -742,13 +708,15 @@
       stationBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         streamIdx = (streamIdx + 1) % STREAMS.length;
-        loadStream();
+        const wasPlaying = !audio.paused;
+        audio.src = STREAMS[streamIdx].url;
+        if (wasPlaying) audio.play().catch(() => {});
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
       });
 
       document.addEventListener('visibilitychange', () => {
-        if (document.hidden) { audio.pause(); }
-        else if (started)    { audio.play().catch(() => {}); }
+        if (document.hidden)   { audio.pause(); }
+        else if (activated)    { audio.play().catch(() => {}); }
       });
 
       audio.addEventListener('error', () => {
