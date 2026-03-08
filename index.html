@@ -678,15 +678,19 @@
       let started = false;
       let unmuted = false;
 
-      function onStarted() {
+      function showControls() {
         if (started) return;
         started = true;
         btn.hidden             = false;
         stationBtn.hidden      = false;
         btn.textContent        = '⏸';
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
-        // Update hint to prompt unmute (for iOS / blocked-unmute case)
-        hint.textContent = '▶ click/tap anywhere to unmute';
+      }
+
+      function hideHint() {
+        hint.style.animation = 'none';
+        hint.style.opacity   = '0';
+        setTimeout(() => { hint.style.visibility = 'hidden'; }, 500);
       }
 
       function unmute() {
@@ -695,30 +699,30 @@
         document.removeEventListener('click',    unmute);
         document.removeEventListener('touchend', unmute);
         audio.muted = false;
-        hint.style.animation = 'none';
-        hint.style.opacity = '0';
-        setTimeout(() => { hint.style.visibility = 'hidden'; }, 500);
+        hideHint();
       }
 
-      function go() {
-        document.removeEventListener('click',    go);
-        document.removeEventListener('touchend', go);
-        audio.play().then(onStarted).catch(() => {
-          document.addEventListener('click',    go);
-          document.addEventListener('touchend', go, { passive: true });
-        });
-      }
-
-      // Try muted autoplay immediately — succeeds in most browsers
+      // Try muted autoplay — works in most browsers
       audio.play().then(() => {
-        onStarted();
-        // Wait for first interaction to unmute
+        showControls();
+        hint.textContent = '▶ click/tap anywhere to unmute';
         document.addEventListener('click',    unmute);
         document.addEventListener('touchend', unmute, { passive: true });
       }).catch(() => {
-        // Muted autoplay also blocked (iOS) — fall back to tap-to-play
-        document.addEventListener('click',    go);
-        document.addEventListener('touchend', go, { passive: true });
+        // Muted autoplay blocked (iOS, low MEI) — wait for first interaction
+        function start() {
+          document.removeEventListener('click',    start);
+          document.removeEventListener('touchend', start);
+          audio.play().then(() => {
+            showControls();
+            unmute(); // user just interacted, unmute immediately
+          }).catch(() => {
+            document.addEventListener('click',    start);
+            document.addEventListener('touchend', start, { passive: true });
+          });
+        }
+        document.addEventListener('click',    start);
+        document.addEventListener('touchend', start, { passive: true });
       });
 
       btn.addEventListener('click', (e) => {
