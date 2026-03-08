@@ -110,16 +110,25 @@
       letter-spacing: -0.03em;
       color: #fff;
       line-height: 1;
-      /* Hard black outline for readability over any background */
-      -webkit-text-stroke: 2px rgba(0,0,0,0.5);
-      paint-order: stroke fill;
       filter: drop-shadow(0 0 30px rgba(0,0,0,0.8));
-      text-shadow:
-        0 0 8px rgba(255,255,255,0.45),
-        0 0 22px rgba(255,255,255,0.18),
-        0 0 50px rgba(0,200,255,0.1),
-        6px 0 rgba(255,255,255,0.06),
-        12px 0 rgba(255,255,255,0.03);
+    }
+
+    /* MTV-style "TV" badge */
+    .title-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tv-badge {
+      position: absolute;
+      top: -0.15em;
+      right: -0.2em;
+      font-family: 'VT323', monospace;
+      font-size: clamp(0.5rem, 2vw, 2rem);
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.05em;
+      line-height: 1;
     }
 
     @keyframes subglitch {
@@ -522,7 +531,10 @@
 
   <div class="container">
     <div class="tape-wobble">
-      <div class="glitch">vansande.org</div>
+      <div class="title-wrap">
+        <div class="glitch">vansande.org</div>
+        <span class="tv-badge">TV</span>
+      </div>
     </div>
     <div id="play-hint" aria-hidden="true">Click/tap anywhere to start the music</div>
   </div>
