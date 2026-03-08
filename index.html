@@ -7,7 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@900&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@900&family=Bebas+Neue&family=Press+Start+2P&family=Silkscreen&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after {
       margin: 0;
@@ -20,7 +20,7 @@
       height: 100dvh; /* accounts for iOS Safari's collapsible address bar */
       overflow: hidden;
       background: #000;
-      font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
+      font-family: 'VT323', monospace;
     }
 
     /* Giphy TV background */
@@ -188,7 +188,7 @@
     .sub {
       font-size: clamp(0.75rem, 3vw, 1.3rem);
       font-weight: 400;
-      font-family: 'Courier New', monospace;
+      font-family: 'VT323', monospace;
       color: rgba(255,255,255,0.85);
       letter-spacing: clamp(0.05em, 0.8vw, 0.2em);
       text-transform: lowercase;
@@ -471,7 +471,7 @@
       right: 0;
       padding: 0 max(1.5rem, env(safe-area-inset-left));
       text-align: center;
-      font-family: 'Courier New', monospace;
+      font-family: 'VT323', monospace;
       font-size: clamp(0.72rem, 2vw, 0.85rem);
       color: rgba(255,255,255,0.4);
       letter-spacing: 0.1em;
@@ -517,7 +517,7 @@
 
     /* ── Music hint + control ───────────────────────────────────────── */
     #play-hint {
-      font-family: 'Courier New', monospace;
+      font-family: 'VT323', monospace;
       font-size: clamp(0.65rem, 1.5vw, 0.78rem);
       color: rgba(255,255,255,0.7);
       letter-spacing: 0.12em;
@@ -549,7 +549,7 @@
       background: none;
       border: 1px solid rgba(255,255,255,0.15);
       color: rgba(255,255,255,0.4);
-      font-family: 'Courier New', monospace;
+      font-family: 'VT323', monospace;
       font-size: clamp(0.6rem, 1.4vw, 0.7rem);
       letter-spacing: 0.1em;
       cursor: pointer;
@@ -570,7 +570,7 @@
       position: fixed;
       top: max(1.1rem, env(safe-area-inset-top));
       left: max(1.3rem, env(safe-area-inset-left));
-      font-family: 'Courier New', monospace;
+      font-family: 'VT323', monospace;
       font-size: clamp(0.58rem, 1.4vw, 0.68rem);
       color: rgba(255,255,255,0.6);
       z-index: 31;
@@ -675,7 +675,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-family: 'Courier New', monospace;
+      font-family: 'VT323', monospace;
       font-size: clamp(0.65rem, 1.8vw, 0.85rem);
       color: rgba(255,255,255,0.8);
       letter-spacing: 0.2em;
@@ -920,13 +920,12 @@
       const CHARS = '█▓▒░▄▀■□▪▫◆◇▬⣿';
       const els   = document.querySelectorAll('.glitch');
       const FONTS = [
-        "'Arial Black', 'Helvetica Neue', sans-serif",
-        "'Impact', 'Haettenschweiler', sans-serif",
-        "'Courier New', monospace",
         "'VT323', monospace",
         "'Orbitron', sans-serif",
         "'Bebas Neue', sans-serif",
         "'Share Tech Mono', monospace",
+        "'Press Start 2P', monospace",
+        "'Silkscreen', monospace",
       ];
       const lastFont = new WeakMap();
 
@@ -986,7 +985,7 @@
         off.width  = Math.ceil(rect.width) + 80;
         off.height = Math.ceil(rect.height) + 10;
         const oc   = off.getContext('2d');
-        oc.font         = `900 ${fs}px "Arial Black","Helvetica Neue",sans-serif`;
+        oc.font         = `900 ${fs}px "VT323",monospace`;
         oc.fillStyle    = '#fff';
         oc.textAlign    = 'center';
         oc.textBaseline = 'top';
