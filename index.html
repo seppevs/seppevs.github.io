@@ -833,7 +833,7 @@
 </head>
 <body>
 
-  <iframe id="bg" src="https://tv.giphy.com/" allow="autoplay" allowfullscreen></iframe>
+  <iframe id="bg" src="https://tv.giphy.com/" allow="autoplay fullscreen"></iframe>
 
   <div class="vhs-color-burn" aria-hidden="true"></div>
   <canvas id="noise"></canvas>
@@ -1036,9 +1036,12 @@
       stationBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         streamIdx = (streamIdx + 1) % STREAMS.length;
-        const wasPlaying = !audio.paused;
         audio.src = STREAMS[streamIdx].url;
-        if (wasPlaying) audio.play().catch(() => {});
+        userPaused = false;
+        audio.play().catch(() => {});
+        btn.textContent = '⏸';
+        btn.setAttribute('aria-label', 'Pause music');
+        pauseOsd.classList.remove('visible');
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
         showChannelOSD(streamIdx);
         bg.src = '';
