@@ -23,7 +23,7 @@
       font-family: 'VT323', monospace;
     }
 
-    /* Giphy TV background — hidden until user tunes in */
+    /* Giphy TV background — hidden until user tunes in, revealed instantly */
     #bg {
       position: fixed;
       inset: 0;
@@ -32,7 +32,25 @@
       border: none;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 1.5s ease-in;
+    }
+
+    /* Pre-activation SMPTE test pattern — sits below noise canvas (z-index 1)
+       so canvas static overlays it. Hidden via JS on tune-in. */
+    #preact-bars {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(to right,
+        #c0c0c0 0% 14.28%,
+        #c0c000 14.28% 28.57%,
+        #00c0c0 28.57% 42.86%,
+        #00c000 42.86% 57.14%,
+        #c000c0 57.14% 71.43%,
+        #c00000 71.43% 85.71%,
+        #0000c0 85.71% 100%
+      );
+      opacity: 0.92;
     }
 
     /* Dark vignette — strong CRT-style darkening at edges */
@@ -316,12 +334,12 @@
     /* ── Music hint + control ───────────────────────────────────────── */
     #play-hint {
       font-family: 'VT323', monospace;
-      font-size: clamp(0.65rem, 1.5vw, 0.78rem);
-      color: rgba(255,255,255,0.7);
-      letter-spacing: 0.12em;
-      text-transform: lowercase;
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
+      color: #fff;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       pointer-events: none;
-      filter: drop-shadow(0 0 8px rgba(0,0,0,1));
+      filter: drop-shadow(0 0 20px rgba(0,0,0,0.9));
       animation: hint-pulse 2.5s ease-in-out infinite;
       transition: opacity 0.5s;
     }
@@ -574,6 +592,7 @@
 
   <iframe id="bg" src="https://tv.giphy.com/" allow="autoplay" allowfullscreen></iframe>
 
+  <div id="preact-bars" aria-hidden="true"></div>
   <canvas id="noise"></canvas>
   <div class="overlay"></div>
   <div class="phosphor"></div>
@@ -724,9 +743,6 @@
         document.removeEventListener('touchend', activate);
         audio.muted = false;
         if (audio.paused) audio.play().catch(() => {});
-        // Tune in: reveal Giphy TV and ramp noise down to subtle grain
-        document.getElementById('bg').style.opacity = '1';
-        site.noiseActivate();
         hint.style.animation = 'none';
         hint.style.opacity   = '0';
         setTimeout(() => { hint.style.visibility = 'hidden'; }, 500);
@@ -734,6 +750,15 @@
         stationBtn.hidden      = false;
         btn.textContent        = '⏸';
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
+        // VHS channel-change: test pattern off → no-signal flash → instant reveal
+        document.getElementById('preact-bars').style.opacity = '0';
+        const noSig = document.getElementById('no-signal');
+        noSig.style.opacity = '0.92';
+        setTimeout(() => {
+          noSig.style.opacity = '0';
+          document.getElementById('bg').style.opacity = '1';
+          site.noiseActivate();
+        }, 130);
       }
 
       document.addEventListener('click',    activate);
