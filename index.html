@@ -23,7 +23,7 @@
       font-family: 'VT323', monospace;
     }
 
-    /* Giphy TV background — hidden until user tunes in, revealed instantly */
+    /* Giphy TV background */
     #bg {
       position: fixed;
       inset: 0;
@@ -31,30 +31,10 @@
       height: 100%;
       border: none;
       pointer-events: none;
-      opacity: 0;
       will-change: filter, transform;
       filter: contrast(1.18) saturate(0.7) brightness(0.86);
       animation: bg-vhs-filter 11s steps(1) infinite,
                  bg-flutter    18s steps(1) infinite;
-    }
-
-    /* Pre-activation SMPTE test pattern — sits below noise canvas (z-index 1)
-       so canvas static overlays it. Hidden via JS on tune-in. */
-    #preact-bars {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      background: linear-gradient(to right,
-        #c0c0c0 0% 14.28%,
-        #c0c000 14.28% 28.57%,
-        #00c0c0 28.57% 42.86%,
-        #00c000 42.86% 57.14%,
-        #c000c0 57.14% 71.43%,
-        #c00000 71.43% 85.71%,
-        #0000c0 85.71% 100%
-      );
-      opacity: 0.92;
     }
 
     /* Dark vignette — strong CRT-style darkening at edges */
@@ -361,8 +341,7 @@
     @media (max-height: 480px) and (orientation: landscape) {
       .container { gap: 0.4rem; padding: 0.5rem 2rem; }
       .glitch    { font-size: clamp(1.2rem, 5vh, 3rem); }
-      .sub       { font-size: clamp(0.6rem, 2.2vh, 1rem); }
-      .contact   { bottom: max(0.4rem, env(safe-area-inset-bottom)); font-size: 0.65rem; }
+        .contact   { bottom: max(0.4rem, env(safe-area-inset-bottom)); font-size: 0.65rem; }
     }
 
     /* ── Music hint + control ───────────────────────────────────────── */
@@ -682,7 +661,6 @@
 
   <iframe id="bg" src="https://tv.giphy.com/" allow="autoplay" allowfullscreen></iframe>
 
-  <div id="preact-bars" aria-hidden="true"></div>
   <div class="vhs-color-burn" aria-hidden="true"></div>
   <canvas id="noise"></canvas>
   <div class="overlay"></div>
@@ -719,7 +697,7 @@
         <span class="tv-badge">TV</span>
       </div>
     </div>
-    <div id="play-hint" aria-hidden="true">click/tap to tune in</div>
+    <div id="play-hint" aria-hidden="true">click or tap to enable sound</div>
   </div>
 
 
@@ -735,7 +713,6 @@
     // Performance tier – reduce JS effects on constrained devices
     // hardwareConcurrency is unreliable (Firefox caps it to 2 for privacy)
     const LOW_END = (navigator.deviceMemory || 4) < 2;
-    const site = {}; // shared state between modules
 
     // ── Canvas noise + occasional static burst ───────────────────────
     (function () {
@@ -746,11 +723,10 @@
       const d   = img.data;
       for (let i = 3; i < d.length; i += 4) { d[i] = 0; }
 
-      const FINAL_ALPHA = LOW_END ? 45  : 38;
-      const FINAL_MS    = LOW_END ? 150 : 80;
-      let maxAlpha = LOW_END ? 130 : 200; // heavy pre-activation static
-      let ms       = LOW_END ? 100 : 50;  // fast interval = more intense
-      let timer    = setInterval(drawNoise, ms);
+      const BASE_ALPHA = LOW_END ? 45 : 38;
+      let maxAlpha = BASE_ALPHA;
+      const ms     = LOW_END ? 150 : 80;
+      let   timer  = setInterval(drawNoise, ms);
 
       function drawNoise() {
         for (let i = 0; i < d.length; i += 4) {
@@ -770,40 +746,28 @@
         else                  { timer = setInterval(drawNoise, ms); }
       });
 
-      // Called on first interaction: ramp noise down, start burst schedule
-      site.noiseActivate = function () {
-        const ramp = setInterval(() => {
-          maxAlpha = Math.max(FINAL_ALPHA, maxAlpha - 12);
-          if (maxAlpha <= FINAL_ALPHA) {
-            clearInterval(ramp);
-            clearInterval(timer);
-            ms    = FINAL_MS;
-            timer = setInterval(drawNoise, ms);
-            if (!LOW_END) {
-              const noSig = document.getElementById('no-signal');
-              function scheduleBurst() {
-                setTimeout(() => {
-                  noSig.style.opacity = '1';
-                  maxAlpha = 255;
-                  setTimeout(() => {
-                    noSig.style.opacity = '0';
-                    maxAlpha = 200;
-                    setTimeout(() => {
-                      maxAlpha = FINAL_ALPHA;
-                      if (Math.random() < 0.4) {
-                        setTimeout(() => { maxAlpha = 160; }, 130);
-                        setTimeout(() => { maxAlpha = FINAL_ALPHA; }, 210);
-                      }
-                    }, 80 + Math.random() * 100);
-                  }, 48);
-                  scheduleBurst();
-                }, 12000 + Math.random() * 18000);
-              }
-              scheduleBurst();
-            }
-          }
-        }, 50);
-      };
+      if (!LOW_END) {
+        const noSig = document.getElementById('no-signal');
+        function scheduleBurst() {
+          setTimeout(() => {
+            noSig.style.opacity = '1';
+            maxAlpha = 255;
+            setTimeout(() => {
+              noSig.style.opacity = '0';
+              maxAlpha = 200;
+              setTimeout(() => {
+                maxAlpha = BASE_ALPHA;
+                if (Math.random() < 0.4) {
+                  setTimeout(() => { maxAlpha = 160; }, 130);
+                  setTimeout(() => { maxAlpha = BASE_ALPHA; }, 210);
+                }
+              }, 80 + Math.random() * 100);
+            }, 48);
+            scheduleBurst();
+          }, 12000 + Math.random() * 18000);
+        }
+        scheduleBurst();
+      }
     })();
 
     // ── Background music ─────────────────────────────────────────────
@@ -847,15 +811,6 @@
         stationBtn.hidden      = false;
         btn.textContent        = '⏸';
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
-        // VHS channel-change: test pattern off → no-signal flash → instant reveal
-        document.getElementById('preact-bars').style.opacity = '0';
-        const noSig = document.getElementById('no-signal');
-        noSig.style.opacity = '0.92';
-        setTimeout(() => {
-          noSig.style.opacity = '0';
-          document.getElementById('bg').style.opacity = '1';
-          site.noiseActivate();
-        }, 130);
       }
 
       document.addEventListener('click',    activate);
