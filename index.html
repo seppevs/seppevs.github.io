@@ -343,8 +343,7 @@
       z-index: 2;
       filter: drop-shadow(0 0 8px rgba(0,0,0,1));
       overflow-wrap: break-word;
-      animation: subglitch 5s steps(1) infinite;
-      animation-delay: 1.7s;
+      animation: subglitch 5s steps(1) 1.7s infinite;
     }
 
     .contact a {
@@ -436,9 +435,8 @@
       z-index: 31;
       pointer-events: none;
       will-change: filter, transform;
-      animation: txt-vhs-filter 11s steps(1) infinite,
-                 bg-flutter     18s steps(1) infinite;
-      animation-delay: -4.2s, -7s;
+      animation: txt-vhs-filter 11s steps(1) -4.2s infinite,
+                 bg-flutter     18s steps(1) -7s   infinite;
     }
 
     #vhs-rec {
@@ -896,6 +894,9 @@
     // hardwareConcurrency is unreliable (Firefox caps it to 2 for privacy)
     const LOW_END = (navigator.deviceMemory || 4) < 2;
 
+    // Shared noise intensity multiplier (noise IIFE + roll IIFE)
+    let _noiseMult = 1;
+
     // ── Canvas noise + occasional static burst ───────────────────────
     (function () {
       const canvas = document.getElementById('noise');
@@ -911,7 +912,7 @@
       let   timer  = setInterval(drawNoise, ms);
 
       function drawNoise() {
-        const alphaMax = Math.min(maxAlpha * (window._noiseMult || 1), 255) | 0;
+        const alphaMax = Math.min(maxAlpha * (_noiseMult || 1), 255) | 0;
         for (let i = 0; i < buf32.length; i++) {
           const r = Math.random();
           // Precomputed RGB bases (little-endian Uint32: 0x00BBGGRR)
@@ -933,7 +934,7 @@
         } else {
           // Reset noise level when tab becomes visible again (prevents stuck-high alpha)
           maxAlpha = BASE_ALPHA;
-          window._noiseMult = 1;
+          _noiseMult = 1;
           noSig.style.opacity = '0';
           timer = setInterval(drawNoise, ms);
         }
@@ -1007,14 +1008,17 @@
       document.addEventListener('touchend', activate, { passive: true });
 
       const pauseOsd = document.getElementById('pause-osd');
+      let userPaused = false;
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (audio.paused) {
+          userPaused = false;
           audio.play().catch(() => {});
           btn.textContent = '⏸';
           btn.setAttribute('aria-label', 'Pause music');
           pauseOsd.classList.remove('visible');
         } else {
+          userPaused = true;
           audio.pause();
           btn.textContent = '▶';
           btn.setAttribute('aria-label', 'Play music');
@@ -1037,12 +1041,13 @@
         if (wasPlaying) audio.play().catch(() => {});
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
         showChannelOSD(streamIdx);
-        bg.src = bg.src;
+        bg.src = '';
+        requestAnimationFrame(() => { bg.src = 'https://tv.giphy.com/'; });
       });
 
       document.addEventListener('visibilitychange', () => {
-        if (document.hidden)   { audio.pause(); }
-        else if (activated)    { audio.play().catch(() => {}); }
+        if (document.hidden)                  { audio.pause(); }
+        else if (activated && !userPaused)    { audio.play().catch(() => {}); }
       });
 
       audio.addEventListener('error', () => {
@@ -1142,13 +1147,13 @@
       if (LOW_END) return;
       const noSig = document.getElementById('no-signal');
       function triggerRoll() {
-        window._noiseMult = 4;
+        _noiseMult = 4;
         noSig.style.opacity = '0.7';
         document.body.style.animation = 'vhs-roll 420ms linear 1';
         setTimeout(() => {
           document.body.style.animation = '';
           noSig.style.opacity = '0';
-          window._noiseMult = 1;
+          _noiseMult = 1;
         }, 450);
         setTimeout(triggerRoll, 25000 + Math.random() * 45000);
       }
