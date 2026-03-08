@@ -622,15 +622,15 @@
       0%, 100%   { filter: none; }
       7%    { filter: contrast(1.9)  saturate(2.1)  brightness(0.68) hue-rotate(32deg); }
       7.8%  { filter: none; }
-      20%   { filter: contrast(0.75) saturate(0.35) brightness(1.06) blur(1.5px); }
+      20%   { filter: contrast(0.75) saturate(0.35) brightness(1.06); }
       20.8% { filter: none; }
-      35%   { filter: contrast(2.0)  saturate(1.95) brightness(0.65) hue-rotate(-38deg) blur(0.5px); }
+      35%   { filter: contrast(2.0)  saturate(1.95) brightness(0.65) hue-rotate(-38deg); }
       35.8% { filter: none; }
       50%   { filter: contrast(0.8)  saturate(0.3)  brightness(1.1); }
       50.8% { filter: none; }
       62%   { filter: contrast(1.75) saturate(1.8)  brightness(0.72) hue-rotate(22deg); }
       62.8% { filter: none; }
-      78%   { filter: contrast(0.85) saturate(0.4)  brightness(1.05) hue-rotate(-14deg) blur(2px); }
+      78%   { filter: contrast(0.85) saturate(0.4)  brightness(1.05) hue-rotate(-14deg); }
       78.8% { filter: none; }
       91%   { filter: contrast(1.85) saturate(2.0)  brightness(0.7)  hue-rotate(18deg); }
       91.8% { filter: none; }
@@ -811,6 +811,24 @@
       100%  { transform: translateY(0)      skewX(0deg);    filter: none; }
     }
 
+    /* ── Mobile: tone down chroma/ghost so small text stays readable ── */
+    @media (max-width: 600px) {
+      .glitch {
+        animation: chroma-drift-mobile 7s steps(1) infinite;
+      }
+      .glitch::before { display: none; }
+    }
+
+    @keyframes chroma-drift-mobile {
+      0%, 100% { text-shadow: -1px 0 rgba(255,0,60,0.55),  1px 0 rgba(0,220,255,0.55),  0 0 5px rgba(180,255,180,0.22), 0 0 14px rgba(180,255,180,0.09); }
+      12%      { text-shadow: -2px 0 rgba(255,0,60,0.8),   3px 0 rgba(0,220,255,0.8),   0 0 9px rgba(180,255,180,0.38), 0 0 22px rgba(180,255,180,0.15); }
+      12.8%    { text-shadow: -1px 0 rgba(255,0,60,0.55),  1px 0 rgba(0,220,255,0.55),  0 0 5px rgba(180,255,180,0.22), 0 0 14px rgba(180,255,180,0.09); }
+      45%      { text-shadow: -1px 0 rgba(255,0,60,0.65),  2px 0 rgba(0,220,255,0.65),  0 0 6px rgba(180,255,180,0.28), 0 0 16px rgba(180,255,180,0.11); }
+      45.8%    { text-shadow: -1px 0 rgba(255,0,60,0.55),  1px 0 rgba(0,220,255,0.55),  0 0 5px rgba(180,255,180,0.22), 0 0 14px rgba(180,255,180,0.09); }
+      78%      { text-shadow: -2px 0 rgba(255,0,60,0.85),  3px 0 rgba(0,220,255,0.85),  0 0 10px rgba(180,255,180,0.42), 0 0 24px rgba(180,255,180,0.16); }
+      78.8%    { text-shadow: -1px 0 rgba(255,0,60,0.55),  1px 0 rgba(0,220,255,0.55),  0 0 5px rgba(180,255,180,0.22), 0 0 14px rgba(180,255,180,0.09); }
+    }
+
     /* ── Reduced-motion: only suppress large screen movements ──────── */
     @media (prefers-reduced-motion: reduce) {
       /* Kill things that move large distances across the screen */
@@ -982,24 +1000,6 @@
         stationBtn.hidden      = false;
         btn.textContent        = '⏸';
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
-        // Set up audio-reactive noise synchronously within the user gesture
-        // (AudioContext must be created here to avoid suspension on async callbacks)
-        try {
-          const actx     = new (window.AudioContext || window.webkitAudioContext)();
-          const src      = actx.createMediaElementSource(audio);
-          const analyser = actx.createAnalyser();
-          analyser.fftSize = 256;
-          analyser.smoothingTimeConstant = 0.75;
-          const data = new Uint8Array(analyser.frequencyBinCount);
-          src.connect(analyser);
-          analyser.connect(actx.destination);
-          (function tick() {
-            analyser.getByteFrequencyData(data);
-            const avg = data.reduce((a, b) => a + b, 0) / data.length;
-            window._noiseMult = 0.6 + (avg / 100) * 1.8;
-            requestAnimationFrame(tick);
-          })();
-        } catch (e) { /* unsupported or already captured */ }
       }
 
       document.addEventListener('click',    activate);
