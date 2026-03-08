@@ -290,12 +290,13 @@
       25.2% { opacity: 0;   transform: translateY(85vh) skewX(0deg); }
     }
 
-    /* Tape wobble wrapper — carries the slow VHS color wash */
+    /* Tape wobble wrapper — VHS filter bursts + flutter warps */
     .tape-wobble {
       display: flex;
       flex-direction: column;
       align-items: center;
-      animation: vhs-color-wash 11s ease-in-out infinite;
+      animation: txt-vhs-filter 11s steps(1) infinite,
+                 bg-flutter     18s steps(1) infinite;
     }
 
 
@@ -407,8 +408,9 @@
       left: max(1.3rem, env(safe-area-inset-left));
       z-index: 31;
       pointer-events: none;
-      animation: vhs-color-wash 8s ease-in-out infinite;
-      animation-delay: -3.5s;
+      animation: txt-vhs-filter 11s steps(1) infinite,
+                 bg-flutter     18s steps(1) infinite;
+      animation-delay: -4.2s, -7s;
     }
 
     #vhs-rec {
@@ -586,15 +588,23 @@
     }
 
     /* ── Slow VHS tape color wash — saturation/hue drift over time ──── */
-    @keyframes vhs-color-wash {
-      0%   { filter: saturate(0.8)  brightness(1.04); }
-      14%  { filter: saturate(1.65) hue-rotate(14deg)  brightness(1.08); }
-      28%  { filter: saturate(0.5)  brightness(0.94); }
-      42%  { filter: saturate(1.4)  hue-rotate(-10deg) brightness(1.06); }
-      57%  { filter: saturate(0.7)  contrast(1.1)      brightness(1.02); }
-      71%  { filter: saturate(1.55) hue-rotate(8deg)   brightness(1.07); }
-      85%  { filter: saturate(0.55) brightness(0.95); }
-      100% { filter: saturate(0.8)  brightness(1.04); }
+    /* ── VHS text filter bursts — same as bg but from neutral base ─── */
+    @keyframes txt-vhs-filter {
+      0%, 100%   { filter: none; }
+      7%    { filter: contrast(1.9)  saturate(2.1)  brightness(0.68) hue-rotate(32deg); }
+      7.8%  { filter: none; }
+      20%   { filter: contrast(0.75) saturate(0.35) brightness(1.06) blur(1.5px); }
+      20.8% { filter: none; }
+      35%   { filter: contrast(2.0)  saturate(1.95) brightness(0.65) hue-rotate(-38deg) blur(0.5px); }
+      35.8% { filter: none; }
+      50%   { filter: contrast(0.8)  saturate(0.3)  brightness(1.1); }
+      50.8% { filter: none; }
+      62%   { filter: contrast(1.75) saturate(1.8)  brightness(0.72) hue-rotate(22deg); }
+      62.8% { filter: none; }
+      78%   { filter: contrast(0.85) saturate(0.4)  brightness(1.05) hue-rotate(-14deg) blur(2px); }
+      78.8% { filter: none; }
+      91%   { filter: contrast(1.85) saturate(2.0)  brightness(0.7)  hue-rotate(18deg); }
+      91.8% { filter: none; }
     }
 
     /* ── VHS Giphy filter bursts — color blowout, desaturation, blur ─── */
