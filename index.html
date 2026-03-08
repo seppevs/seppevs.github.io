@@ -23,7 +23,7 @@
       font-family: 'VT323', monospace;
     }
 
-    /* Giphy TV background */
+    /* Giphy TV background — hidden until user tunes in */
     #bg {
       position: fixed;
       inset: 0;
@@ -31,6 +31,8 @@
       height: 100%;
       border: none;
       pointer-events: none;
+      opacity: 0;
+      transition: opacity 1.5s ease-in;
     }
 
     /* Dark vignette — strong CRT-style darkening at edges */
@@ -250,11 +252,12 @@
       56.8% { opacity: 0;   transform: translateY(82vh) skewX(0deg); }
     }
 
-    /* Tape wobble wrapper */
+    /* Tape wobble wrapper — carries the slow VHS color wash */
     .tape-wobble {
       display: flex;
       flex-direction: column;
       align-items: center;
+      animation: vhs-color-wash 11s ease-in-out infinite;
     }
 
 
@@ -361,17 +364,22 @@
     }
 
     /* ── VHS REC indicator ──────────────────────────────────────────── */
-    #vhs-rec {
+    .clock-wrap {
       position: fixed;
       top: max(1.1rem, env(safe-area-inset-top));
       left: max(1.3rem, env(safe-area-inset-left));
+      z-index: 31;
+      pointer-events: none;
+      animation: vhs-color-wash 8s ease-in-out infinite;
+      animation-delay: -3.5s;
+    }
+
+    #vhs-rec {
       font-family: 'VT323', monospace;
       font-size: clamp(0.78rem, 1.8vw, 0.92rem);
       color: rgba(255,255,255,0.6);
-      z-index: 31;
       letter-spacing: 0.1em;
       filter: drop-shadow(0 0 6px rgba(0,0,0,1));
-      pointer-events: none;
     }
 
     .rec-dot {
@@ -540,6 +548,18 @@
       66%  { color: rgba(255,60,0,0.9); }
     }
 
+    /* ── Slow VHS tape color wash — saturation/hue drift over time ──── */
+    @keyframes vhs-color-wash {
+      0%   { filter: saturate(0.8)  brightness(1.04); }
+      14%  { filter: saturate(1.65) hue-rotate(14deg)  brightness(1.08); }
+      28%  { filter: saturate(0.5)  brightness(0.94); }
+      42%  { filter: saturate(1.4)  hue-rotate(-10deg) brightness(1.06); }
+      57%  { filter: saturate(0.7)  contrast(1.1)      brightness(1.02); }
+      71%  { filter: saturate(1.55) hue-rotate(8deg)   brightness(1.07); }
+      85%  { filter: saturate(0.55) brightness(0.95); }
+      100% { filter: saturate(0.8)  brightness(1.04); }
+    }
+
     /* ── Reduced-motion: only suppress large screen movements ──────── */
     @media (prefers-reduced-motion: reduce) {
       /* Kill things that move large distances across the screen */
@@ -558,7 +578,9 @@
   <div class="overlay"></div>
   <div class="phosphor"></div>
   <div class="crt-corners"></div>
-  <div id="vhs-rec" aria-hidden="true"><span class="rec-dot"></span><span id="vhs-timer">0:00:00</span><span class="vhs-mode">SP</span></div>
+  <div class="clock-wrap">
+    <div id="vhs-rec" aria-hidden="true"><span class="rec-dot"></span><span id="vhs-timer">0:00:00</span><span class="vhs-mode">SP</span></div>
+  </div>
   <div class="vhs-edge top"></div>
   <div class="vhs-edge bottom"></div>
   <div class="scanband"></div>
@@ -581,7 +603,7 @@
         <span class="tv-badge">TV</span>
       </div>
     </div>
-    <div id="play-hint" aria-hidden="true">Click/tap anywhere to start the music</div>
+    <div id="play-hint" aria-hidden="true">click/tap to tune in</div>
   </div>
 
 
@@ -597,6 +619,7 @@
     // Performance tier – reduce JS effects on constrained devices
     // hardwareConcurrency is unreliable (Firefox caps it to 2 for privacy)
     const LOW_END = (navigator.deviceMemory || 4) < 2;
+    const site = {}; // shared state between modules
 
     // ── Canvas noise + occasional static burst ───────────────────────
     (function () {
@@ -605,56 +628,66 @@
       canvas.width = 256; canvas.height = 144;
       const img = ctx.createImageData(256, 144);
       const d   = img.data;
-      // RGB set per-frame; zero out alpha initially
       for (let i = 3; i < d.length; i += 4) { d[i] = 0; }
 
-      let maxAlpha = 22;
+      const FINAL_ALPHA = LOW_END ? 30  : 22;
+      const FINAL_MS    = LOW_END ? 150 : 80;
+      let maxAlpha = LOW_END ? 130 : 200; // heavy pre-activation static
+      let ms       = LOW_END ? 100 : 50;  // fast interval = more intense
+      let timer    = setInterval(drawNoise, ms);
 
       function drawNoise() {
-        // Colorized video noise — warm/cool tints like real tape grain
         for (let i = 0; i < d.length; i += 4) {
           const t = Math.random();
-          if      (t < 0.55) { d[i] = d[i+1] = d[i+2] = 255; }         // white
-          else if (t < 0.68) { d[i] = 255; d[i+1] = 215; d[i+2] = 45; } // warm yellow
-          else if (t < 0.80) { d[i] = 45;  d[i+1] = 215; d[i+2] = 255; }// cyan
-          else if (t < 0.90) { d[i] = 255; d[i+1] = 45;  d[i+2] = 120; }// pink
-          else               { d[i] = 120; d[i+1] = 55;  d[i+2] = 255; } // purple
+          if      (t < 0.55) { d[i] = d[i+1] = d[i+2] = 255; }
+          else if (t < 0.68) { d[i] = 255; d[i+1] = 215; d[i+2] = 45; }
+          else if (t < 0.80) { d[i] = 45;  d[i+1] = 215; d[i+2] = 255; }
+          else if (t < 0.90) { d[i] = 255; d[i+1] = 45;  d[i+2] = 120; }
+          else               { d[i] = 120; d[i+1] = 55;  d[i+2] = 255; }
           d[i+3] = Math.random() * maxAlpha | 0;
         }
         ctx.putImageData(img, 0, 0);
-      }
-
-      const ms    = LOW_END ? 150 : 80;
-      let   timer = setInterval(drawNoise, ms);
-
-      // Full-screen static burst — skip on low-end
-      if (!LOW_END) {
-        const noSig = document.getElementById('no-signal');
-        function scheduleBurst() {
-          setTimeout(() => {
-            noSig.style.opacity = '1';
-            maxAlpha = 255;
-            setTimeout(() => {
-              noSig.style.opacity = '0';
-              maxAlpha = 200;
-              setTimeout(() => {
-                maxAlpha = 22;
-                if (Math.random() < 0.4) {
-                  setTimeout(() => { maxAlpha = 160; }, 130);
-                  setTimeout(() => { maxAlpha = 22;  }, 210);
-                }
-              }, 80 + Math.random() * 100);
-            }, 48);
-            scheduleBurst();
-          }, 12000 + Math.random() * 18000);
-        }
-        scheduleBurst();
       }
 
       document.addEventListener('visibilitychange', () => {
         if (document.hidden) { clearInterval(timer); ctx.clearRect(0, 0, 256, 144); }
         else                  { timer = setInterval(drawNoise, ms); }
       });
+
+      // Called on first interaction: ramp noise down, start burst schedule
+      site.noiseActivate = function () {
+        const ramp = setInterval(() => {
+          maxAlpha = Math.max(FINAL_ALPHA, maxAlpha - 12);
+          if (maxAlpha <= FINAL_ALPHA) {
+            clearInterval(ramp);
+            clearInterval(timer);
+            ms    = FINAL_MS;
+            timer = setInterval(drawNoise, ms);
+            if (!LOW_END) {
+              const noSig = document.getElementById('no-signal');
+              function scheduleBurst() {
+                setTimeout(() => {
+                  noSig.style.opacity = '1';
+                  maxAlpha = 255;
+                  setTimeout(() => {
+                    noSig.style.opacity = '0';
+                    maxAlpha = 200;
+                    setTimeout(() => {
+                      maxAlpha = FINAL_ALPHA;
+                      if (Math.random() < 0.4) {
+                        setTimeout(() => { maxAlpha = 160; }, 130);
+                        setTimeout(() => { maxAlpha = FINAL_ALPHA; }, 210);
+                      }
+                    }, 80 + Math.random() * 100);
+                  }, 48);
+                  scheduleBurst();
+                }, 12000 + Math.random() * 18000);
+              }
+              scheduleBurst();
+            }
+          }
+        }, 50);
+      };
     })();
 
     // ── Background music ─────────────────────────────────────────────
@@ -691,6 +724,9 @@
         document.removeEventListener('touchend', activate);
         audio.muted = false;
         if (audio.paused) audio.play().catch(() => {});
+        // Tune in: reveal Giphy TV and ramp noise down to subtle grain
+        document.getElementById('bg').style.opacity = '1';
+        site.noiseActivate();
         hint.style.animation = 'none';
         hint.style.opacity   = '0';
         setTimeout(() => { hint.style.visibility = 'hidden'; }, 500);
