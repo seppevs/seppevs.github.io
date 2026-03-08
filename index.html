@@ -117,6 +117,22 @@
       color: #fff;
       line-height: 1;
       filter: drop-shadow(0 0 30px rgba(0,0,0,0.8));
+      text-shadow:
+        -2px 0   rgba(255, 0,   60,  0.7),
+         2px 0   rgba(0,   220, 255, 0.7),
+         0   0   8px  rgba(180, 255, 180, 0.3),
+         0   0   22px rgba(180, 255, 180, 0.12);
+      animation: chroma-drift 7s steps(1) infinite;
+    }
+
+    @keyframes chroma-drift {
+      0%, 100% { text-shadow: -2px 0 rgba(255,0,60,0.7),  2px 0 rgba(0,220,255,0.7),  0 0 8px rgba(180,255,180,0.30), 0 0 22px rgba(180,255,180,0.12); }
+      12%      { text-shadow: -5px 0 rgba(255,0,60,0.95), 6px 0 rgba(0,220,255,0.95), 0 0 16px rgba(180,255,180,0.55), 0 0 40px rgba(180,255,180,0.22); }
+      12.8%    { text-shadow: -2px 0 rgba(255,0,60,0.7),  2px 0 rgba(0,220,255,0.7),  0 0 8px rgba(180,255,180,0.30), 0 0 22px rgba(180,255,180,0.12); }
+      45%      { text-shadow: -3px 0 rgba(255,0,60,0.85), 4px 0 rgba(0,220,255,0.85), 0 0 11px rgba(180,255,180,0.42), 0 0 30px rgba(180,255,180,0.16); }
+      45.8%    { text-shadow: -2px 0 rgba(255,0,60,0.7),  2px 0 rgba(0,220,255,0.7),  0 0 8px rgba(180,255,180,0.30), 0 0 22px rgba(180,255,180,0.12); }
+      78%      { text-shadow: -6px 0 rgba(255,0,60,0.95), 7px 0 rgba(0,220,255,0.95), 0 0 18px rgba(180,255,180,0.60), 0 0 45px rgba(180,255,180,0.25); }
+      78.8%    { text-shadow: -2px 0 rgba(255,0,60,0.7),  2px 0 rgba(0,220,255,0.7),  0 0 8px rgba(180,255,180,0.30), 0 0 22px rgba(180,255,180,0.12); }
     }
 
     /* MTV-style "TV" badge */
@@ -663,6 +679,67 @@
       animation: vhs-color-burn 13s steps(1) infinite;
     }
 
+    /* CRT glass convex shine */
+    .crt-glass {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 55% 45% at 32% 22%, rgba(255,255,255,0.028) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 36;
+    }
+
+    /* Channel OSD — TV-style channel number display */
+    #channel-osd {
+      position: fixed;
+      top: max(1.1rem, env(safe-area-inset-top));
+      right: max(1.3rem, env(safe-area-inset-right));
+      font-family: 'VT323', monospace;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      color: rgba(255, 255, 255, 0.92);
+      letter-spacing: 0.12em;
+      opacity: 0;
+      transition: opacity 0.08s;
+      pointer-events: none;
+      z-index: 50;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,1));
+    }
+
+    /* VHS tape dropout — random bright horizontal streaks */
+    #dropout {
+      position: fixed;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 98;
+    }
+
+    /* Interlacing artifact */
+    #interlace {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.018) 0px,
+        rgba(255, 255, 255, 0.018) 1px,
+        transparent                1px,
+        transparent                2px
+      );
+      pointer-events: none;
+      z-index: 97;
+      animation: interlace-jitter 9s steps(1) infinite;
+    }
+
+    @keyframes interlace-jitter {
+      0%, 100%  { transform: translateX(0); }
+      22%       { transform: translateX(1px); }
+      22.3%     { transform: translateX(0); }
+      65%       { transform: translateX(-1px); }
+      65.3%     { transform: translateX(0); }
+    }
+
     /* ── Reduced-motion: only suppress large screen movements ──────── */
     @media (prefers-reduced-motion: reduce) {
       /* Kill things that move large distances across the screen */
@@ -683,6 +760,10 @@
   <div class="phosphor"></div>
   <div class="crt-corners"></div>
   <div id="scanlines" aria-hidden="true"></div>
+  <div id="interlace" aria-hidden="true"></div>
+  <div id="dropout" aria-hidden="true"></div>
+  <div class="crt-glass" aria-hidden="true"></div>
+  <div id="channel-osd" aria-hidden="true"></div>
   <div class="clock-wrap">
     <div id="vhs-rec" aria-hidden="true"><span class="rec-dot"></span><span id="vhs-timer">0:00:00</span><span class="vhs-mode">SP</span></div>
   </div>
@@ -846,6 +927,14 @@
         }
       });
 
+      function showChannelOSD(idx) {
+        const osd = document.getElementById('channel-osd');
+        osd.textContent = 'CH ' + String(idx + 1).padStart(2, '0');
+        osd.style.opacity = '1';
+        clearTimeout(osd._t);
+        osd._t = setTimeout(() => { osd.style.opacity = '0'; }, 1800);
+      }
+
       stationBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         streamIdx = (streamIdx + 1) % STREAMS.length;
@@ -853,6 +942,7 @@
         audio.src = STREAMS[streamIdx].url;
         if (wasPlaying) audio.play().catch(() => {});
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
+        showChannelOSD(streamIdx);
       });
 
       document.addEventListener('visibilitychange', () => {
@@ -864,6 +954,20 @@
         btn.textContent = '✕ no signal';
         btn.disabled    = true;
       });
+    })();
+
+    // ── VHS tape dropout lines ────────────────────────────────────────
+    (function () {
+      if (LOW_END) return;
+      const el = document.getElementById('dropout');
+      function flash() {
+        el.style.top     = (5 + Math.random() * 88) + '%';
+        el.style.height  = (Math.random() < 0.25 ? 2 : 1) + 'px';
+        el.style.opacity = (0.6 + Math.random() * 0.4).toFixed(2);
+        setTimeout(() => { el.style.opacity = '0'; }, 16 + Math.random() * 48);
+        setTimeout(flash, 700 + Math.random() * 2800);
+      }
+      setTimeout(flash, 1200 + Math.random() * 2000);
     })();
 
     // ── VHS clock — current time ─────────────────────────────────────
