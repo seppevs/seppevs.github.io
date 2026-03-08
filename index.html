@@ -47,19 +47,20 @@
       z-index: 1;
     }
 
-    /* Scanlines — scrolling VHS-style horizontal lines across the full page */
-    .overlay::after {
-      content: '';
-      position: absolute;
+    /* Full-page scrolling scanlines — above all layers */
+    #scanlines {
+      position: fixed;
       inset: 0;
       background: repeating-linear-gradient(
         to bottom,
         transparent         0,
         transparent         2px,
-        rgba(0, 0, 0, 0.45) 2px,
-        rgba(0, 0, 0, 0.45) 4px
+        rgba(0, 0, 0, 0.22) 2px,
+        rgba(0, 0, 0, 0.22) 4px
       );
       animation: txt-scan 5s linear infinite;
+      pointer-events: none;
+      z-index: 100;
     }
 
     /* CRT rounded screen corners — four black corner fills */
@@ -671,6 +672,7 @@
   <div class="overlay"></div>
   <div class="phosphor"></div>
   <div class="crt-corners"></div>
+  <div id="scanlines" aria-hidden="true"></div>
   <div class="clock-wrap">
     <div id="vhs-rec" aria-hidden="true"><span class="rec-dot"></span><span id="vhs-timer">0:00:00</span><span class="vhs-mode">SP</span></div>
   </div>
