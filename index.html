@@ -104,6 +104,7 @@
 
     /* --- Main glitch text --- */
     .glitch {
+      position: relative;
       font-size: clamp(1.8rem, 8vw, 8rem);
       font-weight: 900;
       text-transform: uppercase;
@@ -122,6 +123,49 @@
         12px 0 rgba(255,255,255,0.03);
       will-change: transform;
       animation: jitter 4s steps(1) infinite, dropout 13s steps(1) infinite;
+    }
+
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      -webkit-text-stroke: 0;
+      text-shadow: none;
+      mix-blend-mode: screen;
+      opacity: 0;
+    }
+
+    .glitch::before {
+      color: rgba(255, 30, 80, 0.92);
+      animation: rgb-r 4s steps(1) infinite;
+    }
+
+    .glitch::after {
+      color: rgba(0, 240, 255, 0.88);
+      animation: rgb-b 4s steps(1) infinite;
+    }
+
+    @keyframes rgb-r {
+      0%, 100%  { opacity: 0; transform: translate(0); clip-path: none; }
+      2%   { opacity: 1; transform: translate(-6px, 0); clip-path: polygon(0 5%, 100% 5%, 100% 58%, 0 58%); }
+      4%   { opacity: 0; transform: translate(0); clip-path: none; }
+      6%   { opacity: 0.9; transform: translate(-5px, 0); clip-path: polygon(0 38%, 100% 38%, 100% 96%, 0 96%); }
+      8%   { opacity: 0; transform: translate(0); clip-path: none; }
+      73%  { opacity: 0.85; transform: translate(-5px, 2px); clip-path: polygon(0 0%, 100% 0%, 100% 48%, 0 48%); }
+      74%  { opacity: 0; transform: translate(0); clip-path: none; }
+    }
+
+    @keyframes rgb-b {
+      0%, 100%  { opacity: 0; transform: translate(0); clip-path: none; }
+      2%   { opacity: 1; transform: translate(6px, 0); clip-path: polygon(0 5%, 100% 5%, 100% 58%, 0 58%); }
+      4%   { opacity: 0; transform: translate(0); clip-path: none; }
+      6%   { opacity: 0.9; transform: translate(5px, 0); clip-path: polygon(0 38%, 100% 38%, 100% 96%, 0 96%); }
+      8%   { opacity: 0; transform: translate(0); clip-path: none; }
+      73%  { opacity: 0.85; transform: translate(5px, -2px); clip-path: polygon(0 0%, 100% 0%, 100% 48%, 0 48%); }
+      74%  { opacity: 0; transform: translate(0); clip-path: none; }
     }
 
     @keyframes jitter {
@@ -506,6 +550,15 @@
       68.9% { opacity: 0; }
     }
 
+    #no-signal {
+      position: fixed;
+      inset: 0;
+      z-index: 46;
+      pointer-events: none;
+      opacity: 0;
+      background: #d0d0d0;
+    }
+
     /* ── Tracking OSD ───────────────────────────────────────────────── */
     #tracking-osd {
       position: fixed;
@@ -566,6 +619,7 @@
   <div class="hbars hbars-2"></div>
   <div class="hbars hbars-3"></div>
   <div class="color-bars" aria-hidden="true"></div>
+  <div id="no-signal" aria-hidden="true"></div>
   <div id="tracking-osd" aria-hidden="true">TRACKING ▲</div>
 
   <div class="tear tear-1"></div>
@@ -582,7 +636,7 @@
 
   <div class="contact"><a href="/cv.html">Find more about me here</a></div>
 
-  <audio id="music" preload="none"></audio>
+  <audio id="music" preload="auto"></audio>
   <div id="music-controls">
     <button id="station-btn" hidden aria-label="Switch station"></button>
     <button id="music-btn" hidden aria-label="Pause music">⏸</button>
@@ -624,16 +678,22 @@
 
       // Full-screen static burst — skip on low-end
       if (!LOW_END) {
+        const noSig = document.getElementById('no-signal');
         function scheduleBurst() {
           setTimeout(() => {
-            maxAlpha = 200;
+            noSig.style.opacity = '1';
+            maxAlpha = 255;
             setTimeout(() => {
-              maxAlpha = 22;
-              if (Math.random() < 0.4) {           // occasional double-flash
-                setTimeout(() => { maxAlpha = 160; }, 130);
-                setTimeout(() => { maxAlpha = 22;  }, 210);
-              }
-            }, 80 + Math.random() * 100);
+              noSig.style.opacity = '0';
+              maxAlpha = 200;
+              setTimeout(() => {
+                maxAlpha = 22;
+                if (Math.random() < 0.4) {
+                  setTimeout(() => { maxAlpha = 160; }, 130);
+                  setTimeout(() => { maxAlpha = 22;  }, 210);
+                }
+              }, 80 + Math.random() * 100);
+            }, 48);
             scheduleBurst();
           }, 12000 + Math.random() * 18000);
         }
