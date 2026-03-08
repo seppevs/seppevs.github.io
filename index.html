@@ -114,7 +114,6 @@
       /* Hard black outline for readability over any background */
       -webkit-text-stroke: 2px rgba(0,0,0,0.5);
       paint-order: stroke fill;
-      filter: drop-shadow(0 0 30px rgba(0,0,0,0.8));
       text-shadow:
         0 0 8px rgba(255,255,255,0.45),
         0 0 22px rgba(255,255,255,0.18),
@@ -122,7 +121,7 @@
         6px 0 rgba(255,255,255,0.06),
         12px 0 rgba(255,255,255,0.03);
       will-change: transform;
-      animation: jitter 4s steps(1) infinite, dropout 13s steps(1) infinite;
+      animation: jitter 4s steps(1) infinite, dropout 13s steps(1) infinite, blur-pulse 4s steps(1) infinite;
     }
 
     .glitch::before,
@@ -166,6 +165,14 @@
       8%   { opacity: 0; transform: translate(0); clip-path: none; }
       73%  { opacity: 0.85; transform: translate(5px, -2px); clip-path: polygon(0 0%, 100% 0%, 100% 48%, 0 48%); }
       74%  { opacity: 0; transform: translate(0); clip-path: none; }
+    }
+
+    /* Blur pulse — signal defocus during jitter */
+    @keyframes blur-pulse {
+      0%, 1.9%, 4%, 5.9%, 8%, 72.9%, 75%, 100% { filter: drop-shadow(0 0 30px rgba(0,0,0,0.8)); }
+      2%  { filter: blur(4px) drop-shadow(0 0 30px rgba(0,0,0,0.8)); }
+      6%  { filter: blur(3px) drop-shadow(0 0 30px rgba(0,0,0,0.8)); }
+      73% { filter: blur(2px) drop-shadow(0 0 30px rgba(0,0,0,0.8)); }
     }
 
     @keyframes jitter {
@@ -315,11 +322,114 @@
 
     /* Tape wobble wrapper */
     .tape-wobble {
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
       will-change: transform;
       animation: tape-wobble 2.6s ease-in-out infinite;
+    }
+
+    /* ── Glitch overlay effects ─────────────────────────────────────── */
+    .gfx-burn, .gfx-slice, .gfx-stretch, .gfx-interlace {
+      position: absolute;
+      top: 0; left: 0; width: 100%;
+      font-size: clamp(1.8rem, 8vw, 8rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    /* 1. Phosphor burn — green ghost lingers at jitter displacement */
+    .gfx-burn {
+      color: rgba(60, 255, 130, 0.85);
+      text-shadow: 0 0 18px rgba(60, 255, 130, 0.7);
+      animation: phosphor-burn 4s linear infinite;
+    }
+    @keyframes phosphor-burn {
+      0%, 1.9%  { opacity: 0; transform: translate(0); }
+      2%        { opacity: 0.55; transform: translate(-2px, 1px) skewX(-1deg); }
+      4%        { opacity: 0;    transform: translate(-2px, 1px) skewX(-1deg); }
+      5.9%      { opacity: 0;    transform: translate(0); }
+      6%        { opacity: 0.55; transform: translate(2px, -1px) skewX(1deg); }
+      8%        { opacity: 0;    transform: translate(2px, -1px) skewX(1deg); }
+      72.9%     { opacity: 0;    transform: translate(0); }
+      73%       { opacity: 0.5;  transform: translate(-1px, 2px); }
+      74.5%     { opacity: 0;    transform: translate(-1px, 2px); }
+      75%, 100% { opacity: 0;    transform: translate(0); }
+    }
+
+    /* 2. Horizontal slice displacement */
+    .gfx-slice { color: #fff; -webkit-text-stroke: 2px rgba(0,0,0,0.5); paint-order: stroke fill; }
+    .gfx-slice.s1 { animation: slice-1 4s  steps(1) infinite; }
+    .gfx-slice.s2 { animation: slice-2 4s  steps(1) infinite; }
+    .gfx-slice.s3 { animation: slice-3 13s steps(1) infinite; }
+
+    @keyframes slice-1 {
+      0%, 100% { opacity: 0; }
+      2%  { opacity: 1; transform: translateX(14px);  clip-path: polygon(0 22%, 100% 22%, 100% 42%, 0 42%); }
+      4%  { opacity: 0; transform: translate(0);       clip-path: none; }
+      6%  { opacity: 1; transform: translateX(-16px);  clip-path: polygon(0 52%, 100% 52%, 100% 72%, 0 72%); }
+      8%  { opacity: 0; transform: translate(0);       clip-path: none; }
+    }
+    @keyframes slice-2 {
+      0%, 100% { opacity: 0; }
+      2%  { opacity: 1; transform: translateX(-10px); clip-path: polygon(0 58%, 100% 58%, 100% 80%, 0 80%); }
+      4%  { opacity: 0; transform: translate(0);      clip-path: none; }
+      6%  { opacity: 1; transform: translateX(12px);  clip-path: polygon(0 8%,  100% 8%,  100% 28%, 0 28%); }
+      8%  { opacity: 0; transform: translate(0);      clip-path: none; }
+      73% { opacity: 1; transform: translateX(-14px); clip-path: polygon(0 38%, 100% 38%, 100% 62%, 0 62%); }
+      74% { opacity: 0; transform: translate(0);      clip-path: none; }
+    }
+    @keyframes slice-3 {
+      0%, 100%  { opacity: 0; }
+      37.3% { opacity: 1; transform: translateX(18px);  clip-path: polygon(0 33%, 100% 33%, 100% 47%, 0 47%); }
+      37.6% { opacity: 0; transform: translate(0);       clip-path: none; }
+      37.9% { opacity: 1; transform: translateX(-12px);  clip-path: polygon(0 58%, 100% 58%, 100% 70%, 0 70%); }
+      38.2% { opacity: 0; transform: translate(0);       clip-path: none; }
+      78.2% { opacity: 1; transform: translateX(10px);   clip-path: polygon(0 20%, 100% 20%, 100% 32%, 0 32%); }
+      78.5% { opacity: 0; transform: translate(0);       clip-path: none; }
+    }
+
+    /* 7. Vertical stretch artifact */
+    .gfx-stretch { color: #fff; -webkit-text-stroke: 2px rgba(0,0,0,0.5); paint-order: stroke fill; animation: gfx-stretch 9s steps(1) infinite; }
+    @keyframes gfx-stretch {
+      0%, 100% { opacity: 0; }
+      43%   { opacity: 1; transform: scaleY(1.8) translateY(-22%); clip-path: polygon(0 38%, 100% 38%, 100% 55%, 0 55%); }
+      43.5% { opacity: 0; transform: translate(0);                  clip-path: none; }
+      71%   { opacity: 1; transform: scaleY(1.5) translateY(-15%); clip-path: polygon(0 18%, 100% 18%, 100% 32%, 0 32%); }
+      71.5% { opacity: 0; transform: translate(0);                  clip-path: none; }
+    }
+
+    /* 5. Interlace field artifact */
+    .gfx-interlace { animation: interlace-flash 11s steps(1) infinite; }
+    .gfx-interlace::before,
+    .gfx-interlace::after {
+      content: 'vansande.org';
+      position: absolute;
+      top: 0; left: 0; width: 100%;
+      font-size: clamp(1.8rem, 8vw, 8rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      text-align: center;
+      color: #fff;
+      -webkit-text-stroke: 2px rgba(0,0,0,0.5);
+      paint-order: stroke fill;
+    }
+    .gfx-interlace::before { clip-path: polygon(0 0,   100% 0,   100% 50%, 0 50%);   transform: translateX(2px); }
+    .gfx-interlace::after  { clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%); transform: translateX(-2px); }
+    @keyframes interlace-flash {
+      0%, 100%  { opacity: 0; }
+      45.5% { opacity: 0.7; }
+      46%   { opacity: 0;   }
+      82%   { opacity: 0.6; }
+      82.5% { opacity: 0;   }
     }
 
     @keyframes tape-wobble {
@@ -629,6 +739,12 @@
   <div class="container">
     <div class="tape-wobble">
       <div class="glitch" data-text="vansande.org">vansande.org</div>
+      <div class="gfx-burn"              aria-hidden="true">vansande.org</div>
+      <div class="gfx-slice s1"          aria-hidden="true">vansande.org</div>
+      <div class="gfx-slice s2"          aria-hidden="true">vansande.org</div>
+      <div class="gfx-slice s3"          aria-hidden="true">vansande.org</div>
+      <div class="gfx-stretch"           aria-hidden="true">vansande.org</div>
+      <div class="gfx-interlace"         aria-hidden="true"></div>
     </div>
     <div id="play-hint" aria-hidden="true">Click/tap anywhere to start the music</div>
   </div>
@@ -814,6 +930,8 @@
       ];
       const lastFont = new WeakMap();
 
+      const TINTS = ['#3cff82', '#ffc850', '#b400ff'];
+
       function scramble() {
         const el      = els[Math.floor(Math.random() * els.length)];
         const orig    = el.getAttribute('data-text');
@@ -827,12 +945,63 @@
         setTimeout(() => { el.textContent = orig; el.style.fontFamily = ''; }, 60 + Math.random() * 110);
       }
 
+      // 6. Full-word scramble with phosphor colour tint
+      function scrambleFull() {
+        const el   = els[Math.floor(Math.random() * els.length)];
+        const orig = el.getAttribute('data-text');
+        let corrupted = '';
+        for (let i = 0; i < orig.length; i++) corrupted += CHARS[Math.floor(Math.random() * CHARS.length)];
+        el.style.fontFamily = FONTS[Math.floor(Math.random() * FONTS.length)];
+        el.style.color      = TINTS[Math.floor(Math.random() * TINTS.length)];
+        el.textContent      = corrupted;
+        setTimeout(() => { el.textContent = orig; el.style.fontFamily = ''; el.style.color = ''; }, 40 + Math.random() * 60);
+      }
+
       function schedule() {
         setTimeout(() => {
           scramble();
           if (Math.random() < 0.35) { setTimeout(scramble, 90); setTimeout(scramble, 180); }
+          if (Math.random() < 0.12) { setTimeout(scrambleFull, 150); }
           schedule();
         }, 1200 + Math.random() * 4000);
+      }
+      schedule();
+    })();
+
+    // ── Pixel drift — row-level horizontal displacement ──────────────
+    (function () {
+      const el     = document.querySelector('.glitch');
+      const canvas = document.createElement('canvas');
+      canvas.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:29;';
+      canvas.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+
+      function drift() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const rect = el.getBoundingClientRect();
+        const fs   = parseFloat(getComputedStyle(el).fontSize);
+        const off  = document.createElement('canvas');
+        off.width  = Math.ceil(rect.width) + 80;
+        off.height = Math.ceil(rect.height) + 10;
+        const oc   = off.getContext('2d');
+        oc.font         = `900 ${fs}px "Arial Black","Helvetica Neue",sans-serif`;
+        oc.fillStyle    = '#fff';
+        oc.textAlign    = 'center';
+        oc.textBaseline = 'top';
+        oc.fillText('VANSANDE.ORG', off.width / 2, 0);
+        ctx.globalAlpha = 0.82;
+        const sh = Math.max(2, fs / 10 | 0);
+        for (let y = 0; y < off.height; y += sh) {
+          const dx = (Math.random() - 0.5) * 22;
+          ctx.drawImage(off, 0, y, off.width, sh, rect.left - 40 + dx, rect.top + y, off.width, sh);
+        }
+        setTimeout(() => { ctx.clearRect(0, 0, canvas.width, canvas.height); }, 55 + Math.random() * 55);
+      }
+
+      function schedule() {
+        setTimeout(() => { drift(); schedule(); }, 7000 + Math.random() * 13000);
       }
       schedule();
     })();
