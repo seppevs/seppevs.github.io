@@ -1122,6 +1122,7 @@
     (function () {
       const audioEl = document.getElementById('music');
       audioEl.addEventListener('play', function init() {
+        if (audioEl.muted) return; // skip muted autoplay — wait for user gesture
         audioEl.removeEventListener('play', init);
         try {
           const actx     = new (window.AudioContext || window.webkitAudioContext)();
