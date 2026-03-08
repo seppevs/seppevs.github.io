@@ -801,15 +801,14 @@
 
     /* VHS full vertical roll — applied via JS */
     @keyframes vhs-roll {
-      0%    { transform: translateY(0); }
-      18%   { transform: translateY(-10vh); }
-      35%   { transform: translateY(-35vh); }
-      50%   { transform: translateY(-95vh); }
-      50.1% { transform: translateY(100vh); }
-      66%   { transform: translateY(18vh); }
-      78%   { transform: translateY(-5vh); }
-      88%   { transform: translateY(2vh); }
-      100%  { transform: translateY(0); }
+      0%    { transform: translateY(0)      skewX(0deg);    filter: none; }
+      8%    { transform: translateY(-6vh)   skewX(-1.5deg); filter: none; }
+      22%   { transform: translateY(-85vh)  skewX(-4deg);   filter: contrast(3) saturate(3) brightness(0.4) hue-rotate(55deg) blur(1px); }
+      22.5% { transform: translateY(105vh)  skewX(5deg);    filter: contrast(3) saturate(0) brightness(2.2) blur(2px); }
+      40%   { transform: translateY(14vh)   skewX(-2deg);   filter: contrast(2) saturate(2) brightness(0.7) hue-rotate(-20deg); }
+      58%   { transform: translateY(-3vh)   skewX(1deg);    filter: contrast(1.3) saturate(1.2); }
+      75%   { transform: translateY(1vh)    skewX(0deg);    filter: none; }
+      100%  { transform: translateY(0)      skewX(0deg);    filter: none; }
     }
 
     /* ── Reduced-motion: only suppress large screen movements ──────── */
@@ -1147,8 +1146,14 @@
     (function () {
       if (LOW_END) return;
       function triggerRoll() {
-        document.body.style.animation = 'vhs-roll 1.8s linear 1';
-        setTimeout(() => { document.body.style.animation = ''; }, 1900);
+        const noSig = document.getElementById('no-signal');
+        window._noiseMult = 4;
+        noSig.style.opacity = '0.7';
+        document.body.style.animation = 'vhs-roll 420ms linear 1';
+        setTimeout(() => {
+          document.body.style.animation = '';
+          noSig.style.opacity = '0';
+        }, 450);
         setTimeout(triggerRoll, 25000 + Math.random() * 45000);
       }
       setTimeout(triggerRoll, 20000 + Math.random() * 30000);
