@@ -982,6 +982,24 @@
         stationBtn.hidden      = false;
         btn.textContent        = '⏸';
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
+        // Set up audio-reactive noise synchronously within the user gesture
+        // (AudioContext must be created here to avoid suspension on async callbacks)
+        try {
+          const actx     = new (window.AudioContext || window.webkitAudioContext)();
+          const src      = actx.createMediaElementSource(audio);
+          const analyser = actx.createAnalyser();
+          analyser.fftSize = 256;
+          analyser.smoothingTimeConstant = 0.75;
+          const data = new Uint8Array(analyser.frequencyBinCount);
+          src.connect(analyser);
+          analyser.connect(actx.destination);
+          (function tick() {
+            analyser.getByteFrequencyData(data);
+            const avg = data.reduce((a, b) => a + b, 0) / data.length;
+            window._noiseMult = 0.6 + (avg / 100) * 1.8;
+            requestAnimationFrame(tick);
+          })();
+        } catch (e) { /* unsupported or already captured */ }
       }
 
       document.addEventListener('click',    activate);
@@ -1117,30 +1135,6 @@
       setTimeout(glitchMode, 4000 + Math.random() * 8000);
     })();
 
-    // ── Audio-reactive noise via Web Audio API ────────────────────────
-    (function () {
-      const audioEl = document.getElementById('music');
-      audioEl.addEventListener('play', function init() {
-        if (audioEl.muted) return; // skip muted autoplay — wait for user gesture
-        audioEl.removeEventListener('play', init);
-        try {
-          const actx     = new (window.AudioContext || window.webkitAudioContext)();
-          const src      = actx.createMediaElementSource(audioEl);
-          const analyser = actx.createAnalyser();
-          analyser.fftSize = 256;
-          analyser.smoothingTimeConstant = 0.75;
-          const data = new Uint8Array(analyser.frequencyBinCount);
-          src.connect(analyser);
-          analyser.connect(actx.destination);
-          (function tick() {
-            analyser.getByteFrequencyData(data);
-            const avg = data.reduce((a, b) => a + b, 0) / data.length;
-            window._noiseMult = 0.6 + (avg / 100) * 1.8;
-            requestAnimationFrame(tick);
-          })();
-        } catch (e) { /* CORS or unsupported — skip */ }
-      });
-    })();
 
     // ── Occasional VHS vertical roll ─────────────────────────────────
     (function () {
