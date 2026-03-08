@@ -42,7 +42,7 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(ellipse at center, rgba(0,0,0,0.0) 30%, rgba(0,0,0,0.82) 100%);
+        radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.82) 100%);
       pointer-events: none;
       z-index: 1;
     }
@@ -188,7 +188,7 @@
       z-index: 3;
     }
 
-    .tear-1 { top: 23%; animation-delay: 0s; }
+    .tear-1 { top: 23%; }
     .tear-2 { top: 57%; animation-delay: 1.4s; }
     .tear-3 { top: 80%; animation-delay: 2.9s; }
     .tear-4 { top: 40%; animation-delay: 0.7s; }
@@ -481,7 +481,6 @@
       background: linear-gradient(to right,
         rgba(255,0,80,0.75), rgba(0,240,255,0.5) 35%,
         rgba(255,210,0,0.4) 65%, rgba(255,0,80,0.65));
-      animation-delay: 0s;
     }
 
     .vhs-edge.bottom {
@@ -501,7 +500,7 @@
       25.2% { opacity: 0; }
     }
 
-/* ── SMPTE color bars flash ─────────────────────────────────────── */
+    /* ── SMPTE color bars flash ─────────────────────────────────────── */
     .color-bars {
       position: fixed;
       inset: 0;
@@ -884,7 +883,6 @@
     <div id="play-hint" aria-hidden="true">click or tap to enable sound</div>
   </div>
 
-
   <div class="contact"><a href="/cv.html">Find more about me here</a></div>
 
   <audio id="music" preload="auto"></audio>
@@ -927,6 +925,8 @@
         ctx.putImageData(img, 0, 0);
       }
 
+      const noSig = document.getElementById('no-signal');
+
       document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
           clearInterval(timer); ctx.clearRect(0, 0, 256, 144);
@@ -934,13 +934,12 @@
           // Reset noise level when tab becomes visible again (prevents stuck-high alpha)
           maxAlpha = BASE_ALPHA;
           window._noiseMult = 1;
-          document.getElementById('no-signal').style.opacity = '0';
+          noSig.style.opacity = '0';
           timer = setInterval(drawNoise, ms);
         }
       });
 
       if (!LOW_END) {
-        const noSig = document.getElementById('no-signal');
         let burstCleanup = null;
         function scheduleBurst() {
           setTimeout(() => {
@@ -977,6 +976,8 @@
       const hint       = document.getElementById('play-hint');
       const btn        = document.getElementById('music-btn');
       const stationBtn = document.getElementById('station-btn');
+      const osd        = document.getElementById('channel-osd');
+      const bg         = document.getElementById('bg');
 
       // Preload muted in background so first interaction is instant
       audio.src    = STREAMS[streamIdx].url;
@@ -1022,7 +1023,6 @@
       });
 
       function showChannelOSD(idx) {
-        const osd = document.getElementById('channel-osd');
         osd.textContent = 'CH ' + String(idx + 1).padStart(2, '0');
         osd.style.opacity = '1';
         clearTimeout(osd._t);
@@ -1037,8 +1037,6 @@
         if (wasPlaying) audio.play().catch(() => {});
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
         showChannelOSD(streamIdx);
-        // Reload Giphy feed so visuals match the new channel
-        const bg = document.getElementById('bg');
         bg.src = bg.src;
       });
 
@@ -1142,8 +1140,8 @@
     // ── Occasional VHS vertical roll ─────────────────────────────────
     (function () {
       if (LOW_END) return;
+      const noSig = document.getElementById('no-signal');
       function triggerRoll() {
-        const noSig = document.getElementById('no-signal');
         window._noiseMult = 4;
         noSig.style.opacity = '0.7';
         document.body.style.animation = 'vhs-roll 420ms linear 1';
