@@ -162,7 +162,6 @@
       position: absolute;
       top: -0.15em;
       right: -0.2em;
-      font-family: 'VT323', monospace;
       font-size: clamp(0.5rem, 2vw, 2rem);
       font-weight: 900;
       color: #fff;
@@ -221,6 +220,7 @@
       left: 0;
       width: 100%;
       height: 180px;
+      will-change: transform;
       background: linear-gradient(
         to bottom,
         transparent 0%,
@@ -324,10 +324,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      will-change: filter, transform;
       animation: txt-vhs-filter 11s steps(1) infinite,
                  bg-flutter     18s steps(1) infinite;
     }
-
 
     /* Contact line */
     .contact {
@@ -337,7 +337,6 @@
       right: 0;
       padding: 0 max(1.5rem, env(safe-area-inset-left));
       text-align: center;
-      font-family: 'VT323', monospace;
       font-size: clamp(0.72rem, 2vw, 0.85rem);
       color: rgba(255,255,255,0.4);
       letter-spacing: 0.1em;
@@ -382,7 +381,6 @@
 
     /* ── Music hint + control ───────────────────────────────────────── */
     #play-hint {
-      font-family: 'VT323', monospace;
       font-size: clamp(1rem, 2.2vw, 1.2rem);
       color: #fff;
       letter-spacing: 0.08em;
@@ -437,13 +435,13 @@
       left: max(1.3rem, env(safe-area-inset-left));
       z-index: 31;
       pointer-events: none;
+      will-change: filter, transform;
       animation: txt-vhs-filter 11s steps(1) infinite,
                  bg-flutter     18s steps(1) infinite;
       animation-delay: -4.2s, -7s;
     }
 
     #vhs-rec {
-      font-family: 'VT323', monospace;
       font-size: clamp(0.78rem, 1.8vw, 0.92rem);
       color: rgba(255,255,255,0.6);
       letter-spacing: 0.1em;
@@ -546,7 +544,6 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-family: 'VT323', monospace;
       font-size: clamp(0.65rem, 1.8vw, 0.85rem);
       color: rgba(255,255,255,0.8);
       letter-spacing: 0.2em;
@@ -616,7 +613,6 @@
       66%  { color: rgba(255,60,0,0.9); }
     }
 
-    /* ── Slow VHS tape color wash — saturation/hue drift over time ──── */
     /* ── VHS text filter bursts — same as bg but from neutral base ─── */
     @keyframes txt-vhs-filter {
       0%, 100%   { filter: none; }
@@ -706,7 +702,6 @@
       position: fixed;
       top: max(1.1rem, env(safe-area-inset-top));
       right: max(1.3rem, env(safe-area-inset-right));
-      font-family: 'VT323', monospace;
       font-size: clamp(1.2rem, 3vw, 2rem);
       color: rgba(255, 255, 255, 0.92);
       letter-spacing: 0.12em;
@@ -733,6 +728,7 @@
     #interlace {
       position: fixed;
       inset: 0;
+      will-change: transform;
       background: repeating-linear-gradient(
         to bottom,
         rgba(255, 255, 255, 0.018) 0px,
@@ -759,7 +755,6 @@
       top: max(1.1rem, env(safe-area-inset-top));
       left: 50%;
       transform: translateX(-50%);
-      font-family: 'VT323', monospace;
       font-size: clamp(1rem, 2.5vw, 1.6rem);
       color: rgba(255, 255, 255, 0.92);
       letter-spacing: 0.18em;
@@ -908,9 +903,9 @@
       const canvas = document.getElementById('noise');
       const ctx    = canvas.getContext('2d');
       canvas.width = 256; canvas.height = 144;
-      const img = ctx.createImageData(256, 144);
-      const d   = img.data;
-      for (let i = 3; i < d.length; i += 4) { d[i] = 0; }
+      const img   = ctx.createImageData(256, 144);
+      // Uint32 view: write all 4 bytes (RGBA) in one operation (little-endian: 0xAABBGGRR)
+      const buf32 = new Uint32Array(img.data.buffer);
 
       const BASE_ALPHA = LOW_END ? 45 : 38;
       let maxAlpha = BASE_ALPHA;
@@ -918,14 +913,16 @@
       let   timer  = setInterval(drawNoise, ms);
 
       function drawNoise() {
-        for (let i = 0; i < d.length; i += 4) {
-          const t = Math.random();
-          if      (t < 0.55) { d[i] = d[i+1] = d[i+2] = 255; }
-          else if (t < 0.68) { d[i] = 255; d[i+1] = 215; d[i+2] = 45; }
-          else if (t < 0.80) { d[i] = 45;  d[i+1] = 215; d[i+2] = 255; }
-          else if (t < 0.90) { d[i] = 255; d[i+1] = 45;  d[i+2] = 120; }
-          else               { d[i] = 120; d[i+1] = 55;  d[i+2] = 255; }
-          d[i+3] = Math.random() * maxAlpha * (window._noiseMult || 1) | 0;
+        const alphaMax = Math.min(maxAlpha * (window._noiseMult || 1), 255) | 0;
+        for (let i = 0; i < buf32.length; i++) {
+          const r = Math.random();
+          // Precomputed RGB bases (little-endian Uint32: 0x00BBGGRR)
+          const base = r < 0.55 ? 0x00FFFFFF :  // white  255,255,255
+                       r < 0.68 ? 0x002DD7FF :  // yellow 255,215, 45
+                       r < 0.80 ? 0x00FFD72D :  // cyan    45,215,255
+                       r < 0.90 ? 0x00782DFF :  // pink   255, 45,120
+                                  0x00FF3778;   // purple 120, 55,255
+          buf32[i] = (Math.random() * alphaMax | 0) << 24 | base;
         }
         ctx.putImageData(img, 0, 0);
       }
@@ -1147,6 +1144,7 @@
         setTimeout(() => {
           document.body.style.animation = '';
           noSig.style.opacity = '0';
+          window._noiseMult = 1;
         }, 450);
         setTimeout(triggerRoll, 25000 + Math.random() * 45000);
       }
