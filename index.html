@@ -576,7 +576,7 @@
     <div class="tape-wobble">
       <div class="glitch" data-text="vansande.org">vansande.org</div>
     </div>
-    <div id="play-hint" aria-hidden="true">▶ click/tap anywhere to play music</div>
+    <div id="play-hint" aria-hidden="true">▶ click/tap anywhere to unmute</div>
   </div>
 
 
@@ -673,40 +673,57 @@
 
       audio.src    = STREAMS[streamIdx].url;
       audio.volume = 0.3;
+      audio.muted  = true;
 
       let started = false;
+      let unmuted = false;
 
       function onStarted() {
         if (started) return;
         started = true;
+        btn.hidden             = false;
+        stationBtn.hidden      = false;
+        btn.textContent        = '⏸';
+        stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
+        // Update hint to prompt unmute (for iOS / blocked-unmute case)
+        hint.textContent = '▶ click/tap anywhere to unmute';
+      }
+
+      function unmute() {
+        if (unmuted) return;
+        unmuted = true;
+        document.removeEventListener('click',    unmute);
+        document.removeEventListener('touchend', unmute);
+        audio.muted = false;
         hint.style.animation = 'none';
         hint.style.opacity = '0';
         setTimeout(() => { hint.style.visibility = 'hidden'; }, 500);
-        btn.hidden              = false;
-        stationBtn.hidden       = false;
-        btn.textContent         = '⏸';
-        stationBtn.textContent  = '⇄ ' + STREAMS[streamIdx].label;
       }
 
       function go() {
         document.removeEventListener('click',    go);
         document.removeEventListener('touchend', go);
         audio.play().then(onStarted).catch(() => {
-          // Play failed — re-add listeners for next gesture
           document.addEventListener('click',    go);
           document.addEventListener('touchend', go, { passive: true });
         });
       }
 
-      // Try autoplay immediately (works on repeat visits / some browsers)
-      audio.play().then(onStarted).catch(() => {
-        // Blocked – wait for first interaction
+      // Try muted autoplay immediately — succeeds in most browsers
+      audio.play().then(() => {
+        onStarted();
+        // Wait for first interaction to unmute
+        document.addEventListener('click',    unmute);
+        document.addEventListener('touchend', unmute, { passive: true });
+      }).catch(() => {
+        // Muted autoplay also blocked (iOS) — fall back to tap-to-play
         document.addEventListener('click',    go);
         document.addEventListener('touchend', go, { passive: true });
       });
 
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
+        unmute();
         if (audio.paused) {
           audio.play().catch(() => {});
           btn.textContent = '⏸';
