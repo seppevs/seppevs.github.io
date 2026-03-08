@@ -47,18 +47,19 @@
       z-index: 1;
     }
 
-    /* Scanlines — visible horizontal lines like a real CRT */
+    /* Scanlines — scrolling VHS-style horizontal lines across the full page */
     .overlay::after {
       content: '';
       position: absolute;
       inset: 0;
       background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,0,0,0.38) 2px,
-        rgba(0,0,0,0.38) 3px
+        to bottom,
+        transparent         0,
+        transparent         2px,
+        rgba(0, 0, 0, 0.45) 2px,
+        rgba(0, 0, 0, 0.45) 4px
       );
+      animation: txt-scan 5s linear infinite;
     }
 
     /* CRT rounded screen corners — four black corner fills */
@@ -121,24 +122,6 @@
     .title-wrap {
       position: relative;
       display: inline-block;
-    }
-
-    /* VHS scanline overlay on title */
-    .title-wrap::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent         0,
-        transparent         2px,
-        rgba(0, 0, 0, 0.45) 2px,
-        rgba(0, 0, 0, 0.45) 4px
-      );
-      animation: txt-scan 5s linear infinite;
-      pointer-events: none;
-      mix-blend-mode: multiply;
-      z-index: 2;
     }
 
     @keyframes txt-scan {
@@ -433,25 +416,6 @@
       color: rgba(255,255,255,0.6);
       letter-spacing: 0.1em;
       filter: drop-shadow(0 0 6px rgba(0,0,0,1));
-      position: relative;
-    }
-
-    /* VHS scanline overlay on clock */
-    #vhs-rec::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent         0,
-        transparent         2px,
-        rgba(0, 0, 0, 0.45) 2px,
-        rgba(0, 0, 0, 0.45) 4px
-      );
-      animation: txt-scan 5s linear infinite;
-      pointer-events: none;
-      mix-blend-mode: multiply;
-      z-index: 2;
     }
 
     .rec-dot {
