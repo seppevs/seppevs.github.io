@@ -379,35 +379,19 @@
       50%       { opacity: 1; }
     }
 
-    #music-btn {
+    #music-controls {
       position: fixed;
       top: max(1.1rem, env(safe-area-inset-top));
       right: max(1.3rem, env(safe-area-inset-right));
-      background: none;
-      border: 1px solid rgba(255,255,255,0.15);
-      color: rgba(255,255,255,0.4);
-      font-family: 'Courier New', monospace;
-      font-size: clamp(0.6rem, 1.4vw, 0.7rem);
-      letter-spacing: 0.1em;
-      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
       z-index: 31;
-      padding: 0.35em 0.65em;
-      line-height: 1;
       filter: drop-shadow(0 0 8px rgba(0,0,0,1));
-      transition: color 0.2s, border-color 0.2s;
     }
 
-    #music-btn:hover,
-    #music-btn:focus {
-      color: rgba(0,240,255,0.85);
-      border-color: rgba(0,240,255,0.4);
-      outline: none;
-    }
-
+    #music-btn,
     #station-btn {
-      position: fixed;
-      top: calc(max(1.1rem, env(safe-area-inset-top)) + 2.2em);
-      right: max(1.3rem, env(safe-area-inset-right));
       background: none;
       border: 1px solid rgba(255,255,255,0.15);
       color: rgba(255,255,255,0.4);
@@ -415,15 +399,13 @@
       font-size: clamp(0.6rem, 1.4vw, 0.7rem);
       letter-spacing: 0.1em;
       cursor: pointer;
-      z-index: 31;
       padding: 0.35em 0.65em;
       line-height: 1;
-      filter: drop-shadow(0 0 8px rgba(0,0,0,1));
       transition: color 0.2s, border-color 0.2s;
     }
 
-    #station-btn:hover,
-    #station-btn:focus {
+    #music-btn:hover, #music-btn:focus,
+    #station-btn:hover, #station-btn:focus {
       color: rgba(0,240,255,0.85);
       border-color: rgba(0,240,255,0.4);
       outline: none;
@@ -601,8 +583,10 @@
   <div class="contact"><a href="/cv.html">Find more about me here</a></div>
 
   <audio id="music" preload="none"></audio>
-  <button id="music-btn" hidden aria-label="Pause music">⏸</button>
-  <button id="station-btn" hidden aria-label="Switch station"></button>
+  <div id="music-controls">
+    <button id="station-btn" hidden aria-label="Switch station"></button>
+    <button id="music-btn" hidden aria-label="Pause music">⏸</button>
+  </div>
 
   <script>
     // Performance tier – reduce JS effects on constrained devices
