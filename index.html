@@ -116,6 +116,7 @@
       letter-spacing: -0.03em;
       color: #fff;
       line-height: 1;
+      position: relative;
       filter: drop-shadow(0 0 30px rgba(0,0,0,0.8));
       text-shadow:
         -2px 0   rgba(255, 0,   60,  0.7),
@@ -123,6 +124,18 @@
          0   0   8px  rgba(180, 255, 180, 0.3),
          0   0   22px rgba(180, 255, 180, 0.12);
       animation: chroma-drift 7s steps(1) infinite;
+    }
+
+    /* Signal ghost — faint echo offset right like a weak antenna reflection */
+    .glitch::before {
+      content: 'vansande.org';
+      position: absolute;
+      inset: 0;
+      left: 7px;
+      top: 2px;
+      color: rgba(255, 255, 255, 0.07);
+      pointer-events: none;
+      z-index: -1;
     }
 
     @keyframes chroma-drift {
@@ -740,6 +753,65 @@
       65.3%     { transform: translateX(0); }
     }
 
+    /* PAUSE OSD — blinks like a real VCR pause display */
+    #pause-osd {
+      position: fixed;
+      top: max(1.1rem, env(safe-area-inset-top));
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'VT323', monospace;
+      font-size: clamp(1rem, 2.5vw, 1.6rem);
+      color: rgba(255, 255, 255, 0.92);
+      letter-spacing: 0.18em;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 51;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,1));
+    }
+    #pause-osd.visible { animation: pause-blink 0.9s steps(1) infinite; }
+    @keyframes pause-blink {
+      0%, 49%   { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    /* VHS head-switching noise band at bottom edge */
+    #head-switch {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 7px;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,0.28) 0px, transparent 1px,
+        rgba(180,180,180,0.18) 2px, transparent 3px,
+        rgba(255,255,255,0.22) 5px, transparent 6px
+      );
+      pointer-events: none;
+      z-index: 96;
+      animation: head-switch 4.3s steps(1) infinite;
+    }
+    @keyframes head-switch {
+      0%, 100% { opacity: 0.35; height: 7px;  }
+      18%      { opacity: 0.9;  height: 10px; background-position:  3px 0; }
+      18.4%    { opacity: 0.35; height: 7px;  }
+      60%      { opacity: 0.75; height: 8px;  background-position: -2px 0; }
+      60.4%    { opacity: 0.35; height: 7px;  }
+    }
+
+    /* VHS full vertical roll — applied via JS */
+    @keyframes vhs-roll {
+      0%    { transform: translateY(0); }
+      18%   { transform: translateY(-10vh); }
+      35%   { transform: translateY(-35vh); }
+      50%   { transform: translateY(-95vh); }
+      50.1% { transform: translateY(100vh); }
+      66%   { transform: translateY(18vh); }
+      78%   { transform: translateY(-5vh); }
+      88%   { transform: translateY(2vh); }
+      100%  { transform: translateY(0); }
+    }
+
     /* ── Reduced-motion: only suppress large screen movements ──────── */
     @media (prefers-reduced-motion: reduce) {
       /* Kill things that move large distances across the screen */
@@ -764,6 +836,8 @@
   <div id="dropout" aria-hidden="true"></div>
   <div class="crt-glass" aria-hidden="true"></div>
   <div id="channel-osd" aria-hidden="true"></div>
+  <div id="pause-osd" aria-hidden="true">⏸ PAUSE</div>
+  <div id="head-switch" aria-hidden="true"></div>
   <div class="clock-wrap">
     <div id="vhs-rec" aria-hidden="true"><span class="rec-dot"></span><span id="vhs-timer">0:00:00</span><span class="vhs-mode">SP</span></div>
   </div>
@@ -834,7 +908,7 @@
           else if (t < 0.80) { d[i] = 45;  d[i+1] = 215; d[i+2] = 255; }
           else if (t < 0.90) { d[i] = 255; d[i+1] = 45;  d[i+2] = 120; }
           else               { d[i] = 120; d[i+1] = 55;  d[i+2] = 255; }
-          d[i+3] = Math.random() * maxAlpha | 0;
+          d[i+3] = Math.random() * maxAlpha * (window._noiseMult || 1) | 0;
         }
         ctx.putImageData(img, 0, 0);
       }
@@ -914,16 +988,19 @@
       document.addEventListener('click',    activate);
       document.addEventListener('touchend', activate, { passive: true });
 
+      const pauseOsd = document.getElementById('pause-osd');
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (audio.paused) {
           audio.play().catch(() => {});
           btn.textContent = '⏸';
           btn.setAttribute('aria-label', 'Pause music');
+          pauseOsd.classList.remove('visible');
         } else {
           audio.pause();
           btn.textContent = '▶';
           btn.setAttribute('aria-label', 'Play music');
+          pauseOsd.classList.add('visible');
         }
       });
 
@@ -1027,6 +1104,53 @@
 
       scheduleGlitch(document.querySelector('.glitch'), TITLE_FX);
       scheduleGlitch(document.getElementById('vhs-rec'), CLOCK_FX);
+    })();
+
+    // ── Tape mode glitch (SP → LP / EP / SLP) ────────────────────────
+    (function () {
+      const modeEl = document.querySelector('.vhs-mode');
+      const alts   = ['LP', 'EP', 'SLP'];
+      function glitchMode() {
+        modeEl.textContent = alts[Math.floor(Math.random() * alts.length)];
+        setTimeout(() => { modeEl.textContent = 'SP'; }, 80 + Math.random() * 160);
+        setTimeout(glitchMode, 7000 + Math.random() * 18000);
+      }
+      setTimeout(glitchMode, 4000 + Math.random() * 8000);
+    })();
+
+    // ── Audio-reactive noise via Web Audio API ────────────────────────
+    (function () {
+      const audioEl = document.getElementById('music');
+      audioEl.addEventListener('play', function init() {
+        audioEl.removeEventListener('play', init);
+        try {
+          const actx     = new (window.AudioContext || window.webkitAudioContext)();
+          const src      = actx.createMediaElementSource(audioEl);
+          const analyser = actx.createAnalyser();
+          analyser.fftSize = 256;
+          analyser.smoothingTimeConstant = 0.75;
+          const data = new Uint8Array(analyser.frequencyBinCount);
+          src.connect(analyser);
+          analyser.connect(actx.destination);
+          (function tick() {
+            analyser.getByteFrequencyData(data);
+            const avg = data.reduce((a, b) => a + b, 0) / data.length;
+            window._noiseMult = 0.6 + (avg / 100) * 1.8;
+            requestAnimationFrame(tick);
+          })();
+        } catch (e) { /* CORS or unsupported — skip */ }
+      });
+    })();
+
+    // ── Occasional VHS vertical roll ─────────────────────────────────
+    (function () {
+      if (LOW_END) return;
+      function triggerRoll() {
+        document.body.style.animation = 'vhs-roll 1.8s linear 1';
+        setTimeout(() => { document.body.style.animation = ''; }, 1900);
+        setTimeout(triggerRoll, 25000 + Math.random() * 45000);
+      }
+      setTimeout(triggerRoll, 20000 + Math.random() * 30000);
     })();
 
   </script>
