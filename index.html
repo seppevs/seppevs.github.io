@@ -928,27 +928,30 @@
       }
 
       document.addEventListener('visibilitychange', () => {
-        if (document.hidden) { clearInterval(timer); ctx.clearRect(0, 0, 256, 144); }
-        else                  { timer = setInterval(drawNoise, ms); }
+        if (document.hidden) {
+          clearInterval(timer); ctx.clearRect(0, 0, 256, 144);
+        } else {
+          // Reset noise level when tab becomes visible again (prevents stuck-high alpha)
+          maxAlpha = BASE_ALPHA;
+          window._noiseMult = 1;
+          document.getElementById('no-signal').style.opacity = '0';
+          timer = setInterval(drawNoise, ms);
+        }
       });
 
       if (!LOW_END) {
         const noSig = document.getElementById('no-signal');
+        let burstCleanup = null;
         function scheduleBurst() {
           setTimeout(() => {
+            // Cancel any pending cleanup from a prior burst before starting a new one
+            clearTimeout(burstCleanup);
             noSig.style.opacity = '1';
             maxAlpha = 255;
-            setTimeout(() => {
+            burstCleanup = setTimeout(() => {
               noSig.style.opacity = '0';
-              maxAlpha = 200;
-              setTimeout(() => {
-                maxAlpha = BASE_ALPHA;
-                if (Math.random() < 0.4) {
-                  setTimeout(() => { maxAlpha = 160; }, 130);
-                  setTimeout(() => { maxAlpha = BASE_ALPHA; }, 210);
-                }
-              }, 80 + Math.random() * 100);
-            }, 48);
+              maxAlpha = BASE_ALPHA;
+            }, 200);
             scheduleBurst();
           }, 12000 + Math.random() * 18000);
         }
@@ -1034,6 +1037,9 @@
         if (wasPlaying) audio.play().catch(() => {});
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
         showChannelOSD(streamIdx);
+        // Reload Giphy feed so visuals match the new channel
+        const bg = document.getElementById('bg');
+        bg.src = bg.src;
       });
 
       document.addEventListener('visibilitychange', () => {
