@@ -405,71 +405,6 @@
       50%       { opacity: 1; }
     }
 
-    #music-controls {
-      position: fixed;
-      bottom: max(1.1rem, env(safe-area-inset-bottom));
-      right: max(1.3rem, env(safe-area-inset-right));
-      display: flex;
-      align-items: center;
-      gap: 0.5em;
-      z-index: 31;
-      filter: drop-shadow(0 0 8px rgba(0,0,0,1));
-    }
-
-    #music-btn {
-      background: none;
-      border: 1px solid rgba(255,255,255,0.15);
-      color: rgba(255,255,255,0.4);
-      font-family: 'VT323', monospace;
-      font-size: clamp(0.6rem, 1.4vw, 0.7rem);
-      letter-spacing: 0.1em;
-      cursor: pointer;
-      padding: 0.35em 0.65em;
-      line-height: 1;
-      transition: color 0.2s, border-color 0.2s;
-    }
-
-    #music-btn:hover, #music-btn:focus {
-      color: rgba(0,240,255,0.85);
-      border-color: rgba(0,240,255,0.4);
-      outline: none;
-    }
-
-    /* ── VHS REC indicator ──────────────────────────────────────────── */
-    .clock-wrap {
-      position: fixed;
-      bottom: max(1.1rem, env(safe-area-inset-bottom));
-      left: max(1.3rem, env(safe-area-inset-left));
-      z-index: 31;
-      pointer-events: none;
-      will-change: filter, transform;
-      animation: txt-vhs-filter 11s steps(1) -4.2s infinite,
-                 bg-flutter     18s steps(1) -7s   infinite;
-    }
-
-    #vhs-rec {
-      font-size: clamp(1.2rem, 3vw, 2rem);
-      color: rgba(255,255,255,0.6);
-      letter-spacing: 0.12em;
-      filter: drop-shadow(0 0 6px rgba(0,0,0,1));
-    }
-
-    .rec-dot {
-      display: inline-block;
-      width: 0.55em;
-      height: 0.55em;
-      background: #ff2050;
-      border-radius: 50%;
-      margin-right: 0.35em;
-      vertical-align: middle;
-      animation: rec-blink 1s steps(1) infinite;
-    }
-
-    @keyframes rec-blink {
-      0%,  49% { opacity: 1; }
-      50%, 100% { opacity: 0; }
-    }
-
     /* ── VHS color noise bands at screen edges ──────────────────────── */
     .vhs-edge {
       position: fixed;
@@ -565,12 +500,6 @@
       85%  { opacity: 0.9; }
       85.6%{ opacity: 0.55; }
       86.1%{ opacity: 0.85; }
-    }
-
-    /* ── Tape mode label (SP/EP) ────────────────────────────────────── */
-    .vhs-mode {
-      margin-left: 0.45em;
-      opacity: 0.55;
     }
 
     /* VHS text glitch keyframes — triggered by JS at random intervals */
@@ -772,26 +701,6 @@
       65.3%     { transform: translateX(0); }
     }
 
-    /* PAUSE OSD — blinks like a real VCR pause display */
-    #pause-osd {
-      position: fixed;
-      top: max(1.1rem, env(safe-area-inset-top));
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: clamp(1rem, 2.5vw, 1.6rem);
-      color: rgba(255, 255, 255, 0.92);
-      letter-spacing: 0.18em;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 51;
-      filter: drop-shadow(0 0 6px rgba(0,0,0,1));
-    }
-    #pause-osd.visible { animation: pause-blink 0.9s steps(1) infinite; }
-    @keyframes pause-blink {
-      0%, 49%   { opacity: 1; }
-      50%, 100% { opacity: 0; }
-    }
-
     /* VHS head-switching noise band at bottom edge */
     #head-switch {
       position: fixed;
@@ -872,11 +781,7 @@
   <div class="crt-glass" aria-hidden="true"></div>
   <div id="channel-osd" aria-hidden="true"></div>
   <div id="station-osd" aria-hidden="true"></div>
-  <div id="pause-osd" aria-hidden="true">⏸ PAUSE</div>
   <div id="head-switch" aria-hidden="true"></div>
-  <div class="clock-wrap">
-    <div id="vhs-rec" aria-hidden="true"><span class="rec-dot"></span><span id="vhs-timer">0:00:00</span><span class="vhs-mode">SP</span></div>
-  </div>
   <div class="vhs-edge top"></div>
   <div class="vhs-edge bottom"></div>
   <div class="scanband"></div>
@@ -911,9 +816,6 @@
   <div class="contact"><a href="/cv.html">Find more about me here</a></div>
 
   <audio id="music" preload="auto"></audio>
-  <div id="music-controls">
-    <button id="music-btn" hidden aria-label="Pause music">⏸</button>
-  </div>
 
   <script>
     // Performance tier – reduce JS effects on constrained devices
@@ -1001,7 +903,6 @@
 
       const audio = document.getElementById('music');
       const hint  = document.getElementById('play-hint');
-      const btn   = document.getElementById('music-btn');
       const osd   = document.getElementById('channel-osd');
       const stationOsd = document.getElementById('station-osd');
       const bg         = document.getElementById('bg');
@@ -1024,8 +925,6 @@
         if (audio.paused) audio.play().catch(() => {});
         bg.src = 'https://tv.giphy.com/';
         hint.textContent = 'Click or tap to switch channels';
-        btn.hidden       = false;
-        btn.textContent  = '⏸';
         showChannelOSD(streamIdx);
         // Subsequent taps anywhere switch channels
         document.addEventListener('click',    switchChannel);
@@ -1035,27 +934,6 @@
       document.addEventListener('click',    activate);
       document.addEventListener('touchend', activate, { passive: true });
 
-      const pauseOsd = document.getElementById('pause-osd');
-      let userPaused = false;
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (userPaused) {
-          userPaused = false;
-          audio.muted = false;
-          audio.play().catch(() => {});
-          bg.style.opacity = '1';
-          btn.textContent = '⏸';
-          btn.setAttribute('aria-label', 'Pause music');
-          pauseOsd.classList.remove('visible');
-        } else {
-          userPaused = true;
-          audio.muted = true;
-          bg.style.opacity = '0';
-          btn.textContent = '▶';
-          btn.setAttribute('aria-label', 'Play music');
-          pauseOsd.classList.add('visible');
-        }
-      });
 
       function showChannelOSD(idx) {
         osd.textContent = 'CH ' + String(idx + 1).padStart(2, '0');
@@ -1068,37 +946,22 @@
       function switchChannel() {
         streamIdx = (streamIdx + 1) % STREAMS.length;
         audio.src = STREAMS[streamIdx].url;
-        userPaused = false;
-        audio.muted = false;
         audio.play().catch(() => {});
         bg.style.opacity = '1';
-        btn.textContent = '⏸';
-        btn.setAttribute('aria-label', 'Pause music');
-        pauseOsd.classList.remove('visible');
         showChannelOSD(streamIdx);
         bg.src = '';
         requestAnimationFrame(() => { bg.src = 'https://tv.giphy.com/'; });
       }
 
       document.addEventListener('visibilitychange', () => {
-        if (document.hidden)                  { audio.pause(); }
-        else if (activated && !userPaused)    { audio.play().catch(() => {}); }
+        if (document.hidden)  { audio.pause(); }
+        else if (activated)   { audio.play().catch(() => {}); }
       });
 
-      audio.addEventListener('error', () => {
-        btn.textContent = '✕ no signal';
-        btn.disabled    = true;
-      });
-
-      // Keyboard shortcuts: Space = pause/resume, → or N = next station
+      // Keyboard shortcut: → or N = next station
       document.addEventListener('keydown', (e) => {
-        if (!activated || e.target.tagName === 'BUTTON') return;
-        if (e.code === 'Space') {
-          e.preventDefault();
-          btn.click();
-        } else if (e.code === 'ArrowRight' || e.key === 'n' || e.key === 'N') {
-          switchChannel();
-        }
+        if (!activated) return;
+        if (e.code === 'ArrowRight' || e.key === 'n' || e.key === 'N') switchChannel();
       });
     })();
 
@@ -1116,20 +979,6 @@
       setTimeout(flash, 1200 + Math.random() * 2000);
     })();
 
-    // ── VHS clock — current time ─────────────────────────────────────
-    (function () {
-      const el = document.getElementById('vhs-timer');
-      function tick() {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2, '0');
-        const m = String(now.getMinutes()).padStart(2, '0');
-        const s = String(now.getSeconds()).padStart(2, '0');
-        el.textContent = h + ':' + m + ':' + s;
-      }
-      tick();
-      setInterval(tick, 1000);
-    })();
-
     // ── VHS text glitch effects ───────────────────────────────────────
     (function () {
       const TITLE_FX = [
@@ -1143,13 +992,6 @@
         { css: 'g-color 160ms steps(3) 1',   dur: 160 },
         { css: 'g-rgb 200ms steps(3) 1, g-hshift 200ms steps(4) 1', dur: 200 },
         { css: 'g-rgb 220ms steps(3) 1, g-skew 220ms steps(4) 1',  dur: 220 },
-      ];
-
-      const CLOCK_FX = [
-        { css: 'g-rgb 130ms steps(3) 1',    dur: 130 },
-        { css: 'g-hshift 110ms steps(4) 1', dur: 110 },
-        { css: 'g-blink 100ms steps(4) 1',  dur: 100 },
-        { css: 'g-color 120ms steps(3) 1',  dur: 120 },
       ];
 
       function scheduleGlitch(el, fx) {
@@ -1172,19 +1014,6 @@
       }
 
       scheduleGlitch(document.querySelector('.glitch'), TITLE_FX);
-      scheduleGlitch(document.getElementById('vhs-rec'), CLOCK_FX);
-    })();
-
-    // ── Tape mode glitch (SP → LP / EP / SLP) ────────────────────────
-    (function () {
-      const modeEl = document.querySelector('.vhs-mode');
-      const alts   = ['LP', 'EP', 'SLP'];
-      function glitchMode() {
-        modeEl.textContent = alts[Math.floor(Math.random() * alts.length)];
-        setTimeout(() => { modeEl.textContent = 'SP'; }, 80 + Math.random() * 160);
-        setTimeout(glitchMode, 7000 + Math.random() * 18000);
-      }
-      setTimeout(glitchMode, 4000 + Math.random() * 8000);
     })();
 
 
