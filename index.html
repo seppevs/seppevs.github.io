@@ -396,7 +396,7 @@
       pointer-events: none;
       filter: drop-shadow(0 0 20px rgba(0,0,0,0.9));
       animation: hint-pulse 2.5s ease-in-out infinite;
-      transition: opacity 0.5s, transform 0.4s;
+      transition: opacity 0.4s;
     }
 
     @keyframes hint-pulse {
@@ -887,7 +887,7 @@
         <span class="tv-badge">TV</span>
       </div>
     </div>
-    <div id="play-hint" aria-hidden="true">click or tap to zap</div>
+    <div id="play-hint" aria-hidden="true">Click or tap anywhere to start</div>
   </div>
 
   <div class="contact"><a href="/cv.html">Find more about me here</a></div>
@@ -1006,15 +1006,15 @@
         audio.muted = false;
         if (audio.paused) audio.play().catch(() => {});
         bg.src = 'https://tv.giphy.com/';
-        hint.style.animation = 'none';
-        hint.style.transform = 'scale(0.75)';
-        hint.style.opacity   = '0';
-        setTimeout(() => { hint.style.visibility = 'hidden'; }, 500);
+        hint.textContent = 'Click or tap to switch channels';
         btn.hidden             = false;
         stationBtn.hidden      = false;
         btn.textContent        = '⏸';
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
         showChannelOSD(streamIdx);
+        // Subsequent taps anywhere switch channels
+        document.addEventListener('click',    () => stationBtn.click());
+        document.addEventListener('touchend', () => stationBtn.click(), { passive: true });
       }
 
       document.addEventListener('click',    activate);
@@ -1057,10 +1057,8 @@
         pauseOsd.classList.remove('visible');
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
         showChannelOSD(streamIdx);
-        noSig.style.opacity = '0.8';
         bg.src = '';
         requestAnimationFrame(() => { bg.src = 'https://tv.giphy.com/'; });
-        setTimeout(() => { noSig.style.opacity = '0'; }, 2500);
       });
 
       document.addEventListener('visibilitychange', () => {
