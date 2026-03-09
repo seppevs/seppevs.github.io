@@ -396,7 +396,7 @@
       pointer-events: none;
       filter: drop-shadow(0 0 20px rgba(0,0,0,0.9));
       animation: hint-pulse 2.5s ease-in-out infinite;
-      transition: opacity 0.5s;
+      transition: opacity 0.5s, transform 0.4s;
     }
 
     @keyframes hint-pulse {
@@ -842,7 +842,7 @@
 </head>
 <body>
 
-  <iframe id="bg" src="https://tv.giphy.com/" allow="autoplay fullscreen"></iframe>
+  <iframe id="bg" src="" allow="autoplay fullscreen"></iframe>
 
   <div class="vhs-color-burn" aria-hidden="true"></div>
   <canvas id="noise"></canvas>
@@ -887,7 +887,7 @@
         <span class="tv-badge">TV</span>
       </div>
     </div>
-    <div id="play-hint" aria-hidden="true">click or tap to enable sound</div>
+    <div id="play-hint" aria-hidden="true">click or tap to zap</div>
   </div>
 
   <div class="contact"><a href="/cv.html">Find more about me here</a></div>
@@ -1005,7 +1005,9 @@
         document.removeEventListener('touchend', activate);
         audio.muted = false;
         if (audio.paused) audio.play().catch(() => {});
+        bg.src = 'https://tv.giphy.com/';
         hint.style.animation = 'none';
+        hint.style.transform = 'scale(0.75)';
         hint.style.opacity   = '0';
         setTimeout(() => { hint.style.visibility = 'hidden'; }, 500);
         btn.hidden             = false;
@@ -1057,11 +1059,8 @@
         showChannelOSD(streamIdx);
         noSig.style.opacity = '0.8';
         bg.src = '';
-        requestAnimationFrame(() => {
-          bg.src = 'https://tv.giphy.com/';
-          bg.addEventListener('load', () => { noSig.style.opacity = '0'; }, { once: true });
-        });
-        setTimeout(() => { noSig.style.opacity = '0'; }, 3000); // fallback
+        requestAnimationFrame(() => { bg.src = 'https://tv.giphy.com/'; });
+        setTimeout(() => { noSig.style.opacity = '0'; }, 2500);
       });
 
       document.addEventListener('visibilitychange', () => {
