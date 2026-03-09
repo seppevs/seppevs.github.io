@@ -51,6 +51,16 @@
     #scanlines {
       position: fixed;
       inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Pseudo-element uses transform (GPU-composited) instead of background-position (repaint) */
+    #scanlines::before {
+      content: '';
+      position: absolute;
+      inset: -40px 0 0;
       background: repeating-linear-gradient(
         to bottom,
         transparent         0,
@@ -58,9 +68,8 @@
         rgba(0, 0, 0, 0.22) 2px,
         rgba(0, 0, 0, 0.22) 4px
       );
+      will-change: transform;
       animation: txt-scan 5s linear infinite;
-      pointer-events: none;
-      z-index: 100;
     }
 
     /* CRT rounded screen corners — four black corner fills */
@@ -155,7 +164,7 @@
     }
 
     @keyframes txt-scan {
-      to { background-position: 0 40px; }
+      to { transform: translateY(40px); }
     }
 
     .tv-badge {
@@ -971,7 +980,7 @@
         { url: 'https://ice2.somafm.com/illstreet-128-mp3',    label: 'illinois street lounge' },
         { url: 'https://ice2.somafm.com/poptron-128-mp3',      label: 'poptron' },
       ];
-      let streamIdx = 0;
+      let streamIdx = Math.random() * STREAMS.length | 0;
 
       const audio      = document.getElementById('music');
       const hint       = document.getElementById('play-hint');
@@ -979,6 +988,7 @@
       const stationBtn = document.getElementById('station-btn');
       const osd        = document.getElementById('channel-osd');
       const bg         = document.getElementById('bg');
+      const noSig      = document.getElementById('no-signal');
 
       // Preload muted in background so first interaction is instant
       audio.src    = STREAMS[streamIdx].url;
@@ -1002,6 +1012,7 @@
         stationBtn.hidden      = false;
         btn.textContent        = '⏸';
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
+        showChannelOSD(streamIdx);
       }
 
       document.addEventListener('click',    activate);
@@ -1044,8 +1055,13 @@
         pauseOsd.classList.remove('visible');
         stationBtn.textContent = '⇄ ' + STREAMS[streamIdx].label;
         showChannelOSD(streamIdx);
+        noSig.style.opacity = '0.8';
         bg.src = '';
-        requestAnimationFrame(() => { bg.src = 'https://tv.giphy.com/'; });
+        requestAnimationFrame(() => {
+          bg.src = 'https://tv.giphy.com/';
+          bg.addEventListener('load', () => { noSig.style.opacity = '0'; }, { once: true });
+        });
+        setTimeout(() => { noSig.style.opacity = '0'; }, 3000); // fallback
       });
 
       document.addEventListener('visibilitychange', () => {
@@ -1056,6 +1072,17 @@
       audio.addEventListener('error', () => {
         btn.textContent = '✕ no signal';
         btn.disabled    = true;
+      });
+
+      // Keyboard shortcuts: Space = pause/resume, → or N = next station
+      document.addEventListener('keydown', (e) => {
+        if (!activated || e.target.tagName === 'BUTTON') return;
+        if (e.code === 'Space') {
+          e.preventDefault();
+          btn.click();
+        } else if (e.code === 'ArrowRight' || e.key === 'n' || e.key === 'N') {
+          stationBtn.click();
+        }
       });
     })();
 
