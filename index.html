@@ -35,6 +35,7 @@
       filter: contrast(1.18) saturate(0.7) brightness(0.86);
       animation: bg-vhs-filter 11s steps(1) infinite,
                  bg-flutter    18s steps(1) infinite;
+      transition: opacity 0.4s;
     }
 
     /* Dark vignette — strong CRT-style darkening at edges */
@@ -718,6 +719,24 @@
       filter: drop-shadow(0 0 6px rgba(0,0,0,1));
     }
 
+    /* Station name OSD — centred, same style as channel OSD */
+    #station-osd {
+      position: fixed;
+      top: max(1.1rem, env(safe-area-inset-top));
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      color: rgba(255, 255, 255, 0.92);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.08s;
+      pointer-events: none;
+      z-index: 50;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,1));
+    }
+
     /* VHS tape dropout — random bright horizontal streaks */
     #dropout {
       position: fixed;
@@ -854,6 +873,7 @@
   <div id="dropout" aria-hidden="true"></div>
   <div class="crt-glass" aria-hidden="true"></div>
   <div id="channel-osd" aria-hidden="true"></div>
+  <div id="station-osd" aria-hidden="true"></div>
   <div id="pause-osd" aria-hidden="true">⏸ PAUSE</div>
   <div id="head-switch" aria-hidden="true"></div>
   <div class="clock-wrap">
@@ -987,6 +1007,7 @@
       const btn        = document.getElementById('music-btn');
       const stationBtn = document.getElementById('station-btn');
       const osd        = document.getElementById('channel-osd');
+      const stationOsd = document.getElementById('station-osd');
       const bg         = document.getElementById('bg');
       const noSig      = document.getElementById('no-signal');
 
@@ -1024,15 +1045,18 @@
       let userPaused = false;
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (audio.paused) {
+        if (userPaused) {
           userPaused = false;
+          audio.muted = false;
           audio.play().catch(() => {});
+          bg.style.opacity = '1';
           btn.textContent = '⏸';
           btn.setAttribute('aria-label', 'Pause music');
           pauseOsd.classList.remove('visible');
         } else {
           userPaused = true;
-          audio.pause();
+          audio.muted = true;
+          bg.style.opacity = '0';
           btn.textContent = '▶';
           btn.setAttribute('aria-label', 'Play music');
           pauseOsd.classList.add('visible');
@@ -1041,9 +1065,10 @@
 
       function showChannelOSD(idx) {
         osd.textContent = 'CH ' + String(idx + 1).padStart(2, '0');
-        osd.style.opacity = '1';
+        stationOsd.textContent = STREAMS[idx].label;
+        osd.style.opacity = stationOsd.style.opacity = '1';
         clearTimeout(osd._t);
-        osd._t = setTimeout(() => { osd.style.opacity = '0'; }, 1800);
+        osd._t = setTimeout(() => { osd.style.opacity = stationOsd.style.opacity = '0'; }, 1800);
       }
 
       stationBtn.addEventListener('click', (e) => {
